@@ -9,7 +9,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
  * @author foxleren
  */
 public class CommonServerManager {
-    private  Optional<Integer> port;
+    private Optional<Integer> port;
     private Optional<String> contextPath;
 
     public CommonServerManager() {
