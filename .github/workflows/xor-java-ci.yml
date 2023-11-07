@@ -1,4 +1,4 @@
-name: [xor-java] Build with Gradle
+name: "[xor-java] Build with Gradle"
 
 on:
   push:
