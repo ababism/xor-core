@@ -1,10 +1,12 @@
-name: Java CI with Gradle
+name: [xor-java] Build with Gradle
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
+    paths: ["xor-java/**"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
+    paths: ["xor-java/**"]
   workflow_dispatch:
 
 permissions:
