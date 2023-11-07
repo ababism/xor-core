@@ -2,6 +2,7 @@ package ru.xority.idm.context;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import ru.xority.idm.role.RoleDao;
 import ru.xority.idm.role.RoleManager;
 

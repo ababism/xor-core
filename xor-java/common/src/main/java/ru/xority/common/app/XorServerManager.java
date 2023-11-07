@@ -1,4 +1,4 @@
-package ru.xority.common.config;
+package ru.xority.common.app;
 
 import java.util.Optional;
 
@@ -8,11 +8,11 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 /**
  * @author foxleren
  */
-public class CommonServerManager {
+public class XorServerManager {
     private Optional<Integer> port;
     private Optional<String> contextPath;
 
-    public CommonServerManager() {
+    public XorServerManager() {
         port = Optional.empty();
         contextPath = Optional.empty();
     }

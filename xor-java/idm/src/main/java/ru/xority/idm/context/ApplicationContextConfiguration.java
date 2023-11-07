@@ -6,8 +6,9 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import ru.xority.common.config.CommonConfigManager;
-import ru.xority.common.config.CommonServerManager;
+
+import ru.xority.common.app.XorConfigManager;
+import ru.xority.common.app.XorServerManager;
 
 /**
  * @author foxleren
@@ -16,7 +17,7 @@ import ru.xority.common.config.CommonServerManager;
 public class ApplicationContextConfiguration {
     @Bean
     public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return CommonConfigManager.getPropertySourcesPlaceholderConfigurer();
+        return XorConfigManager.getPropertySourcesPlaceholderConfigurer();
     }
 
     @Bean
@@ -24,9 +25,9 @@ public class ApplicationContextConfiguration {
             @Value("${idm.server.port}") int port,
             @Value("${idm.server.context-path}") String contextPath)
     {
-        CommonServerManager commonServerManager = new CommonServerManager();
-        commonServerManager.setPort(port);
-        commonServerManager.setContextPath(contextPath);
-        return commonServerManager.getWebServerFactoryCustomizer();
+        XorServerManager xorServerManager = new XorServerManager();
+        xorServerManager.setPort(port);
+        xorServerManager.setContextPath(contextPath);
+        return xorServerManager.getWebServerFactoryCustomizer();
     }
 }
