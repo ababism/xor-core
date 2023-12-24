@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import ru.xority.common.app.XorConfigManager;
-import ru.xority.common.app.XorServerManager;
+import ru.xority.common.serviceconfig.XorConfigManager;
+import ru.xority.common.serviceconfig.XorServerManager;
 
 /**
  * @author foxleren

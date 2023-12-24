@@ -1,4 +1,4 @@
-package ru.xority.common.app;
+package ru.xority.common.serviceconfig;
 
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;

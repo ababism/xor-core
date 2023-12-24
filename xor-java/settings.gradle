@@ -1,4 +1,4 @@
-rootProject.name = 'xor-java'
-
 include 'common'
+
+include 'elysium'
 include 'idm'

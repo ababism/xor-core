@@ -1,4 +1,4 @@
-package ru.xority.common.app;
+package ru.xority.common.serviceconfig;
 
 import java.util.Optional;
 

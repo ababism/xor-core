@@ -1,4 +1,4 @@
-package ru.xority.common;
+package ru.xority.elysium;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author foxleren
  */
 @SpringBootApplication
-public class Application {
+public class ElysiumApplication {
     public static void main(String[] args) {
-        // :common project just implements instruments for xor-java repo
     }
 }
