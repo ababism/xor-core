@@ -1,4 +1,4 @@
-## `xor-core` - репа со всем бэком `xority`
+## `xor-core` - репозиторий со всем бэкендом `xority`
 
 ### Архитектура
   - `.github/workflows` - все пайплайны для `github-actions`
