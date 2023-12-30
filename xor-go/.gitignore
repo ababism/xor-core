@@ -16,4 +16,6 @@
 
 # Go workspace file
 go.work
+
+# xor-go cache
 /pkg/
