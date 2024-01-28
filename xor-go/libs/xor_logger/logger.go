@@ -21,7 +21,7 @@ func InitLogger(cfg *Config) (*zap.Logger, error) {
 	var level zapcore.Level
 	err = level.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
-		return nil, fmt.Errorf("cannot unmarshall zap xor_logger level: %v", err)
+		return nil, fmt.Errorf("cannot unmarshall xor_logger level: %v", err)
 	}
 
 	// TODO support all options from original zap.Config
@@ -33,7 +33,7 @@ func InitLogger(cfg *Config) (*zap.Logger, error) {
 
 	logger, err := configZap.Build()
 	if err != nil {
-		return nil, fmt.Errorf("zap xor_logger build failed: %v", err)
+		return nil, fmt.Errorf("xor_logger build failed: %v", err)
 	}
 
 	return logger, nil
