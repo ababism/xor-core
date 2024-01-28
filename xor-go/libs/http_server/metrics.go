@@ -1,11 +1,12 @@
 package http_server
 
 import (
-	m "gitlab.com/ArtemFed/mts-final-taxi/pkg/metrics"
+	m "xor-go/libs/metrics"
 )
 
 const metricNameSpace = "http_server"
 
+// FIXME remove taxi mentioning
 func newMetrics() *metrics {
 	req := m.GetOrRegisterCounterVec(m.CounterOpts{
 		Namespace:   metricNameSpace,

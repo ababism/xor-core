@@ -3,7 +3,6 @@ package mytracer
 import (
 	"context"
 	"fmt"
-	"gitlab.com/ArtemFed/mts-final-taxi/pkg/app"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	stdout "go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
@@ -15,6 +14,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
+	"xor-go/libs/app"
 )
 
 func InitTracer(cfg *Config, appCfg *app.Config) (*sdktrace.TracerProvider, error) {
