@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// FIXME remove this code. use github.com/ilyakaznacheev/cleanenv instead of this package
+
 // ReplaceWithEnv заменяет все значения структуры на соответствующие значения из переменных окружения
 func ReplaceWithEnv(config interface{}, prefix string) {
 	v := reflect.ValueOf(config).Elem()
