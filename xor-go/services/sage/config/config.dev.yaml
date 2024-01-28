@@ -8,3 +8,9 @@ logger:
   error_output_paths:
     - "stderr"
     - "path/to/logging.log"
+
+http:
+  host: "localhost"
+  port: "8080"
+  read_timeout: "1s"
+  write_timeout: "1s"

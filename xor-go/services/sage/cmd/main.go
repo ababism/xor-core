@@ -5,7 +5,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 	"os"
-	XorLogger "xor-go/pkg/xor_logger"
+	"xor-go/services/sage/internal/app"
 	"xor-go/services/sage/internal/config"
 )
 
@@ -17,19 +17,18 @@ func main() {
 	if configPath == "" {
 		path := os.Getenv("CONFIG_PATH")
 		if path == "" {
-			log.Panic("no config file provided")
+			log.Fatal("no config file provided")
 		}
 		configPath = path
 	}
 	var appConfig config.Config
 	if err := cleanenv.ReadConfig(configPath, &appConfig); err != nil {
-		log.Panicf("failed reading config from path: %s, with err: %v", configPath, err)
+		log.Fatalf("failed reading config from path: {%s}, with error: {%v}", configPath, err)
 	}
 
-	logger, err := XorLogger.InitLogger(appConfig.LoggerConfig.ToXorLoggerConfig())
+	application, err := app.NewApp(&appConfig)
 	if err != nil {
-		log.Panicf("failed initializing logger with err: %v", err)
+		log.Fatalf("failed creating app with error: {%v}", err)
 	}
-	logger.Info("OKx")
-	logger.Error("NOT OK")
+	application.Start()
 }

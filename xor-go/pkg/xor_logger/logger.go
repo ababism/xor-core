@@ -6,6 +6,14 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+type Config struct {
+	Environment      string   `yaml:"environment" env:"ENVIRONMENT"`
+	Level            string   `yaml:"level" env:"LEVEL"`
+	Encoding         string   `yaml:"encoding" env:"ENCODING"`
+	OutputPaths      []string `yaml:"output_paths" env:"OUTPUT_PATHS"`
+	ErrorOutputPaths []string `yaml:"error_output_paths" env:"ERROR_OUTPUT_PATHS"`
+}
+
 // TODO support using sentry
 
 func InitLogger(cfg *Config) (*zap.Logger, error) {
@@ -21,7 +29,7 @@ func InitLogger(cfg *Config) (*zap.Logger, error) {
 	var level zapcore.Level
 	err = level.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
-		return nil, fmt.Errorf("cannot unmarshall xor_logger level: %v", err)
+		return nil, fmt.Errorf("cannot unmarshall xor_logger level: {%v}", err)
 	}
 
 	// TODO support all options from original zap.Config
@@ -33,7 +41,7 @@ func InitLogger(cfg *Config) (*zap.Logger, error) {
 
 	logger, err := configZap.Build()
 	if err != nil {
-		return nil, fmt.Errorf("xor_logger build failed: %v", err)
+		return nil, fmt.Errorf("xor_logger build failed: {%v}", err)
 	}
 
 	return logger, nil
@@ -48,7 +56,7 @@ func GetLoggerConfig(env Environment) (*zap.Config, error) {
 	case ProdEnvironment:
 		config = zap.NewProductionConfig()
 	default:
-		err = fmt.Errorf("cannot get xor_logger config for env: %s", env)
+		err = fmt.Errorf("cannot get xor_logger config for env: {%s}", env)
 	}
 	if err != nil {
 		return nil, err

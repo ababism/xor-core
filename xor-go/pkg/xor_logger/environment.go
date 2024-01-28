@@ -20,6 +20,6 @@ func ParseEnvironment(env string) (Environment, error) {
 	case ProdEnvironment:
 		return ProdEnvironment, nil
 	default:
-		return UnknownEnvironment, fmt.Errorf("unknown xor_logger environment: %s", env)
+		return UnknownEnvironment, fmt.Errorf("unknown xor_logger environment: {%s}", env)
 	}
 }
