@@ -1,6 +1,6 @@
 package config
 
-import XorLogger "xor-go/libs/xor_logger"
+import XorLogger "xor-go/pkg/xor_logger"
 
 type Config struct {
 	LoggerConfig LoggerConfig `yaml:"logger" env-prefix:"LOGGER"`

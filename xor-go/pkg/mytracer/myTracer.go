@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
-	"xor-go/libs/app"
+	"xor-go/pkg/app"
 )
 
 func InitTracer(cfg *Config, appCfg *app.Config) (*sdktrace.TracerProvider, error) {

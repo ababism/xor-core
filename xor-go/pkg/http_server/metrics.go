@@ -1,7 +1,7 @@
 package http_server
 
 import (
-	m "xor-go/libs/metrics"
+	m "xor-go/pkg/metrics"
 )
 
 const metricNameSpace = "http_server"

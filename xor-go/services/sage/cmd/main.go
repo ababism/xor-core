@@ -5,7 +5,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 	"os"
-	XorLogger "xor-go/libs/xor_logger"
+	XorLogger "xor-go/pkg/xor_logger"
 	"xor-go/services/sage/internal/config"
 )
 
