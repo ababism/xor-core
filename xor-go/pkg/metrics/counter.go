@@ -7,6 +7,8 @@ import (
 	"sync"
 )
 
+// FIXME remove this package. should use "code.cloudfoundry.org/go-metric-registry"
+
 // Counter (Счетчик) — это метрика, представляющая одно числовое значение (не только целочисленное), которое всегда увеличивается.
 type Counter interface {
 	Inc()

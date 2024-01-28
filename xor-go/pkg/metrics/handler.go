@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// FIXME remove this package. should use "code.cloudfoundry.org/go-metric-registry"
+
 func HandleFunc() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// Collect metrics

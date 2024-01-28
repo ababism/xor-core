@@ -2,6 +2,8 @@ package metrics
 
 import "go.uber.org/zap"
 
+// FIXME remove this package. should use "code.cloudfoundry.org/go-metric-registry"
+
 const GroupKeySeparator = "||"
 
 type AppInfo struct {

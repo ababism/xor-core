@@ -5,6 +5,8 @@ import (
 	"sync"
 )
 
+// FIXME remove this package. should use "code.cloudfoundry.org/go-metric-registry"
+
 type loggerFunc func(format string, args ...interface{})
 
 type registry struct {
