@@ -3,7 +3,7 @@ package config
 import XorLogger "xor-go/pkg/xor_logger"
 
 type Config struct {
-	LoggerConfig LoggerConfig `yaml:"logger" env-prefix:"LOGGER"`
+	LoggerConfig *LoggerConfig `yaml:"logger" env-prefix:"LOGGER"`
 }
 
 type LoggerConfig struct {
