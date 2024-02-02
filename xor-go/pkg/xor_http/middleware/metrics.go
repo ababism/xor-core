@@ -11,7 +11,6 @@ func Prometheus(g *gin.RouterGroup) {
 
 func prometheusHandler() gin.HandlerFunc {
 	h := promhttp.Handler()
-
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
 	}

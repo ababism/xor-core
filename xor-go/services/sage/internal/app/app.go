@@ -1,39 +1,61 @@
 package app
 
 import (
-	"fmt"
+	"context"
 	"go.uber.org/zap"
-	XorHttpServer "xor-go/pkg/xor_http_server"
-	XorLogger "xor-go/pkg/xor_logger"
+	"xor-go/pkg/xor_db"
+	"xor-go/pkg/xor_http"
+	"xor-go/pkg/xor_http/response"
+	"xor-go/pkg/xor_log"
 	"xor-go/services/sage/internal/config"
+	"xor-go/services/sage/internal/handler"
+	"xor-go/services/sage/internal/repository"
+	"xor-go/services/sage/internal/service"
 )
 
 type Application struct {
-	config *config.Config
-	logger *zap.Logger
+	config         *config.Config
+	logger         *zap.Logger
+	accountHandler *handler.AccountHandler
 }
 
-func NewApp(config *config.Config) (*Application, error) {
-	logger, err := XorLogger.InitLogger(config.LoggerConfig)
+func NewApp(cfg *config.Config) (*Application, error) {
+	logger, err := xor_log.Init(cfg.LoggerConfig, cfg.SystemConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed initializing logger with error: {%v}", err)
+		return nil, err
 	}
 
+	mongoClient, err := xor_db.NewMongoClient(context.Background(), cfg.MongoConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	httpResponser := response.NewHttpResponseWrapper(logger)
+
+	db := mongoClient.Database(cfg.MongoConfig.Database)
+	accountRepository := repository.NewAccountMongoRepository(logger, db)
+	accountService := service.NewAccountService(accountRepository)
+	accountHandler := handler.NewAccountHandler(httpResponser, accountService)
+
 	return &Application{
-		config: config,
-		logger: logger,
+		config:         cfg,
+		logger:         logger,
+		accountHandler: accountHandler,
 	}, nil
 }
 
-func (a *Application) Start() {
-	a.startHTTPServer()
+func (r *Application) Start() {
+	r.startHTTPServer()
 }
 
-func (a *Application) startHTTPServer() {
-	router := XorHttpServer.NewRouter()
-	httpServer := XorHttpServer.NewServer(a.config.HttpConfig, router)
+func (r *Application) startHTTPServer() {
+	router := xor_http.NewRouterWithSystemHandlers()
 
+	api := router.Router().Group("/api")
+	r.accountHandler.InitAccountRoutes(api)
+
+	httpServer := xor_http.NewServer(r.config.HttpConfig, router)
 	if err := httpServer.Start(); err != nil {
-		a.logger.Error(err.Error())
+		r.logger.Error(err.Error())
 	}
 }

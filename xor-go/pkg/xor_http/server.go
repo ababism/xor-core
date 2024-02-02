@@ -1,4 +1,4 @@
-package xor_http_server
+package xor_http
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func NewServer(cfg *Config, r *Router) *Server {
 
 func (s *Server) Start() error {
 	if s.srv.Handler == nil {
-		return errors.New("no routes have registered")
+		return errors.New("no routes have been registered")
 	}
 	if err := s.srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		return err

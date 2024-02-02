@@ -1,11 +1,15 @@
 package config
 
 import (
-	XorHttpServer "xor-go/pkg/xor_http_server"
-	XorLogger "xor-go/pkg/xor_logger"
+	"xor-go/pkg/xor_app"
+	"xor-go/pkg/xor_db"
+	"xor-go/pkg/xor_http"
+	"xor-go/pkg/xor_log"
 )
 
 type Config struct {
-	LoggerConfig *XorLogger.Config     `yaml:"logger" env-prefix:"LOGGER"`
-	HttpConfig   *XorHttpServer.Config `yaml:"http"  env-prefix:"HTTP"`
+	SystemConfig *xor_app.Config     `yaml:"system"`
+	LoggerConfig *xor_log.Config     `yaml:"logger"`
+	HttpConfig   *xor_http.Config    `yaml:"http"`
+	MongoConfig  *xor_db.MongoConfig `yaml:"mongo"`
 }

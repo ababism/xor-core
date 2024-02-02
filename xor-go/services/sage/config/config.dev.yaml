@@ -1,3 +1,8 @@
+system:
+  service: "sage"
+  environment: "dev"
+  dc: "local"
+
 logger:
   environment: "dev"
   level: "debug"
@@ -10,7 +15,12 @@ logger:
     - "path/to/logging.log"
 
 http:
-  host: "localhost"
-  port: "8080"
-  read_timeout: "1s"
-  write_timeout: "1s"
+  host: "host"
+  port: "port"
+  read_timeout: "6s"
+  write_timeout: "6s"
+
+mongo:
+  uri: "mongodb://host:port"
+  database: "sage"
+  timeout: "3s"

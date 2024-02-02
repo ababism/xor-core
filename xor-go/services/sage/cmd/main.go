@@ -23,12 +23,12 @@ func main() {
 	}
 	var appConfig config.Config
 	if err := cleanenv.ReadConfig(configPath, &appConfig); err != nil {
-		log.Fatalf("failed reading config from path: {%s}, with error: {%v}", configPath, err)
+		log.Fatalf("failed to read config from path: %s, error: %v", configPath, err)
 	}
 
 	application, err := app.NewApp(&appConfig)
 	if err != nil {
-		log.Fatalf("failed creating app with error: {%v}", err)
+		log.Fatalf("failed to create app: %v", err)
 	}
 	application.Start()
 }
