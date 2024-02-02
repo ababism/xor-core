@@ -1,25 +1,25 @@
-package xor_error
+package xorerror
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"xor-go/pkg/xor_http/response"
+	xorhttp "xor-go/pkg/xorhttp/response"
 )
 
-func HandleInternalError(ctx *gin.Context, responser *response.HttpResponseWrapper, err error) {
+func HandleInternalError(ctx *gin.Context, responser *xorhttp.HttpResponseWrapper, err error) {
 	handleInternalError(ctx, err, responser.HandleError)
 }
 
-func HandleInternalErrorWithMessage(ctx *gin.Context, responser *response.HttpResponseWrapper, err error) {
+func HandleInternalErrorWithMessage(ctx *gin.Context, responser *xorhttp.HttpResponseWrapper, err error) {
 	handleInternalError(ctx, err, responser.HandleErrorWithMessage)
 }
+
+type errorHandler func(ctx *gin.Context, code int, err error)
 
 var (
 	illegalArgumentError *IllegalArgumentError
 )
-
-type errorHandler func(ctx *gin.Context, code int, err error)
 
 func handleInternalError(ctx *gin.Context, err error, handler errorHandler) {
 	switch {

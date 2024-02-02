@@ -1,4 +1,4 @@
-package xor_http
+package xorhttp
 
 import (
 	"time"

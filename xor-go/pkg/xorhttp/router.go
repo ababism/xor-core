@@ -1,8 +1,8 @@
-package xor_http
+package xorhttp
 
 import (
 	"github.com/gin-gonic/gin"
-	"xor-go/pkg/xor_http/middleware"
+	"xor-go/pkg/xorhttp/middleware"
 )
 
 type Router struct {
@@ -14,17 +14,9 @@ func (r *Router) Router() *gin.Engine {
 }
 
 func NewRouter() *Router {
-	return &Router{
-		router: gin.Default(),
-	}
-}
-
-func NewRouterWithSystemHandlers() *Router {
-	r := Router{
-		router: gin.Default(),
-	}
+	r := &Router{router: gin.Default()}
 	r.RegisterSystemHandlers()
-	return &r
+	return r
 }
 
 func (r *Router) RegisterSystemHandlers() {

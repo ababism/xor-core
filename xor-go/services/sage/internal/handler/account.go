@@ -5,18 +5,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
-	"xor-go/pkg/xor_error"
-	"xor-go/pkg/xor_http/response"
+	"xor-go/pkg/xorerror"
+	xorhttp "xor-go/pkg/xorhttp/response"
 	"xor-go/services/sage/internal/models"
 	"xor-go/services/sage/internal/service"
 )
 
 type AccountHandler struct {
-	responseWrapper *response.HttpResponseWrapper
+	responseWrapper *xorhttp.HttpResponseWrapper
 	accountService  *service.AccountService
 }
 
-func NewAccountHandler(responseWrapper *response.HttpResponseWrapper, accountService *service.AccountService) *AccountHandler {
+func NewAccountHandler(responseWrapper *xorhttp.HttpResponseWrapper, accountService *service.AccountService) *AccountHandler {
 	return &AccountHandler{responseWrapper: responseWrapper, accountService: accountService}
 }
 
@@ -36,7 +36,7 @@ func (h *AccountHandler) Register(ctx *gin.Context) {
 
 	err = h.accountService.Create(ctx, registerAccountDto.ToRegisterAccountEntity())
 	if err != nil {
-		xor_error.HandleInternalErrorWithMessage(ctx, h.responseWrapper, err)
+		xorerror.HandleInternalErrorWithMessage(ctx, h.responseWrapper, err)
 		return
 	}
 	h.responseWrapper.HandleSuccessWithMessage(ctx, http.StatusOK, "account is registered")

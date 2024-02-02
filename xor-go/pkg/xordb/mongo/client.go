@@ -1,4 +1,4 @@
-package xor_db
+package mongo
 
 import (
 	"context"
@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-type MongoConfig struct {
+type Config struct {
 	Uri      string        `yaml:"uri"`
 	Database string        `yaml:"database"`
 	Timeout  time.Duration `yaml:"timeout"`
 }
 
-func NewMongoClient(ctx context.Context, cfg *MongoConfig) (*mongo.Client, error) {
+func NewClient(ctx context.Context, cfg *Config) (*mongo.Client, error) {
 	opts := options.Client()
 	opts.ApplyURI(cfg.Uri)
 	opts.SetTimeout(cfg.Timeout)

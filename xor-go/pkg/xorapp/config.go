@@ -1,4 +1,4 @@
-package xor_app
+package xorapp
 
 type Config struct {
 	Service     string

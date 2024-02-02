@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"time"
-	"xor-go/pkg/xor_error"
+	"xor-go/pkg/xorerror"
 	"xor-go/services/sage/internal/models"
 	"xor-go/services/sage/internal/repository"
 	"xor-go/services/sage/pkg/auth"
@@ -28,7 +28,7 @@ func (r *AccountService) Create(ctx context.Context, account *models.RegisterAcc
 		return err
 	}
 	if loginPresent {
-		return xor_error.NewIllegalArgumentError("login already exists")
+		return xorerror.NewIllegalArgumentError("login already exists")
 	}
 
 	salt, err := hash.CreateSalt(passwordSaltSize)
@@ -59,7 +59,7 @@ func (r *AccountService) UpdatePassword(ctx context.Context, uuid uuid.UUID, pas
 		return err
 	}
 	if passwordHash == previousPasswordHash {
-		return xor_error.NewIllegalArgumentError("old and new passwords are the same")
+		return xorerror.NewIllegalArgumentError("old and new passwords are the same")
 	}
 	return r.accountRepository.UpdatePassword(ctx, uuid, passwordHash)
 }

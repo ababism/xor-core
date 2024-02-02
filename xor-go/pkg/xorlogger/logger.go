@@ -1,11 +1,11 @@
-package xor_log
+package xorlogger
 
 import (
 	"fmt"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"xor-go/pkg/xor_app"
+	"xor-go/pkg/xorapp"
 )
 
 const (
@@ -23,7 +23,7 @@ type Config struct {
 
 // TODO support using sentry
 
-func Init(cfg *Config, appCfg *xor_app.Config) (*zap.Logger, error) {
+func Init(cfg *Config, appCfg *xorapp.Config) (*zap.Logger, error) {
 	cfgZap, err := configByEnv(appCfg.Environment)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,6 @@ func Init(cfg *Config, appCfg *xor_app.Config) (*zap.Logger, error) {
 		return nil, errors.WithMessage(err, "failed to unmarshall logger level")
 	}
 
-	// TODO support all options from original zap.Config
 	cfgZap.Level = zap.NewAtomicLevelAt(level)
 	cfgZap.OutputPaths = cfg.OutputPaths
 	cfgZap.ErrorOutputPaths = cfg.ErrorOutputPaths
@@ -53,13 +52,13 @@ func Init(cfg *Config, appCfg *xor_app.Config) (*zap.Logger, error) {
 	return logger, nil
 }
 
-func configByEnv(env xor_app.Environment) (*zap.Config, error) {
+func configByEnv(env xorapp.Environment) (*zap.Config, error) {
 	var config zap.Config
 	var err error = nil
 	switch env {
-	case xor_app.DevEnvironment:
+	case xorapp.DevEnvironment:
 		config = zap.NewDevelopmentConfig()
-	case xor_app.ProdEnvironment:
+	case xorapp.ProdEnvironment:
 		config = zap.NewProductionConfig()
 	default:
 		err = fmt.Errorf("failed to get logger config for env: %s", env)
