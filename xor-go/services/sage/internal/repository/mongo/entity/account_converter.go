@@ -23,3 +23,23 @@ func ToAccountContactsMongo(contacts *domain.AccountContacts) *AccountContactsMo
 		TgLogin: contacts.TgLogin,
 	}
 }
+
+func ToAccount(accountMongo *AccountMongo) *domain.Account {
+	return &domain.Account{
+		Uuid:         accountMongo.Uuid,
+		Login:        accountMongo.Login,
+		PasswordHash: accountMongo.PasswordHash,
+		CreatedAt:    accountMongo.CreatedAt,
+		UpdatedAt:    accountMongo.UpdatedAt,
+		Contacts:     ToAccountContacts(accountMongo.Contacts),
+	}
+}
+
+func ToAccountContacts(contactsMongo *AccountContactsMongo) *domain.AccountContacts {
+	if contactsMongo == nil {
+		return nil
+	}
+	return &domain.AccountContacts{
+		TgLogin: contactsMongo.TgLogin,
+	}
+}

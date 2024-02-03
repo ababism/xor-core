@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"time"
 	"xor-go/pkg/xorerror"
 	"xor-go/services/sage/internal/domain"
@@ -10,18 +12,20 @@ import (
 	"xor-go/services/sage/pkg/auth"
 )
 
-const (
-	passwordSaltSize = 16
+var (
+	// FIXME move to config
+	passwordSalt = []byte("salt")
 )
 
 var _ AccountService = &accountService{}
 
 type accountService struct {
+	logger            *zap.Logger
 	accountRepository repository.AccountRepository
 }
 
-func NewAccountService(accountRepository repository.AccountRepository) AccountService {
-	return &accountService{accountRepository: accountRepository}
+func NewAccountService(logger *zap.Logger, accountRepository repository.AccountRepository) AccountService {
+	return &accountService{logger: logger, accountRepository: accountRepository}
 }
 
 func (r *accountService) Create(ctx context.Context, registerAccount *domain.RegisterAccount) error {
@@ -33,11 +37,7 @@ func (r *accountService) Create(ctx context.Context, registerAccount *domain.Reg
 		return xorerror.NewIllegalArgumentError("login already exists")
 	}
 
-	salt, err := hash.CreateSalt(passwordSaltSize)
-	if err != nil {
-		return err
-	}
-	passwordHash := hash.CreateHash(registerAccount.Password, salt)
+	passwordHash := hash.CreateHash(registerAccount.Password, passwordSalt)
 	createdAt := time.Now()
 	account := &domain.Account{
 		Uuid:         uuid.New(),
@@ -47,20 +47,17 @@ func (r *accountService) Create(ctx context.Context, registerAccount *domain.Reg
 		UpdatedAt:    createdAt,
 		Contacts:     nil,
 	}
+	fmt.Println(account.Uuid)
 	return r.accountRepository.Create(ctx, account)
 }
 
 func (r *accountService) UpdatePassword(ctx context.Context, uuid uuid.UUID, password string) error {
-	salt, err := hash.CreateSalt(passwordSaltSize)
+	passwordHash := hash.CreateHash(password, passwordSalt)
+	account, err := r.accountRepository.Get(ctx, uuid)
 	if err != nil {
 		return err
 	}
-	passwordHash := hash.CreateHash(password, salt)
-	previousPasswordHash, err := r.accountRepository.GetPasswordHash(ctx, uuid)
-	if err != nil {
-		return err
-	}
-	if passwordHash == previousPasswordHash {
+	if passwordHash == account.PasswordHash {
 		return xorerror.NewIllegalArgumentError("old and new passwords are the same")
 	}
 	return r.accountRepository.UpdatePassword(ctx, uuid, passwordHash)

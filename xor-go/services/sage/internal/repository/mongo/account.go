@@ -36,14 +36,16 @@ func (r *accountRepository) LoginPresent(ctx context.Context, login string) (boo
 	return count > 0, nil
 }
 
-func (r *accountRepository) GetPasswordHash(ctx context.Context, uuid uuid.UUID) (string, error) {
-	var passwordHash string
-	err := r.accountCollection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&passwordHash)
+func (r *accountRepository) Get(ctx context.Context, uuid uuid.UUID) (*domain.Account, error) {
+	var accountMongo entity.AccountMongo
+
+	filter := bson.M{"uuid": uuid}
+	err := r.accountCollection.FindOne(ctx, filter).Decode(&accountMongo)
 	if err != nil {
-		r.logger.Error("failed to get password_hash")
-		return "", err
+		r.logger.Error("failed to get password_hash", zap.Error(err))
+		return nil, err
 	}
-	return passwordHash, nil
+	return entity.ToAccount(&accountMongo), nil
 }
 
 func (r *accountRepository) Create(ctx context.Context, account *domain.Account) error {

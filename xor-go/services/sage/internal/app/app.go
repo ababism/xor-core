@@ -34,7 +34,7 @@ func NewApp(cfg *config.Config) (*Application, error) {
 
 	db := mongoClient.Database(cfg.MongoConfig.Database)
 	accountRepository := repomongo.NewAccountMongoRepository(logger, db)
-	accountService := service.NewAccountService(accountRepository)
+	accountService := service.NewAccountService(logger, accountRepository)
 	accountHandler := handler.NewAccountHandler(httpResponser, accountService)
 
 	return &Application{

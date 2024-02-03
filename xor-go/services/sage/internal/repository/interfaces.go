@@ -8,7 +8,7 @@ import (
 
 type AccountRepository interface {
 	LoginPresent(ctx context.Context, login string) (bool, error)
-	GetPasswordHash(ctx context.Context, uuid uuid.UUID) (string, error)
+	Get(ctx context.Context, uuid uuid.UUID) (*domain.Account, error)
 	Create(ctx context.Context, account *domain.Account) error
 	UpdatePassword(ctx context.Context, uuid uuid.UUID, passwordHash string) error
 }
