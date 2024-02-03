@@ -7,22 +7,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 	"xor-go/services/sage/internal/domain"
-	"xor-go/services/sage/internal/repository"
 	"xor-go/services/sage/internal/repository/mongo/entity"
+	"xor-go/services/sage/internal/service/adapter"
 )
 
 const (
 	accountCollection = "account"
 )
 
-var _ repository.AccountRepository = &accountRepository{}
+var _ adapter.AccountRepository = &accountRepository{}
 
 type accountRepository struct {
 	logger            *zap.Logger
 	accountCollection *mongo.Collection
 }
 
-func NewAccountMongoRepository(logger *zap.Logger, db *mongo.Database) repository.AccountRepository {
+func NewAccountMongoRepository(logger *zap.Logger, db *mongo.Database) adapter.AccountRepository {
 	accountCollection := db.Collection(accountCollection)
 	return &accountRepository{logger: logger, accountCollection: accountCollection}
 }

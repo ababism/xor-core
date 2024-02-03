@@ -7,15 +7,15 @@ import (
 	"net/http"
 	httpresponse "xor-go/pkg/http/response"
 	"xor-go/services/sage/internal/handler/dto"
-	"xor-go/services/sage/internal/service"
+	"xor-go/services/sage/internal/service/adapter"
 )
 
 type AccountHandler struct {
 	responseWrapper *httpresponse.HttpResponseWrapper
-	accountService  service.AccountService
+	accountService  adapter.AccountService
 }
 
-func NewAccountHandler(responseWrapper *httpresponse.HttpResponseWrapper, accountService service.AccountService) *AccountHandler {
+func NewAccountHandler(responseWrapper *httpresponse.HttpResponseWrapper, accountService adapter.AccountService) *AccountHandler {
 	return &AccountHandler{responseWrapper: responseWrapper, accountService: accountService}
 }
 

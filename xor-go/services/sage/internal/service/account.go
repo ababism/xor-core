@@ -8,7 +8,7 @@ import (
 	"time"
 	xorerror "xor-go/pkg/error"
 	"xor-go/services/sage/internal/domain"
-	"xor-go/services/sage/internal/repository"
+	"xor-go/services/sage/internal/service/adapter"
 	"xor-go/services/sage/pkg/auth"
 )
 
@@ -17,14 +17,14 @@ var (
 	passwordSalt = []byte("salt")
 )
 
-var _ AccountService = &accountService{}
+var _ adapter.AccountService = &accountService{}
 
 type accountService struct {
 	logger            *zap.Logger
-	accountRepository repository.AccountRepository
+	accountRepository adapter.AccountRepository
 }
 
-func NewAccountService(logger *zap.Logger, accountRepository repository.AccountRepository) AccountService {
+func NewAccountService(logger *zap.Logger, accountRepository adapter.AccountRepository) adapter.AccountService {
 	return &accountService{logger: logger, accountRepository: accountRepository}
 }
 
