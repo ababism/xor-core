@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"xor-go/pkg/xorerror"
 	xorhttp "xor-go/pkg/xorhttp/response"
-	"xor-go/services/sage/internal/models"
+	"xor-go/services/sage/internal/model"
 	"xor-go/services/sage/internal/service"
 )
 
@@ -27,7 +27,7 @@ func (h *AccountHandler) InitAccountRoutes(g *gin.RouterGroup) {
 }
 
 func (h *AccountHandler) Register(ctx *gin.Context) {
-	var registerAccountDto models.RegisterAccountDto
+	var registerAccountDto model.RegisterAccountDto
 	err := ctx.BindJSON(&registerAccountDto)
 	if err != nil {
 		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)

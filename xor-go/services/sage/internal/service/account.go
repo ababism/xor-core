@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"time"
 	"xor-go/pkg/xorerror"
-	"xor-go/services/sage/internal/models"
+	"xor-go/services/sage/internal/model"
 	"xor-go/services/sage/internal/repository"
 	"xor-go/services/sage/pkg/auth"
 )
@@ -22,7 +22,7 @@ func NewAccountService(accountRepository repository.AccountRepositoryI) *Account
 	return &AccountService{accountRepository: accountRepository}
 }
 
-func (r *AccountService) Create(ctx context.Context, account *models.RegisterAccountEntity) error {
+func (r *AccountService) Create(ctx context.Context, account *model.RegisterAccountEntity) error {
 	loginPresent, err := r.accountRepository.LoginPresent(ctx, account.Login)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (r *AccountService) Create(ctx context.Context, account *models.RegisterAcc
 	}
 	passwordHash := hash.CreateHash(account.Password, salt)
 	createdAt := time.Now()
-	accountEntity := &models.AccountEntity{
+	accountEntity := &model.AccountEntity{
 		Uuid:         uuid.New(),
 		Login:        account.Login,
 		PasswordHash: passwordHash,

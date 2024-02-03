@@ -1,4 +1,4 @@
-package models
+package model
 
 func (r *RegisterAccountDto) ToRegisterAccountEntity() *RegisterAccountEntity {
 	return &RegisterAccountEntity{

@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
-	"xor-go/services/sage/internal/models"
+	"xor-go/services/sage/internal/model"
 )
 
 const (
@@ -42,7 +42,7 @@ func (r *AccountMongoRepository) GetPasswordHash(ctx context.Context, uuid uuid.
 	return passwordHash, nil
 }
 
-func (r *AccountMongoRepository) Create(ctx context.Context, account *models.AccountEntity) error {
+func (r *AccountMongoRepository) Create(ctx context.Context, account *model.AccountEntity) error {
 	_, err := r.accountCollection.InsertOne(ctx, account)
 	if err != nil {
 		r.logger.Error("failed to create account", zap.Error(err))
