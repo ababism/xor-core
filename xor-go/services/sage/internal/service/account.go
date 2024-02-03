@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 	"time"
 	"xor-go/pkg/xorerror"
-	"xor-go/services/sage/internal/model"
+	"xor-go/services/sage/internal/domain"
 	"xor-go/services/sage/internal/repository"
 	"xor-go/services/sage/pkg/auth"
 )
@@ -14,16 +14,18 @@ const (
 	passwordSaltSize = 16
 )
 
-type AccountService struct {
-	accountRepository repository.AccountRepositoryI
+var _ AccountService = &accountService{}
+
+type accountService struct {
+	accountRepository repository.AccountRepository
 }
 
-func NewAccountService(accountRepository repository.AccountRepositoryI) *AccountService {
-	return &AccountService{accountRepository: accountRepository}
+func NewAccountService(accountRepository repository.AccountRepository) AccountService {
+	return &accountService{accountRepository: accountRepository}
 }
 
-func (r *AccountService) Create(ctx context.Context, account *model.RegisterAccountEntity) error {
-	loginPresent, err := r.accountRepository.LoginPresent(ctx, account.Login)
+func (r *accountService) Create(ctx context.Context, registerAccount *domain.RegisterAccount) error {
+	loginPresent, err := r.accountRepository.LoginPresent(ctx, registerAccount.Login)
 	if err != nil {
 		return err
 	}
@@ -35,20 +37,20 @@ func (r *AccountService) Create(ctx context.Context, account *model.RegisterAcco
 	if err != nil {
 		return err
 	}
-	passwordHash := hash.CreateHash(account.Password, salt)
+	passwordHash := hash.CreateHash(registerAccount.Password, salt)
 	createdAt := time.Now()
-	accountEntity := &model.AccountEntity{
+	account := &domain.Account{
 		Uuid:         uuid.New(),
-		Login:        account.Login,
+		Login:        registerAccount.Login,
 		PasswordHash: passwordHash,
 		CreatedAt:    createdAt,
 		UpdatedAt:    createdAt,
 		Contacts:     nil,
 	}
-	return r.accountRepository.Create(ctx, accountEntity)
+	return r.accountRepository.Create(ctx, account)
 }
 
-func (r *AccountService) UpdatePassword(ctx context.Context, uuid uuid.UUID, password string) error {
+func (r *accountService) UpdatePassword(ctx context.Context, uuid uuid.UUID, password string) error {
 	salt, err := hash.CreateSalt(passwordSaltSize)
 	if err != nil {
 		return err

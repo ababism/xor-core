@@ -9,7 +9,7 @@ import (
 	"xor-go/pkg/xorlogger"
 	"xor-go/services/sage/internal/config"
 	"xor-go/services/sage/internal/handler"
-	"xor-go/services/sage/internal/repository"
+	repomongo "xor-go/services/sage/internal/repository/mongo"
 	"xor-go/services/sage/internal/service"
 )
 
@@ -33,7 +33,7 @@ func NewApp(cfg *config.Config) (*Application, error) {
 	httpResponser := xorhttpresponse.NewHttpResponseWrapper(logger)
 
 	db := mongoClient.Database(cfg.MongoConfig.Database)
-	accountRepository := repository.NewAccountMongoRepository(logger, db)
+	accountRepository := repomongo.NewAccountMongoRepository(logger, db)
 	accountService := service.NewAccountService(accountRepository)
 	accountHandler := handler.NewAccountHandler(httpResponser, accountService)
 

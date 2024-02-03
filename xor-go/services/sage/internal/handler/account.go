@@ -7,16 +7,16 @@ import (
 	"net/http"
 	"xor-go/pkg/xorerror"
 	xorhttp "xor-go/pkg/xorhttp/response"
-	"xor-go/services/sage/internal/model"
+	"xor-go/services/sage/internal/handler/dto"
 	"xor-go/services/sage/internal/service"
 )
 
 type AccountHandler struct {
 	responseWrapper *xorhttp.HttpResponseWrapper
-	accountService  *service.AccountService
+	accountService  service.AccountService
 }
 
-func NewAccountHandler(responseWrapper *xorhttp.HttpResponseWrapper, accountService *service.AccountService) *AccountHandler {
+func NewAccountHandler(responseWrapper *xorhttp.HttpResponseWrapper, accountService service.AccountService) *AccountHandler {
 	return &AccountHandler{responseWrapper: responseWrapper, accountService: accountService}
 }
 
@@ -27,14 +27,14 @@ func (h *AccountHandler) InitAccountRoutes(g *gin.RouterGroup) {
 }
 
 func (h *AccountHandler) Register(ctx *gin.Context) {
-	var registerAccountDto model.RegisterAccountDto
+	var registerAccountDto dto.RegisterAccountDto
 	err := ctx.BindJSON(&registerAccountDto)
 	if err != nil {
 		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	err = h.accountService.Create(ctx, registerAccountDto.ToRegisterAccountEntity())
+	err = h.accountService.Create(ctx, registerAccountDto.ToRegisterAccount())
 	if err != nil {
 		xorerror.HandleInternalErrorWithMessage(ctx, h.responseWrapper, err)
 		return
