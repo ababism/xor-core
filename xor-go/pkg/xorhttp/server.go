@@ -23,16 +23,16 @@ func NewServer(cfg *Config, r *Router) *Server {
 
 // TODO support http server with tls
 
-func (s *Server) Start() error {
-	if s.srv.Handler == nil {
+func (r *Server) Start() error {
+	if r.srv.Handler == nil {
 		return errors.New("no routes have been registered")
 	}
-	if err := s.srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+	if err := r.srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 	return nil
 }
 
-func (s *Server) Stop(ctx context.Context) error {
-	return s.srv.Shutdown(ctx)
+func (r *Server) Stop(ctx context.Context) error {
+	return r.srv.Shutdown(ctx)
 }

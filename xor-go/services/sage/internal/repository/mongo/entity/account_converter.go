@@ -16,6 +16,9 @@ func ToAccountMongo(account *domain.Account) *AccountMongo {
 }
 
 func ToAccountContactsMongo(contacts *domain.AccountContacts) *AccountContactsMongo {
+	if contacts == nil {
+		return nil
+	}
 	return &AccountContactsMongo{
 		TgLogin: contacts.TgLogin,
 	}

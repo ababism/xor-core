@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
-	"xor-go/pkg/xorerror"
 	xorhttp "xor-go/pkg/xorhttp/response"
 	"xor-go/services/sage/internal/handler/dto"
 	"xor-go/services/sage/internal/service"
@@ -20,47 +19,47 @@ func NewAccountHandler(responseWrapper *xorhttp.HttpResponseWrapper, accountServ
 	return &AccountHandler{responseWrapper: responseWrapper, accountService: accountService}
 }
 
-func (h *AccountHandler) InitAccountRoutes(g *gin.RouterGroup) {
+func (r *AccountHandler) InitAccountRoutes(g *gin.RouterGroup) {
 	account := g.Group("/account")
-	account.POST("/register", h.Register)
-	account.PUT("/update-password", h.UpdatePassword)
+	account.POST("/register", r.Register)
+	account.PUT("/update-password", r.UpdatePassword)
 }
 
-func (h *AccountHandler) Register(ctx *gin.Context) {
+func (r *AccountHandler) Register(ctx *gin.Context) {
 	var registerAccountDto dto.RegisterAccountDto
 	err := ctx.BindJSON(&registerAccountDto)
 	if err != nil {
-		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)
+		r.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	err = h.accountService.Create(ctx, registerAccountDto.ToRegisterAccount())
+	err = r.accountService.Create(ctx, registerAccountDto.ToRegisterAccount())
 	if err != nil {
-		xorerror.HandleInternalErrorWithMessage(ctx, h.responseWrapper, err)
+		r.responseWrapper.HandleXorErrorWithMessage(ctx, err)
 		return
 	}
-	h.responseWrapper.HandleSuccessWithMessage(ctx, http.StatusOK, "account is registered")
+	r.responseWrapper.HandleSuccessWithMessage(ctx, http.StatusOK, "account is registered")
 }
 
-func (h *AccountHandler) UpdatePassword(ctx *gin.Context) {
+func (r *AccountHandler) UpdatePassword(ctx *gin.Context) {
 	uuidParam := "uuid"
 	passwordParam := "password"
 	params := ctx.Request.URL.Query()
 	if !params.Has(uuidParam) || !params.Has(passwordParam) {
-		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, errors.New("query params are not provided"))
+		r.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, errors.New("query params are not provided"))
 		return
 	}
 	parsedUuid, err := uuid.Parse(params.Get(uuidParam))
 	if err != nil {
-		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, errors.New("failed to parse account uuid"))
+		r.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, errors.New("failed to parse account uuid"))
 		return
 	}
 	password := params.Get(passwordParam)
 
-	err = h.accountService.UpdatePassword(ctx, parsedUuid, password)
+	err = r.accountService.UpdatePassword(ctx, parsedUuid, password)
 	if err != nil {
-		h.responseWrapper.HandleErrorWithMessage(ctx, http.StatusInternalServerError, err)
+		r.responseWrapper.HandleXorErrorWithMessage(ctx, err)
 		return
 	}
-	h.responseWrapper.HandleSuccessWithMessage(ctx, http.StatusOK, "account password is updated")
+	r.responseWrapper.HandleSuccessWithMessage(ctx, http.StatusOK, "account password is updated")
 }

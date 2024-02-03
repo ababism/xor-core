@@ -1,0 +1,27 @@
+package response
+
+import (
+	"errors"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"xor-go/pkg/xorerror"
+)
+
+type xorErrorHandler func(ctx *gin.Context, code int, err error)
+
+func (r *HttpResponseWrapper) HandleXorError(ctx *gin.Context, err error) {
+	handleXorError(ctx, err, r.HandleError)
+}
+
+func (r *HttpResponseWrapper) HandleXorErrorWithMessage(ctx *gin.Context, err error) {
+	handleXorError(ctx, err, r.HandleErrorWithMessage)
+}
+
+func handleXorError(ctx *gin.Context, err error, handler xorErrorHandler) {
+	switch {
+	case errors.As(err, &xorerror.IllegalArgumentError{}):
+		handler(ctx, http.StatusBadRequest, err)
+	default:
+		handler(ctx, http.StatusInternalServerError, err)
+	}
+}
