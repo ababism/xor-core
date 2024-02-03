@@ -5,17 +5,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
-	xorhttp "xor-go/pkg/xorhttp/response"
+	httpresponse "xor-go/pkg/http/response"
 	"xor-go/services/sage/internal/handler/dto"
 	"xor-go/services/sage/internal/service"
 )
 
 type AccountHandler struct {
-	responseWrapper *xorhttp.HttpResponseWrapper
+	responseWrapper *httpresponse.HttpResponseWrapper
 	accountService  service.AccountService
 }
 
-func NewAccountHandler(responseWrapper *xorhttp.HttpResponseWrapper, accountService service.AccountService) *AccountHandler {
+func NewAccountHandler(responseWrapper *httpresponse.HttpResponseWrapper, accountService service.AccountService) *AccountHandler {
 	return &AccountHandler{responseWrapper: responseWrapper, accountService: accountService}
 }
 

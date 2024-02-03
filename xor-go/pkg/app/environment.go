@@ -1,4 +1,4 @@
-package xorapp
+package app
 
 import (
 	"fmt"

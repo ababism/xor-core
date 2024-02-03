@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"time"
-	"xor-go/pkg/xorerror"
+	xorerror "xor-go/pkg/error"
 	"xor-go/services/sage/internal/domain"
 	"xor-go/services/sage/internal/repository"
 	"xor-go/services/sage/pkg/auth"

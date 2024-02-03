@@ -1,4 +1,4 @@
-package xorhttp
+package http
 
 import (
 	"context"

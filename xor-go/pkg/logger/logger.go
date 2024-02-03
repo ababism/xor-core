@@ -1,11 +1,11 @@
-package xorlogger
+package logger
 
 import (
 	"fmt"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"xor-go/pkg/xorapp"
+	"xor-go/pkg/app"
 )
 
 const (
@@ -23,7 +23,7 @@ type Config struct {
 
 // TODO support using sentry
 
-func Init(cfg *Config, appCfg *xorapp.Config) (*zap.Logger, error) {
+func Init(cfg *Config, appCfg *app.Config) (*zap.Logger, error) {
 	cfgZap, err := configByEnv(appCfg.Environment)
 	if err != nil {
 		return nil, err
@@ -52,13 +52,13 @@ func Init(cfg *Config, appCfg *xorapp.Config) (*zap.Logger, error) {
 	return logger, nil
 }
 
-func configByEnv(env xorapp.Environment) (*zap.Config, error) {
+func configByEnv(env app.Environment) (*zap.Config, error) {
 	var config zap.Config
 	var err error = nil
 	switch env {
-	case xorapp.DevEnvironment:
+	case app.DevEnvironment:
 		config = zap.NewDevelopmentConfig()
-	case xorapp.ProdEnvironment:
+	case app.ProdEnvironment:
 		config = zap.NewProductionConfig()
 	default:
 		err = fmt.Errorf("failed to get logger config for env: %s", env)

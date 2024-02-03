@@ -1,4 +1,4 @@
-package xorerror
+package error
 
 type IllegalArgumentError struct {
 	message string

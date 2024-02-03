@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"xor-go/pkg/xorerror"
+	xorerror "xor-go/pkg/error"
 )
 
 type xorErrorHandler func(ctx *gin.Context, code int, err error)
