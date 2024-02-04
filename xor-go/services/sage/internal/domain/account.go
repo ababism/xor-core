@@ -11,14 +11,20 @@ type Account struct {
 	PasswordHash string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	Contacts     *AccountContacts
+	Contacts     *Contacts
+	Active       bool
 }
 
-type AccountContacts struct {
+type Contacts struct {
 	TgLogin string
 }
 
 type RegisterAccount struct {
 	Login    string
 	Password string
+}
+
+type AccountFilter struct {
+	Uuid  *uuid.UUID
+	Login *string
 }

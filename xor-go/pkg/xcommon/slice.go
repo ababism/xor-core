@@ -2,7 +2,7 @@ package xcommon
 
 import "errors"
 
-func Single[T any](sl []T) (*T, error) {
+func EnsureSingle[T any](sl []T) (*T, error) {
 	if len(sl) == 0 {
 		return nil, errors.New("slice is empty")
 	}
@@ -12,7 +12,7 @@ func Single[T any](sl []T) (*T, error) {
 	return &sl[0], nil
 }
 
-func ConvertSlice[F any, T any](sl []F, converter func(v F) T) []T {
+func ConvertSlice[F any, T any](sl []F, converter func(item F) T) []T {
 	newSl := make([]T, len(sl))
 	for i, v := range sl {
 		newSl[i] = converter(v)
@@ -20,7 +20,7 @@ func ConvertSlice[F any, T any](sl []F, converter func(v F) T) []T {
 	return newSl
 }
 
-func ConvertSliceP[F any, T any](sl []F, converter func(v *F) *T) []T {
+func ConvertSliceP[F any, T any](sl []F, converter func(item *F) *T) []T {
 	newSl := make([]T, len(sl))
 	for i, v := range sl {
 		newSl[i] = *converter(&v)

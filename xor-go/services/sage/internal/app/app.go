@@ -1,15 +1,14 @@
 package app
 
 import (
-	"context"
 	"go.uber.org/zap"
-	"xor-go/pkg/db/mongo"
-	"xor-go/pkg/http"
-	httpresponse "xor-go/pkg/http/response"
-	"xor-go/pkg/logger"
+	"xor-go/pkg/xdb/postgres"
+	"xor-go/pkg/xhttp"
+	httpresponse "xor-go/pkg/xhttp/response"
+	"xor-go/pkg/xlogger"
 	"xor-go/services/sage/internal/config"
 	"xor-go/services/sage/internal/handler"
-	repomongo "xor-go/services/sage/internal/repository/mongo"
+	repopostgres "xor-go/services/sage/internal/repository/postgres"
 	"xor-go/services/sage/internal/service"
 )
 
@@ -20,20 +19,19 @@ type Application struct {
 }
 
 func NewApp(cfg *config.Config) (*Application, error) {
-	logger, err := logger.Init(cfg.LoggerConfig, cfg.SystemConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	mongoClient, err := mongo.NewClient(context.Background(), cfg.MongoConfig)
+	logger, err := xlogger.Init(cfg.LoggerConfig, cfg.SystemConfig)
 	if err != nil {
 		return nil, err
 	}
 
 	httpResponser := httpresponse.NewHttpResponseWrapper(logger)
 
-	db := mongoClient.Database(cfg.MongoConfig.Database)
-	accountRepository := repomongo.NewAccountMongoRepository(logger, db)
+	postgresDb, err := postgres.NewDB(cfg.PostgresConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	accountRepository := repopostgres.NewAccountPostgresRepository(logger, postgresDb)
 	accountService := service.NewAccountService(logger, accountRepository)
 	accountHandler := handler.NewAccountHandler(httpResponser, accountService)
 
@@ -49,12 +47,12 @@ func (r *Application) Start() {
 }
 
 func (r *Application) startHTTPServer() {
-	router := http.NewRouter()
+	router := xhttp.NewRouter()
 
 	api := router.Router().Group("/api")
-	r.accountHandler.InitAccountRoutes(api)
+	r.accountHandler.InitRoutes(api)
 
-	httpServer := http.NewServer(r.config.HttpConfig, router)
+	httpServer := xhttp.NewServer(r.config.HttpConfig, router)
 	if err := httpServer.Start(); err != nil {
 		r.logger.Error(err.Error())
 	}

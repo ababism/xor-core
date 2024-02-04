@@ -1,4 +1,4 @@
-package app
+package xapp
 
 type Config struct {
 	Service     string

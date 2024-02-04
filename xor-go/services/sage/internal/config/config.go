@@ -1,15 +1,17 @@
 package config
 
 import (
-	"xor-go/pkg/app"
-	"xor-go/pkg/db/mongo"
-	"xor-go/pkg/http"
-	"xor-go/pkg/logger"
+	"xor-go/pkg/xapp"
+	"xor-go/pkg/xdb/mongo"
+	"xor-go/pkg/xdb/postgres"
+	"xor-go/pkg/xhttp"
+	"xor-go/pkg/xlogger"
 )
 
 type Config struct {
-	SystemConfig *app.Config    `yaml:"system"`
-	LoggerConfig *logger.Config `yaml:"logger"`
-	HttpConfig   *http.Config   `yaml:"http"`
-	MongoConfig  *mongo.Config  `yaml:"mongo"`
+	SystemConfig   *xapp.Config     `yaml:"system"`
+	LoggerConfig   *xlogger.Config  `yaml:"xlogger"`
+	HttpConfig     *xhttp.Config    `yaml:"xhttp"`
+	MongoConfig    *mongo.Config    `yaml:"mongo"`
+	PostgresConfig *postgres.Config `yaml:"postgres"`
 }

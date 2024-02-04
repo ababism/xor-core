@@ -1,8 +1,8 @@
-package http
+package xhttp
 
 import (
 	"github.com/gin-gonic/gin"
-	"xor-go/pkg/http/middleware"
+	"xor-go/pkg/xhttp/middleware"
 )
 
 type Router struct {

@@ -7,8 +7,10 @@ import (
 )
 
 type AccountRepository interface {
-	LoginPresent(ctx context.Context, login string) (bool, error)
-	Get(ctx context.Context, uuid uuid.UUID) (*domain.Account, error)
+	Present(ctx context.Context, filter *domain.AccountFilter) (bool, error)
+	List(ctx context.Context, filter *domain.AccountFilter) ([]domain.Account, error)
+	Get(ctx context.Context, filter *domain.AccountFilter) (*domain.Account, error)
 	Create(ctx context.Context, account *domain.Account) error
 	UpdatePassword(ctx context.Context, uuid uuid.UUID, passwordHash string) error
+	Deactivate(ctx context.Context, uuid uuid.UUID) error
 }

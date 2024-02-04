@@ -4,9 +4,26 @@ import (
 	"xor-go/services/sage/internal/domain"
 )
 
-func (r *RegisterAccountDto) ToRegisterAccount() *domain.RegisterAccount {
+func ToRegisterAccount(dto *RegisterAccountDto) *domain.RegisterAccount {
 	return &domain.RegisterAccount{
-		Login:    r.Login,
-		Password: r.Password,
+		Login:    dto.Login,
+		Password: dto.Password,
 	}
+}
+
+func ToAccountDto(domain *domain.Account) *AccountDto {
+	var contacts *ContactsDto
+	if domain.Contacts != nil {
+		contacts = ToContactsDto(domain.Contacts)
+	}
+	return &AccountDto{
+		Uuid:     domain.Uuid,
+		Login:    domain.Login,
+		Contacts: contacts,
+		Active:   domain.Active,
+	}
+}
+
+func ToContactsDto(domain *domain.Contacts) *ContactsDto {
+	return &ContactsDto{TgLogin: domain.TgLogin}
 }
