@@ -1,0 +1,3 @@
+rootProject.name = 'xor-java'
+
+include 'idm'
