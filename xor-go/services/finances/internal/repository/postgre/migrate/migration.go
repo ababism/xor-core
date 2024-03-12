@@ -56,7 +56,7 @@ func (m *MigrationsService) RunMigrations(path string) error {
 		&mongodb.Config{DatabaseName: m.db.Name()},
 	)
 	if err != nil {
-		return fmt.Errorf("cannot instantiate mongo driver: %w", err)
+		return fmt.Errorf("cannot instantiate postgre driver: %w", err)
 	}
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -68,7 +68,7 @@ func (m *MigrationsService) RunMigrations(path string) error {
 		return fmt.Errorf("cannot open migration source: %w", err)
 	}
 
-	instance, err := migrate.NewWithInstance("file", fsrc, "mongo", driver)
+	instance, err := migrate.NewWithInstance("file", fsrc, "postgre", driver)
 	if err != nil {
 		return fmt.Errorf("new migrate instance create error: %w", err)
 	}

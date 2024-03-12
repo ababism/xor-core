@@ -1,4 +1,4 @@
-package mongo
+package postgre
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func (r *DriveRepository) GetTripByID(ctx context.Context, tripId uuid.UUID) (*d
 	log := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "driver/repository/mongo.GetTripByID")
+	newCtx, span := tr.Start(ctx, "driver/repository/postgre.GetTripByID")
 	defer span.End()
 
 	var trip models.MongoTrip
@@ -33,8 +33,8 @@ func (r *DriveRepository) GetTripByID(ctx context.Context, tripId uuid.UUID) (*d
 	res, err := models.ToDomainTripModel(trip)
 	if err != nil {
 		appErr := apperror.NewAppError(http.StatusInternalServerError, "internal error",
-			"error converting mongo to domain model", err)
-		log.Error("error converting mongo to domain model", zap.Error(appErr))
+			"error converting postgre to domain model", err)
+		log.Error("error converting postgre to domain model", zap.Error(appErr))
 		return nil, appErr
 	}
 	return res, nil
@@ -45,7 +45,7 @@ func (r *DriveRepository) InsertTrip(ctx context.Context, trip domain.Trip) erro
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "driver/repository/mongo.InsertTrip")
+	newCtx, span := tr.Start(ctx, "driver/repository/postgre.InsertTrip")
 	defer span.End()
 
 	mongoTrip := models.ToMongoTripModel(trip)

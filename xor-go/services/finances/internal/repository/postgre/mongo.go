@@ -1,4 +1,4 @@
-package mongo
+package postgre
 
 import (
 	"context"
@@ -30,18 +30,18 @@ func NewDriverRepository(logger *zap.Logger) *DriveRepository {
 
 func (r *DriveRepository) Connect(ctx context.Context, cfg *Config, migrateCfg *ConfigMigrations) (func(ctx context.Context) error, error) {
 	// TODO take from context
-	r.logger.Info("Connecting to mongo...")
-	r.logger.Info(fmt.Sprintf("mongo params: uri: %s; database: %s", cfg.Uri, cfg.Database))
+	r.logger.Info("Connecting to postgre...")
+	r.logger.Info(fmt.Sprintf("postgre params: uri: %s; database: %s", cfg.Uri, cfg.Database))
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Uri))
 	if err != nil {
-		r.logger.Error("new mongo client create error:", zap.Error(err))
-		return nil, fmt.Errorf("new mongo client create error: %w", err)
+		r.logger.Error("new postgre client create error:", zap.Error(err))
+		return nil, fmt.Errorf("new postgre client create error: %w", err)
 	}
 
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		r.logger.Error("new mongo primary node connect error:", zap.Error(err))
-		return client.Disconnect, fmt.Errorf("new mongo primary node connect error: %w", err)
+		r.logger.Error("new postgre primary node connect error:", zap.Error(err))
+		return client.Disconnect, fmt.Errorf("new postgre primary node connect error: %w", err)
 	}
 
 	r.client = client

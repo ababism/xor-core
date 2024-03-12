@@ -2,38 +2,68 @@ package domain
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
-const (
-	// TODO testing
-	SearchRadius = 113_000
-	ServiceName  = "mts-final-taxi/driver"
-)
-
-// LatLngLiteral An object describing a specific location with Latitude and Longitude in decimal degrees.
-type LatLngLiteral struct {
-	Lat float32
-	Lng float32
+type BankAccountData struct {
 }
 
-type Money struct {
-	// Amount expressed as a decimal number of major currency units
-	Amount float64
-	// Currency 3 letter currency code as defined by ISO-4217
-	Currency string
+type BankAccount struct {
+	UUID        uuid.UUID
+	AccountUUID uuid.UUID
+	Login       string
+	Funds       float64
+	Data        BankAccountData
+	Status      string
+	LastDealAt  time.Time
+	Payments    []uuid.UUID
 }
 
-// Trip defines model for Trip.
-type Trip struct {
-	DriverId *string
-	From     *LatLngLiteral
-	Id       uuid.UUID
-	Price    *Money
-	Status   *TripStatus
-	To       *LatLngLiteral
+type PaymentData struct {
 }
 
-type DriverLocation struct {
-	DriverId    uuid.UUID
-	Coordinates LatLngLiteral
+type Payment struct {
+	UUID     uuid.UUID
+	Sender   uuid.UUID
+	Receiver uuid.UUID
+	Data     PaymentData
+	URL      string
+	Status   string
+	EndedAt  time.Time
+}
+
+type Product struct {
+	UUID      uuid.UUID
+	Name      string
+	Price     float64
+	CreatedAt time.Time
+}
+
+type Discount struct {
+	UUID       uuid.UUID
+	CreatedBy  uuid.UUID
+	Percent    float64
+	StandAlone bool
+	StartedAt  time.Time
+	EndedAt    time.Time
+	Status     string
+}
+
+type PayoutRequestData struct {
+}
+
+type PayoutRequest struct {
+	UUID      uuid.UUID
+	Receiver  uuid.UUID
+	Amount    float64
+	StartedAt time.Time
+	Data      PayoutRequestData
+}
+
+type PurchaseRequest struct {
+	UUID       uuid.UUID
+	Sender     uuid.UUID
+	Receiver   uuid.UUID
+	WebhookURL string
+	StartedAt  time.Time
 }

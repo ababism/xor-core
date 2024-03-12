@@ -12,6 +12,6 @@ type Config struct {
 	SystemConfig   *xapp.Config     `yaml:"system"`
 	LoggerConfig   *xlogger.Config  `yaml:"xlogger"`
 	HttpConfig     *xhttp.Config    `yaml:"xhttp"`
-	MongoConfig    *mongo.Config    `yaml:"mongo"`
+	MongoConfig    *mongo.Config    `yaml:"postgre"`
 	PostgresConfig *postgres.Config `yaml:"postgres"`
 }

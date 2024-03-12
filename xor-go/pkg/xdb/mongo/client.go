@@ -22,12 +22,12 @@ func NewClient(ctx context.Context, cfg *Config) (*mongo.Client, error) {
 
 	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
-		return nil, errors.WithMessage(err, "failed to create mongo client")
+		return nil, errors.WithMessage(err, "failed to create postgre client")
 	}
 
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		return nil, errors.WithMessage(err, "failed to ping mongo")
+		return nil, errors.WithMessage(err, "failed to ping postgre")
 	}
 
 	return client, nil

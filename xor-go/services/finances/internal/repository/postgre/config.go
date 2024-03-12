@@ -1,4 +1,4 @@
-package mongo
+package postgre
 
 type Config struct {
 	Database string `mapstructure:"database" env:"DRIVER_MONGO_DATABASE"`

@@ -1,4 +1,4 @@
-package models
+package dto_models
 
 import (
 	"gitlab.com/ArtemFed/mts-final-taxi/projects/template/internal/domain"
