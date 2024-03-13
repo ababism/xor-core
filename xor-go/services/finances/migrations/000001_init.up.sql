@@ -2,7 +2,7 @@ CREATE TABLE bank_accounts
 (
     uuid         UUID         NOT NULL,
     account_uuid UUID         NOT NULL,
-    login        VARCHAR(255) NOT NULL,
+    login        VARCHAR(255) NOT NULL UNIQUE,
     funds        FLOAT(10)    NOT NULL,
     data         JSONB        NOT NULL,
     status       VARCHAR(255) NOT NULL,

@@ -6,10 +6,12 @@ import (
 )
 
 const (
-	BankAccountsTable = "bank_accounts"
-	PaymentsTable     = "payments"
-	ProductsTable     = "products"
-	DiscountsTable    = "discounts"
+	BankAccountsTable     = "bank_accounts"
+	PaymentsTable         = "payments"
+	ProductsTable         = "products"
+	DiscountsTable        = "discounts"
+	PayoutRequestsTable   = "payout_requests"
+	PurchaseRequestsTable = "purchase_requests"
 )
 
 type BankAccountData struct {
