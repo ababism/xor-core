@@ -6,6 +6,8 @@ import (
 	"xor-go/services/finances/internal/domain"
 )
 
+const ServiceName = "BankAccountService"
+
 type BankAccountService interface {
 	GetAccountById(ctx context.Context, id uuid.UUID) (*domain.BankAccount, error)
 	GetAccountByLogin(ctx context.Context, login string) (*domain.BankAccount, error)

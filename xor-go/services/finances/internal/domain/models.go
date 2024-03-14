@@ -19,6 +19,15 @@ type BankAccount struct {
 	Payments    []uuid.UUID
 }
 
+type BankAccountFilter struct {
+	UUID        *uuid.UUID
+	AccountUUID *uuid.UUID
+	Login       *string
+	Funds       *float64
+	Status      *string
+	LastDealAt  *time.Time
+}
+
 type PaymentData struct {
 }
 
@@ -33,8 +42,10 @@ type Payment struct {
 }
 
 type PaymentFilter struct {
+	UUID      *uuid.UUID
 	Sender    *uuid.UUID
 	Receiver  *uuid.UUID
+	URL       *string
 	Status    *string
 	StartedAt *time.Time
 	EndedAt   *time.Time
@@ -48,6 +59,7 @@ type Product struct {
 }
 
 type ProductFilter struct {
+	UUID      *uuid.UUID
 	Price     *float64
 	StartedAt *time.Time
 	EndedAt   *time.Time
@@ -64,9 +76,9 @@ type Discount struct {
 }
 
 type DiscountFilter struct {
+	UUID       *uuid.UUID
 	CreatedBy  *uuid.UUID
-	PercentMin *float64
-	PercentMax *float64
+	Percent    *float64
 	StandAlone *bool
 	StartedAt  *time.Time
 	EndedAt    *time.Time
@@ -85,11 +97,10 @@ type PayoutRequest struct {
 }
 
 type PayoutRequestFilter struct {
-	Receiver  uuid.UUID
-	AmountMin float64
-	AmountMax float64
-	StartedAt time.Time
-	EndedAt   time.Time
+	UUID       *uuid.UUID
+	Receiver   *uuid.UUID
+	Amount     *float64
+	ReceivedAt *time.Time
 }
 type PurchaseRequest struct {
 	UUID       uuid.UUID
@@ -100,8 +111,9 @@ type PurchaseRequest struct {
 }
 
 type PurchaseRequestFilter struct {
-	Sender    uuid.UUID
-	Receiver  uuid.UUID
-	StartedAt time.Time
-	EndedAt   time.Time
+	UUID       uuid.UUID
+	Sender     *uuid.UUID
+	Receiver   *uuid.UUID
+	WebhookURL *string
+	ReceivedAt *time.Time
 }
