@@ -15,17 +15,17 @@ import (
 const (
 	getAnyQuery = `
 		SELECT uuid, login, password_hash, contacts, active FROM account
-		`
+	`
 	createQuery = `
 		INSERT INTO account (uuid, login, password_hash, contacts, active)
 		VALUES ($1, $2, $3, $4, $5)
-		`
+	`
 	updatePasswordQuery = `
 		UPDATE account SET password_hash = $1 WHERE uuid = $2
-		`
+	`
 	deactivateQuery = `
 		UPDATE account SET active = false WHERE uuid = $1
-		`
+	`
 )
 
 var _ adapter.AccountRepository = &accountRepository{}

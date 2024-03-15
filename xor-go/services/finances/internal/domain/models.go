@@ -9,14 +9,16 @@ type BankAccountData struct {
 }
 
 type BankAccount struct {
-	UUID        uuid.UUID
-	AccountUUID uuid.UUID
-	Login       string
-	Funds       float64
-	Data        BankAccountData
-	Status      string
-	LastDealAt  time.Time
-	Payments    []uuid.UUID
+	UUID         uuid.UUID
+	AccountUUID  uuid.UUID
+	Login        string
+	Funds        float64
+	Data         BankAccountData
+	Status       string
+	LastDealAt   time.Time
+	Payments     []uuid.UUID
+	CreatedAt    time.Time
+	LastUpdateAt time.Time
 }
 
 type BankAccountFilter struct {
@@ -25,44 +27,43 @@ type BankAccountFilter struct {
 	Login       *string
 	Funds       *float64
 	Status      *string
-	LastDealAt  *time.Time
 }
 
 type PaymentData struct {
 }
 
 type Payment struct {
-	UUID     uuid.UUID
-	Sender   uuid.UUID
-	Receiver uuid.UUID
-	Data     PaymentData
-	URL      string
-	Status   string
-	EndedAt  time.Time
+	UUID         uuid.UUID
+	Sender       uuid.UUID
+	Receiver     uuid.UUID
+	Data         PaymentData
+	URL          string
+	Status       string
+	EndedAt      time.Time
+	CreatedAt    time.Time
+	LastUpdateAt time.Time
 }
 
 type PaymentFilter struct {
-	UUID      *uuid.UUID
-	Sender    *uuid.UUID
-	Receiver  *uuid.UUID
-	URL       *string
-	Status    *string
-	StartedAt *time.Time
-	EndedAt   *time.Time
+	UUID     *uuid.UUID
+	Sender   *uuid.UUID
+	Receiver *uuid.UUID
+	URL      *string
+	Status   *string
 }
 
 type Product struct {
-	UUID      uuid.UUID
-	Name      string
-	Price     float64
-	CreatedAt time.Time
+	UUID         uuid.UUID
+	Name         string
+	Price        float64
+	CreatedAt    time.Time
+	LastUpdateAt time.Time
 }
 
 type ProductFilter struct {
-	UUID      *uuid.UUID
-	Price     *float64
-	StartedAt *time.Time
-	EndedAt   *time.Time
+	UUID  *uuid.UUID
+	Name  *string
+	Price *float64
 }
 
 type Discount struct {
@@ -80,8 +81,6 @@ type DiscountFilter struct {
 	CreatedBy  *uuid.UUID
 	Percent    *float64
 	StandAlone *bool
-	StartedAt  *time.Time
-	EndedAt    *time.Time
 	Status     *string
 }
 

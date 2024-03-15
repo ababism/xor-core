@@ -3,11 +3,7 @@ package postgre
 import (
 	"context"
 	"fmt"
-	"gitlab.com/ArtemFed/mts-final-taxi/projects/template/internal/repository/mongo/models"
-	"gitlab.com/ArtemFed/mts-final-taxi/projects/template/internal/service/adapters"
 	"go.uber.org/zap"
-
-	"gitlab.com/ArtemFed/mts-final-taxi/projects/template/internal/repository/mongo/migrate"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

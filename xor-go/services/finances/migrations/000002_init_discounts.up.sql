@@ -9,3 +9,12 @@ CREATE TABLE discounts
     status      VARCHAR(32) NOT NULL,
     PRIMARY KEY (uuid)
 );
+
+CREATE TABLE discounts_products
+(
+    discount_uuid UUID,
+    product_uuid  UUID,
+    PRIMARY KEY (discount_uuid, product_uuid),
+    FOREIGN KEY (discount_uuid) REFERENCES discounts (uuid),
+    FOREIGN KEY (product_uuid) REFERENCES products (uuid)
+);
