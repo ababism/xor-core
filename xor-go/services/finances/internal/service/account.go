@@ -21,12 +21,12 @@ func NewAccountService(accountRepository adapters.BankAccountRepository) adapter
 	return &bankAccountService{r: accountRepository}
 }
 
-func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccount, error) {
+func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".GetByLogin")
 	defer span.End()
 
-	filter := domain.CreateBankAccountFilterByLogin(login)
+	filter := domain.CreateBankAccountFilterLogin(&login)
 	account, err := s.r.Get(newCtx, filter)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*dom
 	return account, err
 }
 
-func (s *bankAccountService) List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccount, error) {
+func (s *bankAccountService) List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".List")
 	defer span.End()
@@ -48,7 +48,7 @@ func (s *bankAccountService) List(ctx context.Context, filter domain.BankAccount
 	return accounts, err
 }
 
-func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccount) error {
+func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountGet) error {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".Create")
 	defer span.End()
@@ -61,7 +61,7 @@ func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccount) error {
+func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountGet) error {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".Update")
 	defer span.End()

@@ -8,10 +8,10 @@ import (
 
 type BankAccountRepository interface {
 	Present(ctx context.Context, filter domain.BankAccountFilter) (bool, error)
-	Get(ctx context.Context, filter domain.BankAccountFilter) (*domain.BankAccount, error)
-	List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccount, error)
-	Create(ctx context.Context, account *domain.BankAccount) error
-	Update(ctx context.Context, account *domain.BankAccount) error
+	Get(ctx context.Context, filter domain.BankAccountFilter) (*domain.BankAccountGet, error)
+	List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccountGet, error)
+	Create(ctx context.Context, account *domain.BankAccountGet) error
+	Update(ctx context.Context, account *domain.BankAccountGet) error
 	//? Deactivate(ctx context.Context, id uuid.UUID) error
 }
 

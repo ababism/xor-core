@@ -2,7 +2,7 @@ package repo_models
 
 import "xor-go/services/finances/internal/domain"
 
-func ToBankAccountPostgres(model *domain.BankAccount) *BankAccount {
+func ToBankAccountPostgres(model *domain.BankAccountGet) *BankAccount {
 	return &BankAccount{
 		UUID:        model.UUID,
 		AccountUUID: model.AccountUUID,
@@ -18,8 +18,8 @@ func ToBankAccountDataPostgres(model domain.BankAccountData) BankAccountData {
 	return BankAccountData{}
 }
 
-func ToBankAccount(model *BankAccount) *domain.BankAccount {
-	return &domain.BankAccount{
+func ToBankAccount(model *BankAccount) *domain.BankAccountGet {
+	return &domain.BankAccountGet{
 		UUID:         model.UUID,
 		AccountUUID:  model.AccountUUID,
 		Login:        model.Login,

@@ -6,19 +6,24 @@ import (
 	"xor-go/services/finances/internal/domain"
 )
 
-const ServiceNameBankAccount = "bank-account-service"
+const (
+	ServiceNameBankAccount = "bank-account-service"
+	ServiceNamePayment     = "payment-service"
+	ServiceNameProduct     = "product-service"
+	ServiceNameDiscount    = "discount-service"
+)
 
 type BankAccountService interface {
-	GetByLogin(ctx context.Context, login string) (*domain.BankAccount, error)
-	List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccount, error)
-	Create(ctx context.Context, account *domain.BankAccount) error
-	Update(ctx context.Context, account *domain.BankAccount) error
+	GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error)
+	List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccountGet, error)
+	Create(ctx context.Context, account *domain.BankAccountGet) error
+	Update(ctx context.Context, account *domain.BankAccountGet) error
 	AddDiffToFunds(ctx context.Context, login string, newFunds float64) error
-	//? UpdateStatus(ctx context.Context, account *domain.BankAccount) error
+	//? UpdateStatus(ctx context.Context, account *domain.BankAccountGet) error
 }
 
 type PaymentService interface {
-	Get(ctx context.Context, filter domain.PaymentFilter) (*domain.Payment, error)
+	Get(ctx context.Context, uuid uuid.UUID) (*domain.Payment, error)
 	List(ctx context.Context, filter domain.PaymentFilter) ([]domain.Payment, error)
 	Create(ctx context.Context, payment *domain.Payment) error
 	Update(ctx context.Context, payment *domain.Payment) error

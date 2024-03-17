@@ -45,7 +45,7 @@ func NewBankAccountRepository(db *sqlx.DB) adapters.BankAccountRepository {
 }
 
 // GetAccountById returns a Bank Account by id
-//func (r *DriveRepository) GetAccountById(ctx context.Context, id uuid.UUID) (*domain.BankAccount, error) {
+//func (r *DriveRepository) GetAccountById(ctx context.Context, id uuid.UUID) (*domain.BankAccountGet, error) {
 //	tr := global.Tracer(adapters.ServiceNameBankAccount)
 //	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".GetAccountById")
 //	defer span.End()
@@ -89,7 +89,7 @@ func (r *bankAccountRepository) Present(ctx context.Context, filter domain.BankA
 	return present, nil
 }
 
-func (r *bankAccountRepository) Get(ctx context.Context, filter domain.BankAccountFilter) (*domain.BankAccount, error) {
+func (r *bankAccountRepository) Get(ctx context.Context, filter domain.BankAccountFilter) (*domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".Get")
 	defer span.End()
@@ -101,7 +101,7 @@ func (r *bankAccountRepository) Get(ctx context.Context, filter domain.BankAccou
 	return xcommon.EnsureSingle(accounts)
 }
 
-func (r *bankAccountRepository) List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccount, error) {
+func (r *bankAccountRepository) List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".List")
 	defer span.End()
@@ -116,7 +116,7 @@ func (r *bankAccountRepository) List(ctx context.Context, filter domain.BankAcco
 	return xcommon.ConvertSliceP(accounts, repo_models.ToBankAccount), nil
 }
 
-func (r *bankAccountRepository) Create(ctx context.Context, account *domain.BankAccount) error {
+func (r *bankAccountRepository) Create(ctx context.Context, account *domain.BankAccountGet) error {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".Create")
 	defer span.End()
@@ -133,7 +133,7 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 	return err
 }
 
-func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccount) error {
+func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccountGet) error {
 	accountPostgres := repo_models.ToBankAccountPostgres(account)
 	_, err := r.db.ExecContext(
 		ctx,

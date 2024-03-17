@@ -8,7 +8,7 @@ import (
 type BankAccountData struct {
 }
 
-type BankAccount struct {
+type BankAccountGet struct {
 	UUID         uuid.UUID
 	AccountUUID  uuid.UUID
 	Login        string
@@ -16,9 +16,16 @@ type BankAccount struct {
 	Data         BankAccountData
 	Status       string
 	LastDealAt   time.Time
-	Payments     []uuid.UUID
 	CreatedAt    time.Time
 	LastUpdateAt time.Time
+	Payments     []uuid.UUID
+}
+
+type BankAccountCreate struct {
+	AccountUUID uuid.UUID
+	Login       string
+	Data        BankAccountData
+	Payments    []uuid.UUID
 }
 
 type BankAccountFilter struct {
@@ -33,15 +40,15 @@ type PaymentData struct {
 }
 
 type Payment struct {
-	UUID         uuid.UUID
-	Sender       uuid.UUID
-	Receiver     uuid.UUID
+	UUID         *uuid.UUID
+	Sender       *uuid.UUID
+	Receiver     *uuid.UUID
 	Data         PaymentData
 	URL          string
 	Status       string
-	EndedAt      time.Time
-	CreatedAt    time.Time
-	LastUpdateAt time.Time
+	EndedAt      *time.Time
+	CreatedAt    *time.Time
+	LastUpdateAt *time.Time
 }
 
 type PaymentFilter struct {
@@ -53,7 +60,7 @@ type PaymentFilter struct {
 }
 
 type Product struct {
-	UUID         uuid.UUID
+	UUID         *uuid.UUID
 	Name         string
 	Price        float64
 	CreatedAt    time.Time
@@ -67,7 +74,7 @@ type ProductFilter struct {
 }
 
 type Discount struct {
-	UUID       uuid.UUID
+	UUID       *uuid.UUID
 	CreatedBy  uuid.UUID
 	Percent    float64
 	StandAlone bool
@@ -88,7 +95,7 @@ type PayoutRequestData struct {
 }
 
 type PayoutRequest struct {
-	UUID       uuid.UUID
+	UUID       *uuid.UUID
 	Receiver   uuid.UUID
 	Amount     float64
 	ReceivedAt time.Time
@@ -102,7 +109,7 @@ type PayoutRequestFilter struct {
 	ReceivedAt *time.Time
 }
 type PurchaseRequest struct {
-	UUID       uuid.UUID
+	UUID       *uuid.UUID
 	Sender     uuid.UUID
 	Receiver   uuid.UUID
 	WebhookURL string
@@ -110,7 +117,7 @@ type PurchaseRequest struct {
 }
 
 type PurchaseRequestFilter struct {
-	UUID       uuid.UUID
+	UUID       *uuid.UUID
 	Sender     *uuid.UUID
 	Receiver   *uuid.UUID
 	WebhookURL *string

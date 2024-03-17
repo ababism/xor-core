@@ -18,6 +18,27 @@ func CreateBankAccountFilter(
 	}
 }
 
-func CreateBankAccountFilterByLogin(login string) BankAccountFilter {
-	return CreateBankAccountFilter(nil, nil, &login, nil, nil)
+func CreateBankAccountFilterLogin(login *string) BankAccountFilter {
+	return CreateBankAccountFilter(nil, nil, login, nil, nil)
+}
+
+func CreatePaymentFilter(
+	uuid *uuid.UUID,
+	senderUUID *uuid.UUID,
+	receiverUUID *uuid.UUID,
+	url *string,
+
+	status *string,
+) PaymentFilter {
+	return PaymentFilter{
+		UUID:     uuid,
+		Sender:   senderUUID,
+		Receiver: receiverUUID,
+		URL:      url,
+		Status:   status,
+	}
+}
+
+func CreatePaymentFilterId(uuid *uuid.UUID) PaymentFilter {
+	return CreatePaymentFilter(uuid, nil, nil, nil, nil)
 }
