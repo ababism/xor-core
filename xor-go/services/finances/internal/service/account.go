@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"xor-go/services/finances/internal/domain"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -21,13 +22,18 @@ func NewAccountService(accountRepository adapters.BankAccountRepository) adapter
 	return &bankAccountService{r: accountRepository}
 }
 
-func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error) {
+func getAccountTracerSpan(ctx context.Context, name string) (trace.Tracer, context.Context, trace.Span) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".GetByLogin")
+	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+name)
+	return tr, newCtx, span
+}
+
+func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	filter := domain.CreateBankAccountFilterLogin(&login)
-	account, err := s.r.Get(newCtx, filter)
+	account, err := s.r.Get(newCtx, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +41,8 @@ func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*dom
 	return account, err
 }
 
-func (s *bankAccountService) List(ctx context.Context, filter domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
-	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".List")
+func (s *bankAccountService) List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".List")
 	defer span.End()
 
 	accounts, err := s.r.List(newCtx, filter)
@@ -48,9 +53,8 @@ func (s *bankAccountService) List(ctx context.Context, filter domain.BankAccount
 	return accounts, err
 }
 
-func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountGet) error {
-	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".Create")
+func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountBase) error {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
 	err := s.r.Create(newCtx, account)
@@ -61,9 +65,8 @@ func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountGet) error {
-	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".Update")
+func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountPost) error {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Update")
 	defer span.End()
 
 	err := s.r.Update(newCtx, account)
@@ -75,8 +78,7 @@ func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAcc
 }
 
 func (s *bankAccountService) AddDiffToFunds(ctx context.Context, login string, diff float64) error {
-	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	newCtx, span := tr.Start(ctx, spanDefaultBankAccount+".AddDiffToFunds")
+	_, newCtx, span := getAccountTracerSpan(ctx, ".AddDiffToFunds")
 	defer span.End()
 
 	account, err := s.GetByLogin(ctx, login)
