@@ -17,7 +17,7 @@ type BankAccountGet struct {
 	Status       string
 	LastDealAt   time.Time
 	CreatedAt    time.Time
-	LastUpdateAt time.Time
+	LastUpdateAt *time.Time
 	Payments     []uuid.UUID
 }
 

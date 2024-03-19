@@ -10,7 +10,7 @@ type BankAccountRepository interface {
 	Present(ctx context.Context, filter *domain.BankAccountFilter) (bool, error)
 	Get(ctx context.Context, filter *domain.BankAccountFilter) (*domain.BankAccountGet, error)
 	List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
-	Create(ctx context.Context, account *domain.BankAccountBase) error
+	Create(ctx context.Context, account *domain.BankAccountCreate) error
 	Update(ctx context.Context, account *domain.BankAccountPost) error
 }
 

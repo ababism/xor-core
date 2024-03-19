@@ -12,15 +12,15 @@ type PayoutRequestGet struct {
 	UUID       uuid.UUID
 	Receiver   uuid.UUID
 	Amount     float64
-	ReceivedAt time.Time
 	Data       PayoutRequestData
+	ReceivedAt time.Time
 }
 
 type PayoutRequestCreate struct {
 	Receiver   uuid.UUID
 	Amount     float64
-	ReceivedAt time.Time
 	Data       PayoutRequestData
+	ReceivedAt time.Time
 }
 
 type PayoutRequestFilter struct {

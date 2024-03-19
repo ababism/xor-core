@@ -43,7 +43,7 @@ func NewPaymentRepository(db *sqlx.DB) adapters.PaymentRepository {
 	return &paymentRepository{db: db}
 }
 
-func (r *paymentRepository) Get(ctx context.Context, filter *domain.PaymentFilter) (*domain.Payment, error) {
+func (r *paymentRepository) Get(ctx context.Context, filter *domain.PaymentFilter) (*domain.PaymentGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanPaymentsDefault+".Get")
 	defer span.End()
@@ -55,7 +55,7 @@ func (r *paymentRepository) Get(ctx context.Context, filter *domain.PaymentFilte
 	return xcommon.EnsureSingle(accounts)
 }
 
-func (r *paymentRepository) List(ctx context.Context, filter *domain.PaymentFilter) ([]domain.Payment, error) {
+func (r *paymentRepository) List(ctx context.Context, filter *domain.PaymentFilter) ([]domain.PaymentGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanPaymentsDefault+".List")
 	defer span.End()
@@ -67,10 +67,11 @@ func (r *paymentRepository) List(ctx context.Context, filter *domain.PaymentFilt
 	if err != nil {
 		return nil, err
 	}
+
 	return xcommon.ConvertSliceP(payments, repo_models.ToPayment), nil
 }
 
-func (r *paymentRepository) Create(ctx context.Context, account *domain.Payment) error {
+func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentCreate) error {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanPaymentsDefault+".Create")
 	defer span.End()
@@ -84,20 +85,6 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.Payment)
 		account.Login,
 		account.Data,
 		account.Status,
-	)
-	return err
-}
-
-func (r *paymentRepository) Update(ctx context.Context, account *domain.Payment) error {
-	_, err := r.db.ExecContext(
-		ctx,
-		// GPT
-		updatePaymentsQuery,
-		account.AccountUUID,
-		account.Login,
-		account.Data,
-		account.Status,
-		account.UUID,
 	)
 	return err
 }

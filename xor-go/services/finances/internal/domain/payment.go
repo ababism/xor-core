@@ -9,15 +9,14 @@ type PaymentData struct {
 }
 
 type PaymentGet struct {
-	UUID         uuid.UUID
-	Sender       uuid.UUID
-	Receiver     uuid.UUID
-	Data         PaymentData
-	URL          string
-	Status       string
-	EndedAt      time.Time
-	CreatedAt    time.Time
-	LastUpdateAt time.Time
+	UUID      uuid.UUID
+	Sender    uuid.UUID
+	Receiver  uuid.UUID
+	Data      PaymentData
+	URL       string
+	Status    string
+	EndedAt   time.Time
+	CreatedAt time.Time
 }
 
 type PaymentCreate struct {
