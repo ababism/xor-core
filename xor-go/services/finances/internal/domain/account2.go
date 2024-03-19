@@ -15,7 +15,7 @@ package domain
 //	Payments    []uuid.UUID
 //}
 //
-//type BankAccountPost struct {
+//type BankAccountUpdate struct {
 //	Base   BankAccountBase
 //	UUID   uuid.UUID
 //	Funds  float64
@@ -23,7 +23,7 @@ package domain
 //}
 //
 //type BankAccountGet struct {
-//	Post         BankAccountPost
+//	Post         BankAccountUpdate
 //	LastDealAt   time.Time
 //	CreatedAt    time.Time
 //	LastUpdatedAt time.Time

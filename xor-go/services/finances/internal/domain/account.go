@@ -28,7 +28,7 @@ type BankAccountCreate struct {
 	Payments    []uuid.UUID
 }
 
-type BankAccountPost struct {
+type BankAccountUpdate struct {
 	UUID        uuid.UUID
 	AccountUUID uuid.UUID
 	Login       string
@@ -45,4 +45,17 @@ type BankAccountFilter struct {
 	Login       *string
 	Funds       *float64
 	Status      *string
+}
+
+func GetToBankAccountUpdateDomain(model *BankAccountGet) *BankAccountUpdate {
+	return &BankAccountUpdate{
+		UUID:        model.UUID,
+		AccountUUID: model.AccountUUID,
+		Login:       model.Login,
+		Funds:       model.Funds,
+		Data:        model.Data,
+		Status:      model.Status,
+		LastDealAt:  model.LastDealAt,
+		Payments:    model.Payments,
+	}
 }

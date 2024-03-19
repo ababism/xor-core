@@ -17,7 +17,7 @@ type PayoutRequest struct {
 	ReceivedAt time.Time         `db:"received_at"`
 }
 
-func CreateToPayoutRequestDataPostgres(model domain.PayoutRequestCreate) PayoutRequestData {
+func CreateToPayoutRequestDataPostgres(model domain.PayoutRequestData) PayoutRequestData {
 	return PayoutRequestData{}
 }
 

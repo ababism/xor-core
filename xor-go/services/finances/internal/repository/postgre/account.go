@@ -25,13 +25,17 @@ const (
 		INSERT INTO bank_accounts (account_uuid, login, data, status)
 		VALUES ($1, $2, $3, $4)
 	`
-	// GPT
 	updateBankAccountQuery = `
-		UPDATE bank_accounts SET password_hash = $1 WHERE uuid = $2
+		UPDATE bank_accounts
+		SET 
+		    account_uuid = $2,
+		    login = $3,
+		    funds = $4,
+		    data = $5,
+		    status = $6,
+		    last_deal_at = $7
+		WHERE uuid = $1;
 	`
-	// ? deactivateQuery = `
-	//	UPDATE bank_accounts SET active = false WHERE uuid = $1
-	//`
 )
 
 var _ adapters.BankAccountRepository = &bankAccountRepository{}
@@ -102,22 +106,24 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 		createBankAccountQuery,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
+		accountPostgres.Funds,
 		accountPostgres.Data,
 		accountPostgres.Status,
 	)
 	return err
 }
 
-func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccountPost) error {
+func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccountUpdate) error {
 	accountPostgres := repo_models.UpdateToBankAccountPostgres(account)
 	_, err := r.db.ExecContext(
 		ctx,
 		updateBankAccountQuery,
+		accountPostgres.UUID,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
 		accountPostgres.Data,
 		accountPostgres.Status,
-		accountPostgres.UUID,
+		accountPostgres.LastDealAt,
 	)
 	return err
 }

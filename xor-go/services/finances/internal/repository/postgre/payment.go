@@ -12,25 +12,15 @@ import (
 
 const (
 	spanPaymentsDefault = "payments/repository/postgre"
-)
-
-const (
-	baseGetPaymentQuery = `
-		SELECT uuid, account_uuid, login, funds, data, status, last_deal_at, created_at, last_updated_at
-		FROM  bank_accounts
+	basePaymentGetQuery = `
+		SELECT uuid, sender, receiver, data, url, status, ended_at, created_at
+		FROM payments
 		WHERE uuid = $1
 	`
 	createPaymentQuery = `
-		INSERT INTO bank_accounts (account_uuid, login, data, status)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO payments (uuid, sender, receiver, data, url, status, ended_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
-	// GPT
-	updatePaymentQuery = `
-		UPDATE bank_accounts SET password_hash = $1 WHERE uuid = $2
-	`
-	// ? deactivateQuery = `
-	//	UPDATE bank_accounts SET active = false WHERE uuid = $1
-	//`
 )
 
 var _ adapters.PaymentRepository = &paymentRepository{}
@@ -61,14 +51,14 @@ func (r *paymentRepository) List(ctx context.Context, filter *domain.PaymentFilt
 	defer span.End()
 
 	paramsMap := mapGetPaymentRequestParams(filter)
-	query, args := xcommon.QueryWhereAnd(baseGetPaymentQuery, paramsMap)
+	query, args := xcommon.QueryWhereAnd(basePaymentGetQuery, paramsMap)
 	var payments []repo_models.Payment
 	err := r.db.SelectContext(ctx, &payments, query, args...)
 	if err != nil {
 		return nil, err
 	}
 
-	return xcommon.ConvertSliceP(payments, repo_models.ToPayment), nil
+	return xcommon.ConvertSliceP(payments, repo_models.ToPaymentDomain), nil
 }
 
 func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentCreate) error {
@@ -76,15 +66,17 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 	_, span := tr.Start(ctx, spanPaymentsDefault+".Create")
 	defer span.End()
 
-	accountPostgres := repo_models.ToPaymentPostgres(account)
+	accountPostgres := repo_models.CreateToPaymentPostgres(account)
 	_, err := r.db.ExecContext(
 		ctx,
 		createPaymentQuery,
-		// GPT
-		account.AccountUUID,
-		account.Login,
-		account.Data,
-		account.Status,
+		accountPostgres.UUID,
+		accountPostgres.Sender,
+		accountPostgres.Receiver,
+		accountPostgres.Data,
+		accountPostgres.URL,
+		accountPostgres.Status,
+		accountPostgres.EndedAt,
 	)
 	return err
 }
@@ -94,7 +86,20 @@ func mapGetPaymentRequestParams(params *domain.PaymentFilter) map[string]any {
 	if params.UUID != nil {
 		paramsMap["uuid"] = params.UUID
 	}
-	// TODO GPT
-
+	if params.Sender != nil {
+		paramsMap["sender"] = params.Sender
+	}
+	if params.Receiver != nil {
+		paramsMap["receiver"] = params.Receiver
+	}
+	if params.URL != nil {
+		paramsMap["url"] = params.URL
+	}
+	if params.Status != nil {
+		paramsMap["status"] = params.Status
+	}
+	if params.EndedAt != nil {
+		paramsMap["ended_at"] = params.EndedAt
+	}
 	return paramsMap
 }

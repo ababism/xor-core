@@ -11,7 +11,7 @@ type BankAccountRepository interface {
 	Get(ctx context.Context, filter *domain.BankAccountFilter) (*domain.BankAccountGet, error)
 	List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
 	Create(ctx context.Context, account *domain.BankAccountCreate) error
-	Update(ctx context.Context, account *domain.BankAccountPost) error
+	Update(ctx context.Context, account *domain.BankAccountUpdate) error
 }
 
 type PaymentRepository interface {
@@ -25,7 +25,7 @@ type ProductRepository interface {
 	List(ctx context.Context, filter *domain.ProductFilter) ([]domain.ProductGet, error)
 	Create(ctx context.Context, product *domain.ProductCreate) error
 	Update(ctx context.Context, product *domain.ProductUpdate) error
-	Disable(ctx context.Context, id uuid.UUID) error
+	SetAvailability(ctx context.Context, id uuid.UUID, isAvailable bool) error
 }
 
 type DiscountRepository interface {
@@ -40,7 +40,7 @@ type PayoutRequestRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.PayoutRequestGet, error)
 	List(ctx context.Context, filter *domain.PayoutRequestFilter) ([]domain.PayoutRequestGet, error)
 	Create(ctx context.Context, payout *domain.PayoutRequestCreate) error
-	Archive(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type PurchaseRequestRepository interface {

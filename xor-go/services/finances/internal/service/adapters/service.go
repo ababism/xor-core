@@ -7,17 +7,19 @@ import (
 )
 
 const (
-	ServiceNameBankAccount = "bank-account-service"
-	ServiceNamePayment     = "payment-service"
-	ServiceNameProduct     = "product-service"
-	ServiceNameDiscount    = "discount-service"
+	ServiceNameBankAccount     = "bank-account-service"
+	ServiceNamePayment         = "payment-service"
+	ServiceNameProduct         = "product-service"
+	ServiceNameDiscount        = "discount-service"
+	ServiceNamePayoutRequest   = "payout-request-service"
+	ServiceNamePurchaseRequest = "purchase-request-service"
 )
 
 type BankAccountService interface {
 	GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error)
 	List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
-	Create(ctx context.Context, account *domain.BankAccountBase) error
-	Update(ctx context.Context, account *domain.BankAccountPost) error
+	Create(ctx context.Context, account *domain.BankAccountCreate) error
+	Update(ctx context.Context, account *domain.BankAccountUpdate) error
 	AddDiffToFunds(ctx context.Context, login string, newFunds float64) error
 }
 

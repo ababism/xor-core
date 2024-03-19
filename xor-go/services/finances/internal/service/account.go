@@ -53,7 +53,7 @@ func (s *bankAccountService) List(ctx context.Context, filter *domain.BankAccoun
 	return accounts, err
 }
 
-func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountBase) error {
+func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountCreate) error {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -65,7 +65,7 @@ func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountPost) error {
+func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountUpdate) error {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Update")
 	defer span.End()
 
@@ -88,7 +88,7 @@ func (s *bankAccountService) AddDiffToFunds(ctx context.Context, login string, d
 
 	account.Funds += diff
 
-	err = s.r.Update(newCtx, account)
+	err = s.r.Update(newCtx, domain.GetToBankAccountUpdateDomain(account))
 	if err != nil {
 		return err
 	}

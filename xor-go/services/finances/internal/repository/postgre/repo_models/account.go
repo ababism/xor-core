@@ -33,7 +33,7 @@ func CreateToBankAccountPostgres(model *domain.BankAccountCreate) *BankAccount {
 	}
 }
 
-func UpdateToBankAccountPostgres(model *domain.BankAccountPost) *BankAccount {
+func UpdateToBankAccountPostgres(model *domain.BankAccountUpdate) *BankAccount {
 	return &BankAccount{
 		UUID:        model.UUID,
 		AccountUUID: model.AccountUUID,

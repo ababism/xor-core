@@ -34,4 +34,5 @@ type PaymentFilter struct {
 	Receiver *uuid.UUID
 	URL      *string
 	Status   *string
+	EndedAt  *time.Time
 }

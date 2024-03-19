@@ -9,6 +9,7 @@ type ProductGet struct {
 	UUID          uuid.UUID
 	Name          string
 	Price         float64
+	IsAvailable   bool
 	CreatedAt     time.Time
 	LastUpdatedAt time.Time
 }
@@ -19,9 +20,10 @@ type ProductCreate struct {
 }
 
 type ProductUpdate struct {
-	UUID  uuid.UUID
-	Name  string
-	Price float64
+	UUID        uuid.UUID
+	Name        string
+	Price       float64
+	IsAvailable bool
 }
 
 type ProductFilter struct {
