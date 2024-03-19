@@ -1,8 +1,0 @@
-server:
-  error:
-    include-message: always
-
-spring:
-  datasource:
-    url: jdbc:postgresql://host:port/db?user=user&password=password
-    driver-class-name: org.postgresql.Driver
