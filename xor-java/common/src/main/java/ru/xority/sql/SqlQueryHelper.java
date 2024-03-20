@@ -16,6 +16,9 @@ public class SqlQueryHelper {
     }
 
     public static String queryWhereAnd(List<String> keys) {
+        if (keys.isEmpty()) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder(" WHERE ");
 
         int i = 1;

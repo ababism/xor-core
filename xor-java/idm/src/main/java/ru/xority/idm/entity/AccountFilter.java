@@ -14,13 +14,21 @@ import lombok.Data;
 public class AccountFilter {
     private Optional<UUID> uuid;
     private Optional<String> email;
-    private boolean active;
+    private Optional<Boolean> active;
 
-    public static AccountFilter byEmail(String email) {
+    public static AccountFilter byUuid(UUID uuid) {
+        return new AccountFilter(
+                Optional.of(uuid),
+                Optional.empty(),
+                Optional.empty()
+        );
+    }
+
+    public static AccountFilter activeByEmail(String email) {
         return new AccountFilter(
                 Optional.empty(),
                 Optional.of(email),
-                true
+                Optional.of(true)
         );
     }
 }

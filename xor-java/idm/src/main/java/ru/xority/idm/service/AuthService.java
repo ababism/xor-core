@@ -25,7 +25,7 @@ public class AuthService {
     private final JwtService jwtService;
 
     public String register(String email, String password) {
-        Optional<AccountEntity> accountFromRepo = accountRepository.get(AccountFilter.byEmail(email));
+        Optional<AccountEntity> accountFromRepo = accountRepository.get(AccountFilter.activeByEmail(email));
         if (accountFromRepo.isPresent()) {
             throw new BadRequestException("Email is already registered");
         }
@@ -38,7 +38,7 @@ public class AuthService {
     }
 
     public String logIn(String email, String password) {
-        Optional<AccountEntity> accountO = accountRepository.get(AccountFilter.byEmail(email));
+        Optional<AccountEntity> accountO = accountRepository.get(AccountFilter.activeByEmail(email));
         if (accountO.isEmpty()) {
             throw new AccountNotFoundException();
         }

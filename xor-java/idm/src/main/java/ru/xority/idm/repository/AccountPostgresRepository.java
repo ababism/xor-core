@@ -42,7 +42,7 @@ public class AccountPostgresRepository implements AccountRepository {
         Map<String, Object> args = new HashMap<>();
         filter.getUuid().ifPresent(v -> args.put(AccountEntity.UUID_FIELD, v));
         filter.getEmail().ifPresent(v -> args.put(AccountEntity.EMAIL_FIELD, v));
-        args.put(AccountEntity.ACTIVE_FIELD, filter.isActive());
+        filter.getActive().ifPresent(v -> args.put(AccountEntity.ACTIVE_FIELD, v));
 
         String whereQuery = SqlQueryHelper.queryWhereAnd(args.keySet().stream().toList());
 

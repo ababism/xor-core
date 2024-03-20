@@ -65,7 +65,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        Optional<AccountEntity> accountO = accountService.get(AccountFilter.byEmail(email));
+        Optional<AccountEntity> accountO = accountService.get(AccountFilter.activeByEmail(email));
         if (accountO.isEmpty()) {
             logger.error("Account with email={} is not found", email);
             return;
