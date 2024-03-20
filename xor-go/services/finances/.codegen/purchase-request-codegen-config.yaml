@@ -1,10 +1,10 @@
-# purchase_request-codegen-config.yaml for purchase_request api + server
+# purchase-request-codegen-config.yaml for purchase-request api + server
 
-output: xor-go/services/finances/internal/handler/generated/purchase_request/purchase_request.go
+output: internal/handler/generated/purchase-request/purchase-request.go
 package: purchase_request
 generate:
   - types
   - gin-server
 
 # To RUN from root:
-# oapi-codegen --config .codegen/purchase_request-codegen-config.yaml .codegen/purchase_request-codegen.yaml
+# oapi-codegen --config .codegen/purchase-request-codegen-config.yaml .codegen/purchase-request-codegen.yaml

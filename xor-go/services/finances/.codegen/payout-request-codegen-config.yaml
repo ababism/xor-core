@@ -1,11 +1,10 @@
 # payout-request-codegen-config.yaml for payout-request api + server
 
-output: xor-go/services/finances/internal/handler/generated/payout-request/payout-request.go
-package: payout-request
+output: internal/handler/generated/payout-request/payout-request.go
+package: payout_request
 generate:
   - types
   - gin-server
 
-
 # To RUN from root:
-# oapi-codegen --config xor-go/services/finances/.codegen/payout-request-codegen-config.yaml xor-go/services/finances/.codegen/payout-request-codegen.yaml
+# oapi-codegen --config .codegen/payout-request-codegen-config.yaml .codegen/payout-request-codegen.yaml

@@ -1,11 +1,10 @@
 # discount-codegen-config.yaml for discount api + server
 
-output: xor-go/services/finances/internal/handler/generated/discount/discount.go
+output: internal/handler/generated/discount/discount.go
 package: discount
 generate:
   - types
   - gin-server
 
-
 # To RUN from root:
-# oapi-codegen --config xor-go/services/finances/.codegen/discount-codegen-config.yaml xor-go/services/finances/.codegen/discount-codegen.yaml
+# oapi-codegen --config .codegen/discount-codegen-config.yaml .codegen/discount-codegen.yaml

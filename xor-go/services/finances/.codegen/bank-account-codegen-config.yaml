@@ -1,11 +1,10 @@
 # bank-account-codegen-config.yaml for bank-account api + server
 
-output: xor-go/services/finances/internal/handler/generated/bank-account/bank-account.go
-package: bank-account
+output: internal/handler/generated/bank-account/bank-account.go
+package: bank_account
 generate:
   - types
   - gin-server
 
-
 # To RUN from root:
-# oapi-codegen --config xor-go/services/finances/.codegen/bank-account-codegen-config.yaml xor-go/services/finances/.codegen/bank-account-codegen.yaml
+# oapi-codegen --config .codegen/bank-account-codegen-config.yaml .codegen/bank-account-codegen.yaml
