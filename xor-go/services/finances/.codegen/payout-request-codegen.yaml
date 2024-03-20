@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Payout Request Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /payout-requests/{id}:
+    get:
+      summary: Get payout request by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutRequestGet'
+  /payout-requests:
+    get:
+      summary: List payout requests
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayoutRequestGet'
+    post:
+      summary: Create a payout request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequestCreate'
+      responses:
+        '200':
+          description: Successful operation
+  /payout-requests/{id}/archive:
+    put:
+      summary: Archive a payout request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+components:
+  schemas:
+    PayoutRequestData:
+      type: object
+      properties: {}
+    PayoutRequestGet:
+      type: object
+      required:
+        - UUID
+        - Receiver
+        - Amount
+        - ReceivedAt
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        Data:
+          $ref: '#/components/schemas/PayoutRequestData'
+        ReceivedAt:
+          type: string
+          format: date-time
+    PayoutRequestCreate:
+      type: object
+      required:
+        - Receiver
+        - Amount
+        - ReceivedAt
+      properties:
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        Data:
+          $ref: '#/components/schemas/PayoutRequestData'
+        ReceivedAt:
+          type: string
+          format: date-time
+    PayoutRequestFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        ReceivedAt:
+          type: string
+          format: date-time

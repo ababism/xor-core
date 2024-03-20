@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  title: Payment Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /payments/{uuid}:
+    get:
+      summary: Get payment by UUID
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentGet'
+        '400':
+          description: Incorrect payment UUID
+        '404':
+          description: Payment not found by UUID
+  /payments:
+    get:
+      summary: List payments
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentGet'
+    post:
+      summary: Create a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect payment data
+components:
+  schemas:
+    PaymentData:
+      type: object
+      properties: { }
+    PaymentGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Data:
+          $ref: '#/components/schemas/PaymentData'
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time
+        CreatedAt:
+          type: string
+          format: date-time
+    PaymentCreate:
+      type: object
+      properties:
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Data:
+          $ref: '#/components/schemas/PaymentData'
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time
+      required:
+        - Sender
+        - Receiver
+        - Data
+        - URL
+        - Status
+        - EndedAt
+    PaymentFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time

@@ -1,0 +1,11 @@
+# product-codegen-config.yaml for product api + server
+
+output: xor-go/services/finances/internal/handler/generated/product/product.go
+package: product
+generate:
+  - types
+  - gin-server
+
+
+# To RUN from root:
+# oapi-codegen --config xor-go/services/finances/.codegen/product-codegen-config.yaml xor-go/services/finances/.codegen/product-codegen.yaml
