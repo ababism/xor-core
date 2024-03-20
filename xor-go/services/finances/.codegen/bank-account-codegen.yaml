@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  title: Bank Account Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /bank-accounts/{login}:
+    get:
+      summary: Get bank account by login
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountGet'
+        '400':
+          description: Incorrect bank account login
+        '404':
+          description: Bank account not found
+  /bank-accounts:
+    get:
+      summary: List bank accounts
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountGet'
+    post:
+      summary: Create a bank account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Incorrect bank account data
+    put:
+      summary: Update a bank account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountUpdate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect bank account data
+        '404':
+          description: Bank account not found
+  /bank-accounts/{login}/add-funds:
+    put:
+      summary: Add funds to a bank account
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newFunds:
+                  type: number
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect funds data
+        '404':
+          description: Bank account not found
+components:
+  schemas:
+    BankAccountData:
+      type: object
+      properties: { }
+    BankAccountGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Status:
+          type: string
+        LastDealAt:
+          type: string
+          format: date-time
+        CreatedAt:
+          type: string
+          format: date-time
+        LastUpdateAt:
+          type: string
+          format: date-time
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+    BankAccountCreate:
+      type: object
+      properties:
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - AccountUUID
+        - Login
+        - Data
+        - Payments
+    BankAccountUpdate:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Status:
+          type: string
+        LastDealAt:
+          type: string
+          format: date-time
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - UUID
+        - AccountUUID
+        - Login
+        - Funds
+        - Data
+        - Status
+        - LastDealAt
+        - Payments
