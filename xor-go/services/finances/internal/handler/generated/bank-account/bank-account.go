@@ -50,37 +50,37 @@ type BankAccountUpdate struct {
 	UUID        openapi_types.UUID   `json:"UUID"`
 }
 
-// PutBankAccountsLoginAddFundsJSONBody defines parameters for PutBankAccountsLoginAddFunds.
-type PutBankAccountsLoginAddFundsJSONBody struct {
+// ChangeFundsJSONBody defines parameters for ChangeFunds.
+type ChangeFundsJSONBody struct {
 	NewFunds *float32 `json:"newFunds,omitempty"`
 }
 
-// PostBankAccountsJSONRequestBody defines body for PostBankAccounts for application/json ContentType.
-type PostBankAccountsJSONRequestBody = BankAccountCreate
+// CreateBankAccountJSONRequestBody defines body for CreateBankAccount for application/json ContentType.
+type CreateBankAccountJSONRequestBody = BankAccountCreate
 
-// PutBankAccountsJSONRequestBody defines body for PutBankAccounts for application/json ContentType.
-type PutBankAccountsJSONRequestBody = BankAccountUpdate
+// UpdateBankAccountJSONRequestBody defines body for UpdateBankAccount for application/json ContentType.
+type UpdateBankAccountJSONRequestBody = BankAccountUpdate
 
-// PutBankAccountsLoginAddFundsJSONRequestBody defines body for PutBankAccountsLoginAddFunds for application/json ContentType.
-type PutBankAccountsLoginAddFundsJSONRequestBody PutBankAccountsLoginAddFundsJSONBody
+// ChangeFundsJSONRequestBody defines body for ChangeFunds for application/json ContentType.
+type ChangeFundsJSONRequestBody ChangeFundsJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List bank accounts
 	// (GET /bank-accounts)
-	GetBankAccounts(c *gin.Context)
+	GetBankAccountsFiltered(c *gin.Context)
 	// Create a bank account
 	// (POST /bank-accounts)
-	PostBankAccounts(c *gin.Context)
+	CreateBankAccount(c *gin.Context)
 	// Update a bank account
 	// (PUT /bank-accounts)
-	PutBankAccounts(c *gin.Context)
+	UpdateBankAccount(c *gin.Context)
 	// Get bank account by login
 	// (GET /bank-accounts/{login})
-	GetBankAccountsLogin(c *gin.Context, login string)
-	// Add funds to a bank account
-	// (PUT /bank-accounts/{login}/add-funds)
-	PutBankAccountsLoginAddFunds(c *gin.Context, login string)
+	GetBankAccountByLogin(c *gin.Context, login string)
+	// Change bank account funds
+	// (PUT /bank-accounts/{login}/change-funds)
+	ChangeFunds(c *gin.Context, login string)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -92,8 +92,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetBankAccounts operation middleware
-func (siw *ServerInterfaceWrapper) GetBankAccounts(c *gin.Context) {
+// GetBankAccountsFiltered operation middleware
+func (siw *ServerInterfaceWrapper) GetBankAccountsFiltered(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -102,11 +102,11 @@ func (siw *ServerInterfaceWrapper) GetBankAccounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetBankAccounts(c)
+	siw.Handler.GetBankAccountsFiltered(c)
 }
 
-// PostBankAccounts operation middleware
-func (siw *ServerInterfaceWrapper) PostBankAccounts(c *gin.Context) {
+// CreateBankAccount operation middleware
+func (siw *ServerInterfaceWrapper) CreateBankAccount(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -115,11 +115,11 @@ func (siw *ServerInterfaceWrapper) PostBankAccounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostBankAccounts(c)
+	siw.Handler.CreateBankAccount(c)
 }
 
-// PutBankAccounts operation middleware
-func (siw *ServerInterfaceWrapper) PutBankAccounts(c *gin.Context) {
+// UpdateBankAccount operation middleware
+func (siw *ServerInterfaceWrapper) UpdateBankAccount(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -128,11 +128,11 @@ func (siw *ServerInterfaceWrapper) PutBankAccounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutBankAccounts(c)
+	siw.Handler.UpdateBankAccount(c)
 }
 
-// GetBankAccountsLogin operation middleware
-func (siw *ServerInterfaceWrapper) GetBankAccountsLogin(c *gin.Context) {
+// GetBankAccountByLogin operation middleware
+func (siw *ServerInterfaceWrapper) GetBankAccountByLogin(c *gin.Context) {
 
 	var err error
 
@@ -152,11 +152,11 @@ func (siw *ServerInterfaceWrapper) GetBankAccountsLogin(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetBankAccountsLogin(c, login)
+	siw.Handler.GetBankAccountByLogin(c, login)
 }
 
-// PutBankAccountsLoginAddFunds operation middleware
-func (siw *ServerInterfaceWrapper) PutBankAccountsLoginAddFunds(c *gin.Context) {
+// ChangeFunds operation middleware
+func (siw *ServerInterfaceWrapper) ChangeFunds(c *gin.Context) {
 
 	var err error
 
@@ -176,7 +176,7 @@ func (siw *ServerInterfaceWrapper) PutBankAccountsLoginAddFunds(c *gin.Context) 
 		}
 	}
 
-	siw.Handler.PutBankAccountsLoginAddFunds(c, login)
+	siw.Handler.ChangeFunds(c, login)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -206,9 +206,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/bank-accounts", wrapper.GetBankAccounts)
-	router.POST(options.BaseURL+"/bank-accounts", wrapper.PostBankAccounts)
-	router.PUT(options.BaseURL+"/bank-accounts", wrapper.PutBankAccounts)
-	router.GET(options.BaseURL+"/bank-accounts/:login", wrapper.GetBankAccountsLogin)
-	router.PUT(options.BaseURL+"/bank-accounts/:login/add-funds", wrapper.PutBankAccountsLoginAddFunds)
+	router.GET(options.BaseURL+"/bank-accounts", wrapper.GetBankAccountsFiltered)
+	router.POST(options.BaseURL+"/bank-accounts", wrapper.CreateBankAccount)
+	router.PUT(options.BaseURL+"/bank-accounts", wrapper.UpdateBankAccount)
+	router.GET(options.BaseURL+"/bank-accounts/:login", wrapper.GetBankAccountByLogin)
+	router.PUT(options.BaseURL+"/bank-accounts/:login/change-funds", wrapper.ChangeFunds)
 }

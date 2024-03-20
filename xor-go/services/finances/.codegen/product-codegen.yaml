@@ -7,6 +7,7 @@ servers:
 paths:
   /products/{id}:
     get:
+      operationId: getProduct
       summary: Get product by ID
       parameters:
         - in: path
@@ -24,6 +25,7 @@ paths:
                 $ref: '#/components/schemas/ProductGet'
   /products:
     get:
+      operationId: getProducts
       summary: List products
       responses:
         '200':
@@ -35,6 +37,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ProductGet'
     post:
+      operationId: createProduct
       summary: Create a product
       requestBody:
         required: true
@@ -46,6 +49,7 @@ paths:
         '200':
           description: Successful operation
     put:
+      operationId: updateProduct
       summary: Update a product
       requestBody:
         required: true
@@ -58,6 +62,7 @@ paths:
           description: Successful operation
   /products/{id}/disable:
     put:
+      operationId: disableProduct
       summary: Disable a product
       parameters:
         - in: path

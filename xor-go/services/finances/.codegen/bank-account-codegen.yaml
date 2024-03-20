@@ -7,7 +7,7 @@ servers:
 paths:
   /bank-accounts/{login}:
     get:
-      operationId: getBankAccountByLogin
+      operationId: getBankAccount
       summary: Get bank account by login
       parameters:
         - in: path
