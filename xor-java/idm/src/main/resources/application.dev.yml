@@ -1,0 +1,17 @@
+server:
+  port: 5758
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=qwerty
+    driver-class-name: org.postgresql.Driver
+
+jwt-token:
+  salt: ns9ozm2ani3oc6xo4pozoijxsperv8rpo1bsdijvdlpszq
+  expiration: 86400000 # 24h
