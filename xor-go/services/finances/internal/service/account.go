@@ -77,7 +77,7 @@ func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) AddDiffToFunds(ctx context.Context, login string, diff float64) error {
+func (s *bankAccountService) ChangeFunds(ctx context.Context, login string, diff float64) error {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".AddDiffToFunds")
 	defer span.End()
 

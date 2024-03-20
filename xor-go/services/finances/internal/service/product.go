@@ -78,15 +78,15 @@ func (s *productService) Update(ctx context.Context, product *domain.ProductUpda
 	return nil
 }
 
-func (s *productService) Disable(ctx context.Context, id uuid.UUID) error {
-	_, newCtx, span := getProductTracerSpan(ctx, ".Disable")
+func (s *productService) SetAvailability(ctx context.Context, id uuid.UUID, isAvailable bool) error {
+	_, newCtx, span := getProductTracerSpan(ctx, ".SetAvailability")
 	defer span.End()
 
 	if id == uuid.Nil {
 		return errors.New("product ID cannot be nil")
 	}
 
-	err := s.r.Disable(newCtx, id)
+	err := s.r.SetAvailability(newCtx, id, isAvailable)
 	if err != nil {
 		return err
 	}

@@ -62,7 +62,7 @@ components:
   schemas:
     PayoutRequestData:
       type: object
-      properties: {}
+      properties: { }
     PayoutRequestGet:
       type: object
       required:
