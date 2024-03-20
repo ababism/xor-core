@@ -13,5 +13,5 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 jwt-token:
-  salt: ${JWT_TOKEN_SALT}
-  expiration: ${JWT_TOKEN_EXPIRATION}
+  salt: ${JWT_TOKEN_SALT:}
+  expiration: ${JWT_TOKEN_EXPIRATION:}
