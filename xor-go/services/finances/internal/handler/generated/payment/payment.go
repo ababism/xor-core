@@ -38,20 +38,20 @@ type PaymentGet struct {
 	UUID      *openapi_types.UUID `json:"UUID,omitempty"`
 }
 
-// PostPaymentsJSONRequestBody defines body for PostPayments for application/json ContentType.
-type PostPaymentsJSONRequestBody = PaymentCreate
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = PaymentCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List payments
 	// (GET /payments)
-	GetPayments(c *gin.Context)
+	GetList(c *gin.Context)
 	// Create a payment
 	// (POST /payments)
-	PostPayments(c *gin.Context)
+	Create(c *gin.Context)
 	// Get payment by UUID
 	// (GET /payments/{uuid})
-	GetPaymentsUuid(c *gin.Context, uuid openapi_types.UUID)
+	Get(c *gin.Context, uuid openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -63,8 +63,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetPayments operation middleware
-func (siw *ServerInterfaceWrapper) GetPayments(c *gin.Context) {
+// GetList operation middleware
+func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -73,11 +73,11 @@ func (siw *ServerInterfaceWrapper) GetPayments(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetPayments(c)
+	siw.Handler.GetList(c)
 }
 
-// PostPayments operation middleware
-func (siw *ServerInterfaceWrapper) PostPayments(c *gin.Context) {
+// Create operation middleware
+func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -86,11 +86,11 @@ func (siw *ServerInterfaceWrapper) PostPayments(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostPayments(c)
+	siw.Handler.Create(c)
 }
 
-// GetPaymentsUuid operation middleware
-func (siw *ServerInterfaceWrapper) GetPaymentsUuid(c *gin.Context) {
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 
 	var err error
 
@@ -110,7 +110,7 @@ func (siw *ServerInterfaceWrapper) GetPaymentsUuid(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetPaymentsUuid(c, uuid)
+	siw.Handler.Get(c, uuid)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -140,7 +140,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/payments", wrapper.GetPayments)
-	router.POST(options.BaseURL+"/payments", wrapper.PostPayments)
-	router.GET(options.BaseURL+"/payments/:uuid", wrapper.GetPaymentsUuid)
+	router.GET(options.BaseURL+"/payments", wrapper.GetList)
+	router.POST(options.BaseURL+"/payments", wrapper.Create)
+	router.GET(options.BaseURL+"/payments/:uuid", wrapper.Get)
 }

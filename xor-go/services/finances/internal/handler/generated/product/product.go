@@ -37,29 +37,29 @@ type ProductUpdate struct {
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 
-// PostProductsJSONRequestBody defines body for PostProducts for application/json ContentType.
-type PostProductsJSONRequestBody = ProductCreate
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = ProductCreate
 
-// PutProductsJSONRequestBody defines body for PutProducts for application/json ContentType.
-type PutProductsJSONRequestBody = ProductUpdate
+// UpdateJSONRequestBody defines body for Update for application/json ContentType.
+type UpdateJSONRequestBody = ProductUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List products
 	// (GET /products)
-	GetProducts(c *gin.Context)
+	GetList(c *gin.Context)
 	// Create a product
 	// (POST /products)
-	PostProducts(c *gin.Context)
+	Create(c *gin.Context)
 	// Update a product
 	// (PUT /products)
-	PutProducts(c *gin.Context)
+	Update(c *gin.Context)
 	// Get product by ID
 	// (GET /products/{id})
-	GetProductsId(c *gin.Context, id openapi_types.UUID)
+	Get(c *gin.Context, id openapi_types.UUID)
 	// Disable a product
 	// (PUT /products/{id}/disable)
-	PutProductsIdDisable(c *gin.Context, id openapi_types.UUID)
+	Disable(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -71,8 +71,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetProducts operation middleware
-func (siw *ServerInterfaceWrapper) GetProducts(c *gin.Context) {
+// GetList operation middleware
+func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -81,11 +81,11 @@ func (siw *ServerInterfaceWrapper) GetProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetProducts(c)
+	siw.Handler.GetList(c)
 }
 
-// PostProducts operation middleware
-func (siw *ServerInterfaceWrapper) PostProducts(c *gin.Context) {
+// Create operation middleware
+func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -94,11 +94,11 @@ func (siw *ServerInterfaceWrapper) PostProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostProducts(c)
+	siw.Handler.Create(c)
 }
 
-// PutProducts operation middleware
-func (siw *ServerInterfaceWrapper) PutProducts(c *gin.Context) {
+// Update operation middleware
+func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -107,11 +107,11 @@ func (siw *ServerInterfaceWrapper) PutProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutProducts(c)
+	siw.Handler.Update(c)
 }
 
-// GetProductsId operation middleware
-func (siw *ServerInterfaceWrapper) GetProductsId(c *gin.Context) {
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 
 	var err error
 
@@ -131,11 +131,11 @@ func (siw *ServerInterfaceWrapper) GetProductsId(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetProductsId(c, id)
+	siw.Handler.Get(c, id)
 }
 
-// PutProductsIdDisable operation middleware
-func (siw *ServerInterfaceWrapper) PutProductsIdDisable(c *gin.Context) {
+// Disable operation middleware
+func (siw *ServerInterfaceWrapper) Disable(c *gin.Context) {
 
 	var err error
 
@@ -155,7 +155,7 @@ func (siw *ServerInterfaceWrapper) PutProductsIdDisable(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutProductsIdDisable(c, id)
+	siw.Handler.Disable(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -185,9 +185,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/products", wrapper.GetProducts)
-	router.POST(options.BaseURL+"/products", wrapper.PostProducts)
-	router.PUT(options.BaseURL+"/products", wrapper.PutProducts)
-	router.GET(options.BaseURL+"/products/:id", wrapper.GetProductsId)
-	router.PUT(options.BaseURL+"/products/:id/disable", wrapper.PutProductsIdDisable)
+	router.GET(options.BaseURL+"/products", wrapper.GetList)
+	router.POST(options.BaseURL+"/products", wrapper.Create)
+	router.PUT(options.BaseURL+"/products", wrapper.Update)
+	router.GET(options.BaseURL+"/products/:id", wrapper.Get)
+	router.PUT(options.BaseURL+"/products/:id/disable", wrapper.Disable)
 }

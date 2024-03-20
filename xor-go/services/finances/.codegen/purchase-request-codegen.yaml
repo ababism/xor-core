@@ -7,7 +7,7 @@ servers:
 paths:
   /purchase-requests/{id}:
     get:
-      operationId: getPurchaseRequest
+      operationId: get
       summary: Get purchase request by ID
       parameters:
         - in: path
@@ -25,7 +25,7 @@ paths:
                 $ref: '#/components/schemas/PurchaseRequestGet'
   /purchase-requests:
     get:
-      operationId: getPurchaseRequests
+      operationId: getList
       summary: List purchase requests
       responses:
         '200':
@@ -37,7 +37,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/PurchaseRequestGet'
     post:
-      operationId: createPurchaseRequest
+      operationId: create
       summary: Create a purchase request
       requestBody:
         required: true
@@ -50,7 +50,7 @@ paths:
           description: Successful operation
   /purchase-requests/{id}/archive:
     put:
-      operationId: archivePurchaseRequest
+      operationId: archive
       summary: Archive a purchase request
       parameters:
         - in: path

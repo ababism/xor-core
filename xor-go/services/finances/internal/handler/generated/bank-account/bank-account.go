@@ -50,37 +50,37 @@ type BankAccountUpdate struct {
 	UUID        openapi_types.UUID   `json:"UUID"`
 }
 
-// ChangeFundsJSONBody defines parameters for ChangeFunds.
-type ChangeFundsJSONBody struct {
+// ChangeJSONBody defines parameters for Change.
+type ChangeJSONBody struct {
 	NewFunds *float32 `json:"newFunds,omitempty"`
 }
 
-// CreateBankAccountJSONRequestBody defines body for CreateBankAccount for application/json ContentType.
-type CreateBankAccountJSONRequestBody = BankAccountCreate
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = BankAccountCreate
 
-// UpdateBankAccountJSONRequestBody defines body for UpdateBankAccount for application/json ContentType.
-type UpdateBankAccountJSONRequestBody = BankAccountUpdate
+// UpdateJSONRequestBody defines body for Update for application/json ContentType.
+type UpdateJSONRequestBody = BankAccountUpdate
 
-// ChangeFundsJSONRequestBody defines body for ChangeFunds for application/json ContentType.
-type ChangeFundsJSONRequestBody ChangeFundsJSONBody
+// ChangeJSONRequestBody defines body for Change for application/json ContentType.
+type ChangeJSONRequestBody ChangeJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List bank accounts
 	// (GET /bank-accounts)
-	GetBankAccountsFiltered(c *gin.Context)
+	GetList(c *gin.Context)
 	// Create a bank account
 	// (POST /bank-accounts)
-	CreateBankAccount(c *gin.Context)
+	Create(c *gin.Context)
 	// Update a bank account
 	// (PUT /bank-accounts)
-	UpdateBankAccount(c *gin.Context)
+	Update(c *gin.Context)
 	// Get bank account by login
 	// (GET /bank-accounts/{login})
-	GetBankAccountByLogin(c *gin.Context, login string)
+	Get(c *gin.Context, login string)
 	// Change bank account funds
 	// (PUT /bank-accounts/{login}/change-funds)
-	ChangeFunds(c *gin.Context, login string)
+	Change(c *gin.Context, login string)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -92,8 +92,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetBankAccountsFiltered operation middleware
-func (siw *ServerInterfaceWrapper) GetBankAccountsFiltered(c *gin.Context) {
+// GetList operation middleware
+func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -102,11 +102,11 @@ func (siw *ServerInterfaceWrapper) GetBankAccountsFiltered(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetBankAccountsFiltered(c)
+	siw.Handler.GetList(c)
 }
 
-// CreateBankAccount operation middleware
-func (siw *ServerInterfaceWrapper) CreateBankAccount(c *gin.Context) {
+// Create operation middleware
+func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -115,11 +115,11 @@ func (siw *ServerInterfaceWrapper) CreateBankAccount(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.CreateBankAccount(c)
+	siw.Handler.Create(c)
 }
 
-// UpdateBankAccount operation middleware
-func (siw *ServerInterfaceWrapper) UpdateBankAccount(c *gin.Context) {
+// Update operation middleware
+func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -128,11 +128,11 @@ func (siw *ServerInterfaceWrapper) UpdateBankAccount(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UpdateBankAccount(c)
+	siw.Handler.Update(c)
 }
 
-// GetBankAccountByLogin operation middleware
-func (siw *ServerInterfaceWrapper) GetBankAccountByLogin(c *gin.Context) {
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 
 	var err error
 
@@ -152,11 +152,11 @@ func (siw *ServerInterfaceWrapper) GetBankAccountByLogin(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetBankAccountByLogin(c, login)
+	siw.Handler.Get(c, login)
 }
 
-// ChangeFunds operation middleware
-func (siw *ServerInterfaceWrapper) ChangeFunds(c *gin.Context) {
+// Change operation middleware
+func (siw *ServerInterfaceWrapper) Change(c *gin.Context) {
 
 	var err error
 
@@ -176,7 +176,7 @@ func (siw *ServerInterfaceWrapper) ChangeFunds(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.ChangeFunds(c, login)
+	siw.Handler.Change(c, login)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -206,9 +206,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/bank-accounts", wrapper.GetBankAccountsFiltered)
-	router.POST(options.BaseURL+"/bank-accounts", wrapper.CreateBankAccount)
-	router.PUT(options.BaseURL+"/bank-accounts", wrapper.UpdateBankAccount)
-	router.GET(options.BaseURL+"/bank-accounts/:login", wrapper.GetBankAccountByLogin)
-	router.PUT(options.BaseURL+"/bank-accounts/:login/change-funds", wrapper.ChangeFunds)
+	router.GET(options.BaseURL+"/bank-accounts", wrapper.GetList)
+	router.POST(options.BaseURL+"/bank-accounts", wrapper.Create)
+	router.PUT(options.BaseURL+"/bank-accounts", wrapper.Update)
+	router.GET(options.BaseURL+"/bank-accounts/:login", wrapper.Get)
+	router.PUT(options.BaseURL+"/bank-accounts/:login/change-funds", wrapper.Change)
 }

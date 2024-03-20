@@ -47,29 +47,29 @@ type DiscountUpdate struct {
 	UUID       openapi_types.UUID `json:"UUID"`
 }
 
-// PostDiscountsJSONRequestBody defines body for PostDiscounts for application/json ContentType.
-type PostDiscountsJSONRequestBody = DiscountCreate
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = DiscountCreate
 
-// PutDiscountsJSONRequestBody defines body for PutDiscounts for application/json ContentType.
-type PutDiscountsJSONRequestBody = DiscountUpdate
+// UpdateJSONRequestBody defines body for Update for application/json ContentType.
+type UpdateJSONRequestBody = DiscountUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List discounts
 	// (GET /discounts)
-	GetDiscounts(c *gin.Context)
+	GetList(c *gin.Context)
 	// Create a discount
 	// (POST /discounts)
-	PostDiscounts(c *gin.Context)
+	Create(c *gin.Context)
 	// Update a discount
 	// (PUT /discounts)
-	PutDiscounts(c *gin.Context)
+	Update(c *gin.Context)
 	// Get discount by ID
 	// (GET /discounts/{id})
-	GetDiscountsId(c *gin.Context, id openapi_types.UUID)
+	Get(c *gin.Context, id openapi_types.UUID)
 	// End a discount
 	// (PUT /discounts/{id}/end)
-	PutDiscountsIdEnd(c *gin.Context, id openapi_types.UUID)
+	End(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -81,8 +81,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetDiscounts operation middleware
-func (siw *ServerInterfaceWrapper) GetDiscounts(c *gin.Context) {
+// GetList operation middleware
+func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -91,11 +91,11 @@ func (siw *ServerInterfaceWrapper) GetDiscounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetDiscounts(c)
+	siw.Handler.GetList(c)
 }
 
-// PostDiscounts operation middleware
-func (siw *ServerInterfaceWrapper) PostDiscounts(c *gin.Context) {
+// Create operation middleware
+func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -104,11 +104,11 @@ func (siw *ServerInterfaceWrapper) PostDiscounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostDiscounts(c)
+	siw.Handler.Create(c)
 }
 
-// PutDiscounts operation middleware
-func (siw *ServerInterfaceWrapper) PutDiscounts(c *gin.Context) {
+// Update operation middleware
+func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -117,11 +117,11 @@ func (siw *ServerInterfaceWrapper) PutDiscounts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutDiscounts(c)
+	siw.Handler.Update(c)
 }
 
-// GetDiscountsId operation middleware
-func (siw *ServerInterfaceWrapper) GetDiscountsId(c *gin.Context) {
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 
 	var err error
 
@@ -141,11 +141,11 @@ func (siw *ServerInterfaceWrapper) GetDiscountsId(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetDiscountsId(c, id)
+	siw.Handler.Get(c, id)
 }
 
-// PutDiscountsIdEnd operation middleware
-func (siw *ServerInterfaceWrapper) PutDiscountsIdEnd(c *gin.Context) {
+// End operation middleware
+func (siw *ServerInterfaceWrapper) End(c *gin.Context) {
 
 	var err error
 
@@ -165,7 +165,7 @@ func (siw *ServerInterfaceWrapper) PutDiscountsIdEnd(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutDiscountsIdEnd(c, id)
+	siw.Handler.End(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -195,9 +195,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/discounts", wrapper.GetDiscounts)
-	router.POST(options.BaseURL+"/discounts", wrapper.PostDiscounts)
-	router.PUT(options.BaseURL+"/discounts", wrapper.PutDiscounts)
-	router.GET(options.BaseURL+"/discounts/:id", wrapper.GetDiscountsId)
-	router.PUT(options.BaseURL+"/discounts/:id/end", wrapper.PutDiscountsIdEnd)
+	router.GET(options.BaseURL+"/discounts", wrapper.GetList)
+	router.POST(options.BaseURL+"/discounts", wrapper.Create)
+	router.PUT(options.BaseURL+"/discounts", wrapper.Update)
+	router.GET(options.BaseURL+"/discounts/:id", wrapper.Get)
+	router.PUT(options.BaseURL+"/discounts/:id/end", wrapper.End)
 }

@@ -7,7 +7,7 @@ servers:
 paths:
   /payout-requests/{id}:
     get:
-      operationId: getPayoutRequest
+      operationId: get
       summary: Get payout request by ID
       parameters:
         - in: path
@@ -25,7 +25,7 @@ paths:
                 $ref: '#/components/schemas/PayoutRequestGet'
   /payout-requests:
     get:
-      operationId: getPayoutRequests
+      operationId: getList
       summary: List payout requests
       responses:
         '200':
@@ -37,7 +37,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/PayoutRequestGet'
     post:
-      operationId: createPayoutRequest
+      operationId: create
       summary: Create a payout request
       requestBody:
         required: true
@@ -50,7 +50,7 @@ paths:
           description: Successful operation
   /payout-requests/{id}/archive:
     put:
-      operationId: archivePayoutRequest
+      operationId: archive
       summary: Archive a payout request
       parameters:
         - in: path

@@ -30,23 +30,23 @@ type PurchaseRequestGet struct {
 	WebhookURL string             `json:"WebhookURL"`
 }
 
-// PostPurchaseRequestsJSONRequestBody defines body for PostPurchaseRequests for application/json ContentType.
-type PostPurchaseRequestsJSONRequestBody = PurchaseRequestCreate
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = PurchaseRequestCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List purchase requests
 	// (GET /purchase-requests)
-	GetPurchaseRequests(c *gin.Context)
+	GetList(c *gin.Context)
 	// Create a purchase request
 	// (POST /purchase-requests)
-	PostPurchaseRequests(c *gin.Context)
+	Create(c *gin.Context)
 	// Get purchase request by ID
 	// (GET /purchase-requests/{id})
-	GetPurchaseRequestsId(c *gin.Context, id openapi_types.UUID)
+	Get(c *gin.Context, id openapi_types.UUID)
 	// Archive a purchase request
 	// (PUT /purchase-requests/{id}/archive)
-	PutPurchaseRequestsIdArchive(c *gin.Context, id openapi_types.UUID)
+	Archive(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -58,8 +58,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetPurchaseRequests operation middleware
-func (siw *ServerInterfaceWrapper) GetPurchaseRequests(c *gin.Context) {
+// GetList operation middleware
+func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -68,11 +68,11 @@ func (siw *ServerInterfaceWrapper) GetPurchaseRequests(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetPurchaseRequests(c)
+	siw.Handler.GetList(c)
 }
 
-// PostPurchaseRequests operation middleware
-func (siw *ServerInterfaceWrapper) PostPurchaseRequests(c *gin.Context) {
+// Create operation middleware
+func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -81,11 +81,11 @@ func (siw *ServerInterfaceWrapper) PostPurchaseRequests(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostPurchaseRequests(c)
+	siw.Handler.Create(c)
 }
 
-// GetPurchaseRequestsId operation middleware
-func (siw *ServerInterfaceWrapper) GetPurchaseRequestsId(c *gin.Context) {
+// Get operation middleware
+func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 
 	var err error
 
@@ -105,11 +105,11 @@ func (siw *ServerInterfaceWrapper) GetPurchaseRequestsId(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetPurchaseRequestsId(c, id)
+	siw.Handler.Get(c, id)
 }
 
-// PutPurchaseRequestsIdArchive operation middleware
-func (siw *ServerInterfaceWrapper) PutPurchaseRequestsIdArchive(c *gin.Context) {
+// Archive operation middleware
+func (siw *ServerInterfaceWrapper) Archive(c *gin.Context) {
 
 	var err error
 
@@ -129,7 +129,7 @@ func (siw *ServerInterfaceWrapper) PutPurchaseRequestsIdArchive(c *gin.Context) 
 		}
 	}
 
-	siw.Handler.PutPurchaseRequestsIdArchive(c, id)
+	siw.Handler.Archive(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -159,8 +159,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/purchase-requests", wrapper.GetPurchaseRequests)
-	router.POST(options.BaseURL+"/purchase-requests", wrapper.PostPurchaseRequests)
-	router.GET(options.BaseURL+"/purchase-requests/:id", wrapper.GetPurchaseRequestsId)
-	router.PUT(options.BaseURL+"/purchase-requests/:id/archive", wrapper.PutPurchaseRequestsIdArchive)
+	router.GET(options.BaseURL+"/purchase-requests", wrapper.GetList)
+	router.POST(options.BaseURL+"/purchase-requests", wrapper.Create)
+	router.GET(options.BaseURL+"/purchase-requests/:id", wrapper.Get)
+	router.PUT(options.BaseURL+"/purchase-requests/:id/archive", wrapper.Archive)
 }
