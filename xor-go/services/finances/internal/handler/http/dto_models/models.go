@@ -12,7 +12,7 @@ type BankAccount struct {
 	UUID        uuid.UUID       `json:"uuid"`
 	AccountUUID uuid.UUID       `json:"account_uuid"`
 	Login       string          `json:"login"`
-	Funds       float64         `json:"funds"`
+	Funds       float32         `json:"funds"`
 	Data        BankAccountData `json:"data"`
 	Status      string          `json:"status"`
 	LastDealAt  time.Time       `json:"last_deal_at"`
@@ -35,14 +35,14 @@ type Payment struct {
 type Product struct {
 	UUID      uuid.UUID `json:"uuid"`
 	Name      string    `json:"name"`
-	Price     float64   `json:"price"`
+	Price     float32   `json:"price"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 type Discount struct {
 	UUID       uuid.UUID `json:"uuid"`
 	CreatedBy  uuid.UUID `json:"created_by"`
-	Percent    float64   `json:"percent"`
+	Percent    float32   `json:"percent"`
 	StandAlone bool      `json:"stand_alone"`
 	StartedAt  time.Time `json:"started_at"`
 	EndedAt    time.Time `json:"ended_at"`
@@ -55,7 +55,7 @@ type PayoutRequestData struct {
 type PayoutRequest struct {
 	UUID      uuid.UUID         `json:"uuid"`
 	Receiver  uuid.UUID         `json:"receiver"`
-	Amount    float64           `json:"amount"`
+	Amount    float32           `json:"amount"`
 	StartedAt time.Time         `json:"started_at"`
 	Data      PayoutRequestData `json:"data"`
 }

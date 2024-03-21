@@ -12,7 +12,7 @@ type BankAccountGet struct {
 	UUID         uuid.UUID
 	AccountUUID  uuid.UUID
 	Login        string
-	Funds        float64
+	Funds        float32
 	Data         BankAccountData
 	Status       string
 	LastDealAt   time.Time
@@ -32,7 +32,7 @@ type BankAccountUpdate struct {
 	UUID        uuid.UUID
 	AccountUUID uuid.UUID
 	Login       string
-	Funds       float64
+	Funds       float32
 	Data        BankAccountData
 	Status      string
 	LastDealAt  time.Time
@@ -43,7 +43,7 @@ type BankAccountFilter struct {
 	UUID        *uuid.UUID
 	AccountUUID *uuid.UUID
 	Login       *string
-	Funds       *float64
+	Funds       *float32
 	Status      *string
 }
 

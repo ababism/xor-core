@@ -28,8 +28,8 @@ func getAccountTracerSpan(ctx context.Context, name string) (trace.Tracer, conte
 	return tr, newCtx, span
 }
 
-func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
+func (s *bankAccountService) Get(ctx context.Context, login string) (*domain.BankAccountGet, error) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
 	defer span.End()
 
 	filter := domain.CreateBankAccountFilterLogin(&login)
@@ -77,11 +77,11 @@ func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) ChangeFunds(ctx context.Context, login string, diff float64) error {
+func (s *bankAccountService) ChangeFunds(ctx context.Context, login string, diff float32) error {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".AddDiffToFunds")
 	defer span.End()
 
-	account, err := s.GetByLogin(ctx, login)
+	account, err := s.Get(ctx, login)
 	if err != nil {
 		return err
 	}

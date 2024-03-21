@@ -33,36 +33,33 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 }
 
 func (h *BankAccountHandler) Get(c *gin.Context, login string) {
-	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
+	_, newCtx, span := getAccountTracerSpan(c, ".Get")
 	defer span.End()
 
-	accounts, err := h.bankAccountService.List(newCtx, FilterToDomain(params.Filter))
+	domain, err := h.bankAccountService.Get(newCtx, login)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	list := make([]bankaccount.BankAccountGet, len(accounts))
-	for i, item := range accounts {
-		list[i] = DomainToResponse(item)
-	}
+	response := DomainToGet(*domain)
 
-	c.JSON(http.StatusOK, list)
+	c.JSON(http.StatusOK, response)
 }
 
 func (h *BankAccountHandler) GetList(c *gin.Context, params bankaccount.GetListParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
 	defer span.End()
 
-	accounts, err := h.bankAccountService.List(newCtx, FilterToDomain(params.Filter))
+	domains, err := h.bankAccountService.List(newCtx, FilterToDomain(params.Filter))
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	list := make([]bankaccount.BankAccountGet, len(accounts))
-	for i, item := range accounts {
-		list[i] = DomainToResponse(item)
+	list := make([]bankaccount.BankAccountGet, len(domains))
+	for i, item := range domains {
+		list[i] = DomainToGet(item)
 	}
 
 	c.JSON(http.StatusOK, list)
@@ -72,73 +69,39 @@ func (h *BankAccountHandler) Create(c *gin.Context, params bankaccount.CreatePar
 	_, newCtx, span := getAccountTracerSpan(c, ".Create")
 	defer span.End()
 
-	accounts, err := h.bankAccountService.List(newCtx, FilterToDomain(params.Filter))
+	domain := CreateToDomain(params.Model)
+	err := h.bankAccountService.Create(newCtx, &domain)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	list := make([]bankaccount.BankAccountGet, len(accounts))
-	for i, item := range accounts {
-		list[i] = DomainToResponse(item)
-	}
-
-	c.JSON(http.StatusOK, list)
+	c.JSON(http.StatusOK, http.NoBody)
 }
 
 func (h *BankAccountHandler) Update(c *gin.Context, params bankaccount.UpdateParams) {
-	//TODO implement me
-	panic("implement me")
+	_, newCtx, span := getAccountTracerSpan(c, ".Update")
+	defer span.End()
+
+	domain := UpdateToDomain(params.Model)
+	err := h.bankAccountService.Update(newCtx, &domain)
+	if err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, http.NoBody)
 }
 
 func (h *BankAccountHandler) Change(c *gin.Context, login string, params bankaccount.ChangeParams) {
-	//TODO implement me
-	panic("implement me")
+	_, newCtx, span := getAccountTracerSpan(c, ".Change")
+	defer span.End()
+
+	err := h.bankAccountService.ChangeFunds(newCtx, login, params.NewFunds)
+	if err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, http.NoBody)
 }
-
-//func (h *BankAccountHandler) GetList(c *gin.Context) {
-//	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
-//	defer span.End()
-//
-//	trip, err := h.bankAccountService.List(newCtx, params.UserId)
-//	if err != nil {
-//		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
-//		return
-//	}
-//	resp := models.ToTripResponse(*trip)
-//
-//	ginCtx.JSON(http.StatusOK, resp)
-//}
-
-//func (h *BankAccountHandler) GetTripByID(ginCtx *gin.Context, tripId openapitypes.UUID, params generated.GetTripByIDParams) {
-//	tr := global.Tracer(domain.ServiceName)
-//	ctxTrace, span := tr.Start(ginCtx, "bankAccount/bankAccount_api.GetTripByID")
-//	defer span.End()
-//
-//	ctx := zapctx.WithLogger(ctxTrace, h.logger)
-//
-//	trip, err := h.bankAccountService.GetTripByID(ctx, params.UserId, tripId)
-//	if err != nil {
-//		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
-//		return
-//	}
-//	resp := models.ToTripResponse(*trip)
-//
-//	ginCtx.JSON(http.StatusOK, resp)
-//}
-
-//func (h *BankAccountHandler) AcceptTrip(ginCtx *gin.Context, tripId openapitypes.UUID, params generated.AcceptTripParams) {
-//	tr := global.Tracer(domain.ServiceName)
-//	ctxTrace, span := tr.Start(ginCtx, "bankAccount/bankAccount_api.AcceptTrip")
-//	defer span.End()
-//
-//	ctx := zapctx.WithLogger(ctxTrace, h.logger)
-//
-//	err := h.bankAccountService.AcceptTrip(ctx, params.UserId, tripId)
-//	if err != nil {
-//		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
-//		return
-//	}
-//
-//	ginCtx.JSON(http.StatusOK, http.NoBody)
-//}

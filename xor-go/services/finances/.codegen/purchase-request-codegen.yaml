@@ -46,7 +46,7 @@ paths:
       summary: Create a purchase request
       parameters:
         - in: query
-          name: filter
+          name: model
           required: true
           schema:
             $ref: '#/components/schemas/PurchaseRequestCreate'

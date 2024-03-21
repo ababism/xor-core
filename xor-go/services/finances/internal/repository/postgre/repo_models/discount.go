@@ -9,7 +9,7 @@ import (
 type Discount struct {
 	UUID          uuid.UUID `db:"uuid"`
 	CreatedBy     uuid.UUID `db:"created_by"`
-	Percent       float64   `db:"percent"`
+	Percent       float32   `db:"percent"`
 	StandAlone    bool      `db:"stand_alone"`
 	StartedAt     time.Time `db:"started_at"`
 	EndedAt       time.Time `db:"ended_at"`

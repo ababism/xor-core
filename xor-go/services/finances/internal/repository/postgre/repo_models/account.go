@@ -13,7 +13,7 @@ type BankAccount struct {
 	UUID          uuid.UUID       `db:"uuid"`
 	AccountUUID   uuid.UUID       `db:"account_uuid"`
 	Login         string          `db:"login"`
-	Funds         float64         `db:"funds"`
+	Funds         float32         `db:"funds"`
 	Data          BankAccountData `db:"data"`
 	Status        string          `db:"status"`
 	LastDealAt    time.Time       `db:"last_deal_at"`

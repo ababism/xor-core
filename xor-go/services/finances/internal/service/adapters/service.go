@@ -16,11 +16,11 @@ const (
 )
 
 type BankAccountService interface {
-	GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error)
+	Get(ctx context.Context, login string) (*domain.BankAccountGet, error)
 	List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
 	Create(ctx context.Context, account *domain.BankAccountCreate) error
 	Update(ctx context.Context, account *domain.BankAccountUpdate) error
-	ChangeFunds(ctx context.Context, login string, newFunds float64) error
+	ChangeFunds(ctx context.Context, login string, newFunds float32) error
 }
 
 type PaymentService interface {

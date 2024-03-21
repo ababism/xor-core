@@ -6,7 +6,7 @@ func CreateBankAccountFilter(
 	uuid *uuid.UUID,
 	accountId *uuid.UUID,
 	login *string,
-	funds *float64,
+	funds *float32,
 	status *string,
 ) BankAccountFilter {
 	return BankAccountFilter{
