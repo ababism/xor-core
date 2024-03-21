@@ -15,7 +15,7 @@ import (
 
 // PayoutRequestCreate defines model for PayoutRequestCreate.
 type PayoutRequestCreate struct {
-	Amount     float64            `json:"Amount"`
+	Amount     float32            `json:"Amount"`
 	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
@@ -26,7 +26,7 @@ type PayoutRequestData = map[string]interface{}
 
 // PayoutRequestFilter defines model for PayoutRequestFilter.
 type PayoutRequestFilter struct {
-	Amount     *float64            `json:"Amount,omitempty"`
+	Amount     *float32            `json:"Amount,omitempty"`
 	ReceivedAt *time.Time          `json:"ReceivedAt,omitempty"`
 	Receiver   *openapi_types.UUID `json:"Receiver,omitempty"`
 	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
@@ -34,7 +34,7 @@ type PayoutRequestFilter struct {
 
 // PayoutRequestGet defines model for PayoutRequestGet.
 type PayoutRequestGet struct {
-	Amount     float64            `json:"Amount"`
+	Amount     float32            `json:"Amount"`
 	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
@@ -43,7 +43,7 @@ type PayoutRequestGet struct {
 
 // GetListParams defines parameters for GetList.
 type GetListParams struct {
-	Filter PayoutRequestFilter `form:"filter" json:"filter"`
+	Filter *PayoutRequestFilter `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
 // CreateParams defines parameters for Create.
@@ -84,16 +84,9 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetListParams
 
-	// ------------- Required query parameter "filter" -------------
+	// ------------- Optional query parameter "filter" -------------
 
-	if paramValue := c.Query("filter"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
 		return

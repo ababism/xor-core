@@ -38,19 +38,19 @@ type PaymentFilter struct {
 
 // PaymentGet defines model for PaymentGet.
 type PaymentGet struct {
-	CreatedAt *time.Time          `json:"CreatedAt,omitempty"`
-	Data      *PaymentData        `json:"Data,omitempty"`
-	EndedAt   *time.Time          `json:"EndedAt,omitempty"`
-	Receiver  *openapi_types.UUID `json:"Receiver,omitempty"`
-	Sender    *openapi_types.UUID `json:"Sender,omitempty"`
-	Status    *string             `json:"Status,omitempty"`
-	URL       *string             `json:"URL,omitempty"`
-	UUID      *openapi_types.UUID `json:"UUID,omitempty"`
+	CreatedAt time.Time          `json:"CreatedAt"`
+	Data      PaymentData        `json:"Data"`
+	EndedAt   time.Time          `json:"EndedAt"`
+	Receiver  openapi_types.UUID `json:"Receiver"`
+	Sender    openapi_types.UUID `json:"Sender"`
+	Status    string             `json:"Status"`
+	URL       string             `json:"URL"`
+	UUID      openapi_types.UUID `json:"UUID"`
 }
 
 // GetListParams defines parameters for GetList.
 type GetListParams struct {
-	Filter PaymentFilter `form:"filter" json:"filter"`
+	Filter *PaymentFilter `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
 // CreateParams defines parameters for Create.
@@ -88,16 +88,9 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetListParams
 
-	// ------------- Required query parameter "filter" -------------
+	// ------------- Optional query parameter "filter" -------------
 
-	if paramValue := c.Query("filter"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
 		return

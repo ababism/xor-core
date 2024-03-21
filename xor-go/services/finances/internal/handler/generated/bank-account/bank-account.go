@@ -27,7 +27,7 @@ type BankAccountData = map[string]interface{}
 // BankAccountFilter defines model for BankAccountFilter.
 type BankAccountFilter struct {
 	AccountUUID *openapi_types.UUID `json:"AccountUUID,omitempty"`
-	Funds       *float64            `json:"Funds,omitempty"`
+	Funds       *float32            `json:"Funds,omitempty"`
 	Login       *string             `json:"Login,omitempty"`
 	Status      *string             `json:"Status,omitempty"`
 	UUID        *openapi_types.UUID `json:"UUID,omitempty"`
@@ -38,7 +38,7 @@ type BankAccountGet struct {
 	AccountUUID  openapi_types.UUID   `json:"AccountUUID"`
 	CreatedAt    time.Time            `json:"CreatedAt"`
 	Data         BankAccountData      `json:"Data"`
-	Funds        float64              `json:"Funds"`
+	Funds        float32              `json:"Funds"`
 	LastDealAt   time.Time            `json:"LastDealAt"`
 	LastUpdateAt time.Time            `json:"LastUpdateAt"`
 	Login        string               `json:"Login"`
@@ -51,7 +51,7 @@ type BankAccountGet struct {
 type BankAccountUpdate struct {
 	AccountUUID openapi_types.UUID   `json:"AccountUUID"`
 	Data        BankAccountData      `json:"Data"`
-	Funds       float64              `json:"Funds"`
+	Funds       float32              `json:"Funds"`
 	LastDealAt  time.Time            `json:"LastDealAt"`
 	Login       string               `json:"Login"`
 	Payments    []openapi_types.UUID `json:"Payments"`
@@ -76,7 +76,7 @@ type UpdateParams struct {
 
 // ChangeParams defines parameters for Change.
 type ChangeParams struct {
-	NewFunds float64 `form:"newFunds" json:"newFunds"`
+	NewFunds float32 `form:"newFunds" json:"newFunds"`
 }
 
 // ServerInterface represents all server handlers.

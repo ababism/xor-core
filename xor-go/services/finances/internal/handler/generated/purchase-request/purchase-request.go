@@ -21,6 +21,15 @@ type PurchaseRequestCreate struct {
 	WebhookURL string             `json:"WebhookURL"`
 }
 
+// PurchaseRequestFilter defines model for PurchaseRequestFilter.
+type PurchaseRequestFilter struct {
+	ReceivedAt *time.Time          `json:"ReceivedAt,omitempty"`
+	Receiver   *openapi_types.UUID `json:"Receiver,omitempty"`
+	Sender     *openapi_types.UUID `json:"Sender,omitempty"`
+	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
+	WebhookURL *string             `json:"WebhookURL,omitempty"`
+}
+
 // PurchaseRequestGet defines model for PurchaseRequestGet.
 type PurchaseRequestGet struct {
 	ReceivedAt time.Time          `json:"ReceivedAt"`
@@ -32,7 +41,7 @@ type PurchaseRequestGet struct {
 
 // GetListParams defines parameters for GetList.
 type GetListParams struct {
-	Filter PurchaseRequestGet `form:"filter" json:"filter"`
+	Filter *PurchaseRequestFilter `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
 // CreateParams defines parameters for Create.
@@ -73,16 +82,9 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetListParams
 
-	// ------------- Required query parameter "filter" -------------
+	// ------------- Optional query parameter "filter" -------------
 
-	if paramValue := c.Query("filter"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
 		return

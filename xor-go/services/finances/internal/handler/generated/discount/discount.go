@@ -17,7 +17,7 @@ import (
 type DiscountCreate struct {
 	CreatedBy  openapi_types.UUID `json:"CreatedBy"`
 	EndedAt    time.Time          `json:"EndedAt"`
-	Percent    float64            `json:"Percent"`
+	Percent    float32            `json:"Percent"`
 	StandAlone bool               `json:"StandAlone"`
 	StartedAt  time.Time          `json:"StartedAt"`
 	Status     string             `json:"Status"`
@@ -26,7 +26,7 @@ type DiscountCreate struct {
 // DiscountFilter defines model for DiscountFilter.
 type DiscountFilter struct {
 	CreatedBy  *openapi_types.UUID `json:"CreatedBy,omitempty"`
-	Percent    *float64            `json:"Percent,omitempty"`
+	Percent    *float32            `json:"Percent,omitempty"`
 	StandAlone *bool               `json:"StandAlone,omitempty"`
 	Status     *string             `json:"Status,omitempty"`
 	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
@@ -38,7 +38,7 @@ type DiscountGet struct {
 	CreatedBy    openapi_types.UUID `json:"CreatedBy"`
 	EndedAt      time.Time          `json:"EndedAt"`
 	LastUpdateAt time.Time          `json:"LastUpdateAt"`
-	Percent      float64            `json:"Percent"`
+	Percent      float32            `json:"Percent"`
 	StandAlone   bool               `json:"StandAlone"`
 	StartedAt    time.Time          `json:"StartedAt"`
 	Status       string             `json:"Status"`
@@ -49,7 +49,7 @@ type DiscountGet struct {
 type DiscountUpdate struct {
 	CreatedBy  openapi_types.UUID `json:"CreatedBy"`
 	EndedAt    time.Time          `json:"EndedAt"`
-	Percent    float64            `json:"Percent"`
+	Percent    float32            `json:"Percent"`
 	StandAlone bool               `json:"StandAlone"`
 	StartedAt  time.Time          `json:"StartedAt"`
 	Status     string             `json:"Status"`
