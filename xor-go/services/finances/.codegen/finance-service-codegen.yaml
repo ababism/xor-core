@@ -1,0 +1,956 @@
+openapi: 3.0.0
+info:
+  title: Integrated API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /bank-accounts/{login}:
+    get:
+      tags:
+        - Bank Account
+      operationId: get
+      summary: Get bank account by login
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountGet'
+        '400':
+          description: Incorrect bank account login
+        '404':
+          description: Bank account not found
+  /bank-accounts:
+    get:
+      tags:
+        - Bank Account
+      operationId: getList
+      summary: List bank accounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/BankAccountFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountGet'
+    post:
+      tags:
+        - Bank Account
+      operationId: create
+      summary: Create a bank account
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Incorrect bank account data
+    put:
+      tags:
+        - Bank Account
+      operationId: update
+      summary: Update a bank account
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountUpdate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect bank account data
+        '404':
+          description: Bank account not found
+  /bank-accounts/{login}/change-funds:
+    put:
+      tags:
+        - Bank Account
+      operationId: change
+      summary: Change bank account funds
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: newFunds
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect funds data
+        '404':
+          description: Bank account not found
+  /discounts/{id}:
+    get:
+      tags:
+        - Discount
+      operationId: get
+      summary: Get discount by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscountGet'
+  /discounts:
+    get:
+      tags:
+        - Discount
+      operationId: getList
+      summary: List discounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/DiscountFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DiscountGet'
+    post:
+      tags:
+        - Discount
+      operationId: create
+      summary: Create a discount
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/DiscountCreate'
+      responses:
+        '200':
+          description: Successful operation
+    put:
+      tags:
+        - Discount
+      operationId: update
+      summary: Update a discount
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/DiscountUpdate'
+      responses:
+        '200':
+          description: Successful operation
+  /discounts/{id}/end:
+    patch:
+      tags:
+        - Discount
+      operationId: end
+      summary: End a discount
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+  /payments/{uuid}:
+    get:
+      tags:
+        - Payment
+      operationId: get
+      summary: Get payment by UUID
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentGet'
+        '400':
+          description: Incorrect payment UUID
+        '404':
+          description: Payment not found by UUID
+  /payments:
+    get:
+      tags:
+        - Payment
+      operationId: getList
+      summary: List payments
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/PaymentFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentGet'
+    post:
+      tags:
+        - Payment
+      operationId: create
+      summary: Create a payment
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/PaymentCreate'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Incorrect payment data
+  /payout-requests/{id}:
+    get:
+      tags:
+        - Payout Request
+      operationId: get
+      summary: Get payout request by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutRequestGet'
+  /payout-requests:
+    get:
+      tags:
+        - Payout Request
+      operationId: getList
+      summary: List payout requests
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/PayoutRequestFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayoutRequestGet'
+    post:
+      tags:
+        - Payout Request
+      operationId: create
+      summary: Create a payout request
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/PayoutRequestCreate'
+      responses:
+        '200':
+          description: Successful operation
+  /payout-requests/{id}/archive:
+    put:
+      tags:
+        - Payout Request
+      operationId: archive
+      summary: Archive a payout request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+  /products/{id}:
+    get:
+      tags:
+        - Product
+      operationId: get
+      summary: Get product by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductGet'
+  /products:
+    get:
+      tags:
+        - Product
+      operationId: getList
+      summary: List products
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/ProductFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductGet'
+    post:
+      tags:
+        - Product
+      operationId: create
+      summary: Create a product
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '200':
+          description: Successful operation
+    put:
+      tags:
+        - Product
+      operationId: update
+      summary: Update a product
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200':
+          description: Successful operation
+  /products/{id}/disable:
+    put:
+      tags:
+        - Product
+      operationId: disable
+      summary: Disable a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+  /purchase-requests/{id}:
+    get:
+      tags:
+        - Purchase request
+      operationId: get
+      summary: Get purchase request by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseRequestGet'
+  /purchase-requests:
+    get:
+      tags:
+        - Purchase request
+      operationId: getList
+      summary: List purchase requests
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/PurchaseRequestFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PurchaseRequestGet'
+    post:
+      tags:
+        - Purchase request
+      operationId: create
+      summary: Create a purchase request
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/PurchaseRequestCreate'
+      responses:
+        '200':
+          description: Successful operation
+  /purchase-requests/{id}/archive:
+    put:
+      tags:
+        - Purchase request
+      operationId: archive
+      summary: Archive a purchase request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+components:
+  schemas:
+    BankAccountData:
+      type: object
+      properties: { }
+    BankAccountGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Status:
+          type: string
+        LastDealAt:
+          type: string
+          format: date-time
+        CreatedAt:
+          type: string
+          format: date-time
+        LastUpdateAt:
+          type: string
+          format: date-time
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - UUID
+        - AccountUUID
+        - Login
+        - Data
+        - Status
+        - Funds
+        - LastDealAt
+        - CreatedAt
+        - LastUpdateAt
+        - Payments
+    BankAccountCreate:
+      type: object
+      properties:
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - AccountUUID
+        - Login
+        - Data
+        - Payments
+    BankAccountUpdate:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Data:
+          $ref: '#/components/schemas/BankAccountData'
+        Status:
+          type: string
+        LastDealAt:
+          type: string
+          format: date-time
+        Payments:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+        - UUID
+        - AccountUUID
+        - Login
+        - Funds
+        - Data
+        - Status
+        - LastDealAt
+        - Payments
+    BankAccountFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Status:
+          type: string
+    DiscountGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        CreatedBy:
+          type: string
+          format: uuid
+        Percent:
+          type: number
+        StandAlone:
+          type: boolean
+        StartedAt:
+          type: string
+          format: date-time
+        EndedAt:
+          type: string
+          format: date-time
+        Status:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+        LastUpdateAt:
+          type: string
+          format: date-time
+      required:
+        - UUID
+        - CreatedBy
+        - Percent
+        - StandAlone
+        - StartedAt
+        - EndedAt
+        - Status
+        - CreatedAt
+        - LastUpdateAt
+    DiscountCreate:
+      type: object
+      properties:
+        CreatedBy:
+          type: string
+          format: uuid
+        Percent:
+          type: number
+        StandAlone:
+          type: boolean
+        StartedAt:
+          type: string
+          format: date-time
+        EndedAt:
+          type: string
+          format: date-time
+        Status:
+          type: string
+      required:
+        - CreatedBy
+        - Percent
+        - StandAlone
+        - StartedAt
+        - EndedAt
+        - Status
+    DiscountUpdate:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        CreatedBy:
+          type: string
+          format: uuid
+        Percent:
+          type: number
+        StandAlone:
+          type: boolean
+        StartedAt:
+          type: string
+          format: date-time
+        EndedAt:
+          type: string
+          format: date-time
+        Status:
+          type: string
+      required:
+        - UUID
+        - CreatedBy
+        - Percent
+        - StandAlone
+        - StartedAt
+        - EndedAt
+        - Status
+    DiscountFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        CreatedBy:
+          type: string
+          format: uuid
+        Percent:
+          type: number
+        StandAlone:
+          type: boolean
+        Status:
+          type: string
+    PaymentData:
+      type: object
+      properties: { }
+    PaymentGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Data:
+          $ref: '#/components/schemas/PaymentData'
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time
+        CreatedAt:
+          type: string
+          format: date-time
+      required:
+        - UUID
+        - Sender
+        - Receiver
+        - Data
+        - URL
+        - Status
+        - EndedAt
+        - CreatedAt
+    PaymentCreate:
+      type: object
+      properties:
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Data:
+          $ref: '#/components/schemas/PaymentData'
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time
+      required:
+        - Sender
+        - Receiver
+        - Data
+        - URL
+        - Status
+        - EndedAt
+    PaymentFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        URL:
+          type: string
+        Status:
+          type: string
+        EndedAt:
+          type: string
+          format: date-time
+    PayoutRequestData:
+      type: object
+      properties: { }
+    PayoutRequestGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        Data:
+          $ref: '#/components/schemas/PayoutRequestData'
+        ReceivedAt:
+          type: string
+          format: date-time
+      required:
+        - UUID
+        - Receiver
+        - Amount
+        - Data
+        - ReceivedAt
+    PayoutRequestCreate:
+      type: object
+      properties:
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        Data:
+          $ref: '#/components/schemas/PayoutRequestData'
+        ReceivedAt:
+          type: string
+          format: date-time
+      required:
+        - Receiver
+        - Amount
+        - Data
+        - ReceivedAt
+    PayoutRequestFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        Amount:
+          type: number
+        ReceivedAt:
+          type: string
+          format: date-time
+    ProductGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number
+        IsAvailable:
+          type: boolean
+        CreatedAt:
+          type: string
+          format: date-time
+        LastUpdatedAt:
+          type: string
+          format: date-time
+      required:
+        - UUID
+        - Name
+        - Price
+        - IsAvailable
+        - CreatedAt
+        - LastUpdatedAt
+    ProductCreate:
+      type: object
+      properties:
+        Name:
+          type: string
+        Price:
+          type: number
+      required:
+        - Name
+        - Price
+    ProductUpdate:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number
+        IsAvailable:
+          type: boolean
+      required:
+        - UUID
+        - Name
+        - Price
+        - IsAvailable
+    ProductFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number
+    PurchaseRequestGet:
+      type: object
+      required:
+        - UUID
+        - Sender
+        - Receiver
+        - WebhookURL
+        - ReceivedAt
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time
+    PurchaseRequestCreate:
+      type: object
+      required:
+        - Sender
+        - Receiver
+        - WebhookURL
+        - ReceivedAt
+      properties:
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time
+    PurchaseRequestFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time
