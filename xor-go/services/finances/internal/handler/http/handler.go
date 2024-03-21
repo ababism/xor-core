@@ -21,6 +21,8 @@ const (
 	version    = "1"
 )
 
+type MiddlewareFunc func(c *gin.Context)
+
 type Handler struct {
 	cfg                    *config.Config
 	bankAccountHandler     *bank_account_api.BankAccountHandler
@@ -42,13 +44,23 @@ func HandleError(c *gin.Context, err error, statusCode int) {
 	c.JSON(statusCode, gin.H{"error": err.Error()})
 }
 
-func RegHandlerRoutes() {
+func ConvertToBankAccount(middlewareMain MiddlewareFunc) bank_account.MiddlewareFunc {
+	return func(c *gin.Context) {
+		middlewareMain(c)
+	}
+}
 
+func ConvertArrayToAnother(middlewaresMain []MiddlewareFunc) []bank_account.MiddlewareFunc {
+	middlewaresAnother := make([]bank_account.MiddlewareFunc, len(middlewaresMain))
+	for i, middlewareMain := range middlewaresMain {
+		middlewaresAnother[i] = ConvertToBankAccount(middlewareMain)
+	}
+	return middlewaresAnother
 }
 
 func InitHandler(
 	router gin.IRouter,
-	middlewares []generated.MiddlewareFunc,
+	middlewares []MiddlewareFunc,
 	bankAccountService adapters.BankAccountService,
 	discountService adapters.DiscountService,
 	paymentService adapters.PaymentService,
@@ -56,10 +68,12 @@ func InitHandler(
 	purchaseRequestService adapters.PurchaseRequestService,
 	payoutRequestService adapters.PayoutRequestService,
 ) {
+	baseUrl := fmt.Sprintf("%s/%s", httpPrefix, getVersion())
+
 	bankAccountHandler := bank_account_api.NewBankAccountHandler(bankAccountService)
 	ginOpts := bank_account.GinServerOptions{
-		BaseURL:      fmt.Sprintf("%s/%s", httpPrefix, getVersion()),
-		Middlewares:  middlewares,
+		BaseURL:      baseUrl,
+		Middlewares:  ConvertToGinMiddlewares(middlewares),
 		ErrorHandler: HandleError,
 	}
 	bank_account.RegisterHandlersWithOptions(router, bankAccountHandler, ginOpts)
