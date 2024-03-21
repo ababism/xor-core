@@ -9,7 +9,7 @@ import (
 	"time"
 	"xor-go/pkg/xhttp"
 	"xor-go/pkg/xshutdown"
-	"xor-go/services/finances/internal/handler/generated"
+	"xor-go/services/finances/internal/handler/handler"
 	"xor-go/services/finances/internal/log"
 )
 
@@ -32,21 +32,21 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	// TODO Добавляем системные роуты
 	//router.WithHandleGET("/metrics", metrics.HandleFunc())
 
-	tracerMw := generated.MiddlewareFunc(otelgin.Middleware(a.cfg.App.Service, otelgin.WithTracerProvider(a.tracerProvider)))
-	GinZapMw := generated.MiddlewareFunc(ginzap.Ginzap(log.Logger, time.RFC3339, true))
-	requestIdMw := generated.MiddlewareFunc(requestid.RequestID(nil))
-	middlewares := []generated.MiddlewareFunc{
+	tracerMw := handler.MiddlewareFunc(otelgin.Middleware(a.cfg.App.Service, otelgin.WithTracerProvider(a.tracerProvider)))
+	GinZapMw := handler.MiddlewareFunc(ginzap.Ginzap(log.Logger, time.RFC3339, true))
+	requestIdMw := handler.MiddlewareFunc(requestid.RequestID(nil))
+	middlewares := []handler.MiddlewareFunc{
 		tracerMw,
 		GinZapMw,
 		requestIdMw,
 	}
 
 	// TODO Добавляем роуты api
-	xhttp.InitHandler(router.Router(), middlewares, a.service)
+	handler.InitHandler(a.handler, router.Router(), middlewares)
 
 	// TODO Создаем сервер
 	srv := xhttp.NewServer(a.cfg.Http, router)
-	srv.RegisterRoutes(&router)
+	//srv.RegisterRoutes(&router)
 
 	// Стартуем
 	log.Logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Service, a.cfg.Http.Host, a.cfg.Http.Port))

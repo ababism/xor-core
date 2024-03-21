@@ -1,10 +1,10 @@
-package http
+package handler
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"xor-go/pkg/xerror"
-	"xor-go/services/finances/internal/handler/http/dto_models"
+	"xor-go/services/finances/internal/handler/handler/dto_models"
 	"xor-go/services/finances/internal/log"
 )
 

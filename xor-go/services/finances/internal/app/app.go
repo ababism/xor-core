@@ -10,16 +10,17 @@ import (
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/finances/internal/config"
+	"xor-go/services/finances/internal/handler/handler"
 	"xor-go/services/finances/internal/log"
+	"xor-go/services/finances/internal/repository/postgre"
 	"xor-go/services/finances/internal/service"
-	"xor-go/services/finances/internal/service/adapters"
 )
 
 type App struct {
 	cfg            *config.Config
+	handler        handler.Handler
 	address        string
 	tracerProvider *trace.TracerProvider
-	service        adapters.DriverService
 }
 
 func NewApp(cfg *config.Config) (*App, error) {
@@ -81,21 +82,43 @@ func NewApp(cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
+	bankAccountRepo := postgre.NewBankAccountRepository(postgresDb)
+	discountRepo := postgre.NewDiscountRepository(postgresDb)
+	paymentRepo := postgre.NewPaymentRepository(postgresDb)
+	productRepo := postgre.NewProductRepository(postgresDb)
+	payoutRequest := postgre.NewPayoutRequestRepository(postgresDb)
+	purchaseRequest := postgre.NewPurchaseRequestRepository(postgresDb)
+
 	// SERVICE LAYER ----------------------------------------------------------------------
 
 	// Service layer
-	driverService := service.NewDriverService(driverRepo)
+	bankAccountService := service.NewBankAccountService(bankAccountRepo)
+	discountService := service.NewDiscountService(discountRepo)
+	paymentService := service.NewPaymentService(paymentRepo)
+	productService := service.NewProductService(productRepo)
+	payoutRequestService := service.NewPayoutRequestService(payoutRequest)
+	purchaseRequestService := service.NewPurchaseRequestService(purchaseRequest)
 
 	log.Logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Service))
 
 	// TRANSPORT LAYER ----------------------------------------------------------------------
+
+	mainHandler := handler.NewHandler(
+		cfg,
+		bankAccountService,
+		discountService,
+		paymentService,
+		productService,
+		purchaseRequestService,
+		payoutRequestService,
+	)
 
 	// инициализируем адрес сервера
 	address := fmt.Sprintf(":%d", cfg.Http.Port)
 
 	return &App{
 		cfg:            cfg,
-		service:        driverService,
+		handler:        mainHandler,
 		address:        address,
 		tracerProvider: tp,
 	}, nil

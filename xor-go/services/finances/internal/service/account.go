@@ -18,7 +18,7 @@ type bankAccountService struct {
 	r adapters.BankAccountRepository
 }
 
-func NewAccountService(accountRepository adapters.BankAccountRepository) adapters.BankAccountService {
+func NewBankAccountService(accountRepository adapters.BankAccountRepository) adapters.BankAccountService {
 	return &bankAccountService{r: accountRepository}
 }
 
