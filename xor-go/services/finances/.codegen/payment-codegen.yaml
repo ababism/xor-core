@@ -89,6 +89,15 @@ components:
         CreatedAt:
           type: string
           format: date-time
+      required:
+        - UUID
+        - Sender
+        - Receiver
+        - Data
+        - URL
+        - Status
+        - EndedAt
+        - CreatedAt
     PaymentCreate:
       type: object
       properties:

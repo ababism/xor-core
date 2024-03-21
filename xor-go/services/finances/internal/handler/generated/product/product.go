@@ -16,13 +16,13 @@ import (
 // ProductCreate defines model for ProductCreate.
 type ProductCreate struct {
 	Name  string  `json:"Name"`
-	Price float32 `json:"Price"`
+	Price float64 `json:"Price"`
 }
 
 // ProductFilter defines model for ProductFilter.
 type ProductFilter struct {
 	Name  *string             `json:"Name,omitempty"`
-	Price *float32            `json:"Price,omitempty"`
+	Price *float64            `json:"Price,omitempty"`
 	UUID  *openapi_types.UUID `json:"UUID,omitempty"`
 }
 
@@ -32,7 +32,7 @@ type ProductGet struct {
 	IsAvailable   bool               `json:"IsAvailable"`
 	LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
 	Name          string             `json:"Name"`
-	Price         float32            `json:"Price"`
+	Price         float64            `json:"Price"`
 	UUID          openapi_types.UUID `json:"UUID"`
 }
 
@@ -40,7 +40,7 @@ type ProductGet struct {
 type ProductUpdate struct {
 	IsAvailable bool               `json:"IsAvailable"`
 	Name        string             `json:"Name"`
-	Price       float32            `json:"Price"`
+	Price       float64            `json:"Price"`
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 

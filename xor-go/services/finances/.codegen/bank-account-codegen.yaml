@@ -138,6 +138,7 @@ components:
         - Login
         - Data
         - Status
+        - Funds
         - LastDealAt
         - CreatedAt
         - LastUpdateAt

@@ -15,7 +15,7 @@ import (
 
 // PayoutRequestCreate defines model for PayoutRequestCreate.
 type PayoutRequestCreate struct {
-	Amount     float32            `json:"Amount"`
+	Amount     float64            `json:"Amount"`
 	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
@@ -26,7 +26,7 @@ type PayoutRequestData = map[string]interface{}
 
 // PayoutRequestFilter defines model for PayoutRequestFilter.
 type PayoutRequestFilter struct {
-	Amount     *float32            `json:"Amount,omitempty"`
+	Amount     *float64            `json:"Amount,omitempty"`
 	ReceivedAt *time.Time          `json:"ReceivedAt,omitempty"`
 	Receiver   *openapi_types.UUID `json:"Receiver,omitempty"`
 	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
@@ -34,7 +34,7 @@ type PayoutRequestFilter struct {
 
 // PayoutRequestGet defines model for PayoutRequestGet.
 type PayoutRequestGet struct {
-	Amount     float32            `json:"Amount"`
+	Amount     float64            `json:"Amount"`
 	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
