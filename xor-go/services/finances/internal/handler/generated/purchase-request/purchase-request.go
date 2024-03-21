@@ -30,17 +30,24 @@ type PurchaseRequestGet struct {
 	WebhookURL string             `json:"WebhookURL"`
 }
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = PurchaseRequestCreate
+// GetListParams defines parameters for GetList.
+type GetListParams struct {
+	Filter PurchaseRequestGet `form:"filter" json:"filter"`
+}
+
+// CreateParams defines parameters for Create.
+type CreateParams struct {
+	Filter PurchaseRequestCreate `form:"filter" json:"filter"`
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List purchase requests
 	// (GET /purchase-requests)
-	GetList(c *gin.Context)
+	GetList(c *gin.Context, params GetListParams)
 	// Create a purchase request
 	// (POST /purchase-requests)
-	Create(c *gin.Context)
+	Create(c *gin.Context, params CreateParams)
 	// Get purchase request by ID
 	// (GET /purchase-requests/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -61,6 +68,26 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetListParams
+
+	// ------------- Required query parameter "filter" -------------
+
+	if paramValue := c.Query("filter"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -68,12 +95,32 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetList(c, params)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateParams
+
+	// ------------- Required query parameter "filter" -------------
+
+	if paramValue := c.Query("filter"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -81,7 +128,7 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.Create(c, params)
 }
 
 // Get operation middleware

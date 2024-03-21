@@ -27,6 +27,12 @@ paths:
     get:
       operationId: getList
       summary: List payout requests
+      parameters:
+        - in: query
+          name: filter
+          required: true
+          schema:
+            $ref: '#/components/schemas/PayoutRequestFilter'
       responses:
         '200':
           description: Successful operation
@@ -39,12 +45,12 @@ paths:
     post:
       operationId: create
       summary: Create a payout request
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PayoutRequestCreate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/PayoutRequestCreate'
       responses:
         '200':
           description: Successful operation
@@ -69,11 +75,6 @@ components:
       properties: { }
     PayoutRequestGet:
       type: object
-      required:
-        - UUID
-        - Receiver
-        - Amount
-        - ReceivedAt
       properties:
         UUID:
           type: string
@@ -88,12 +89,14 @@ components:
         ReceivedAt:
           type: string
           format: date-time
-    PayoutRequestCreate:
-      type: object
       required:
+        - UUID
         - Receiver
         - Amount
+        - Data
         - ReceivedAt
+    PayoutRequestCreate:
+      type: object
       properties:
         Receiver:
           type: string
@@ -105,6 +108,11 @@ components:
         ReceivedAt:
           type: string
           format: date-time
+      required:
+        - Receiver
+        - Amount
+        - Data
+        - ReceivedAt
     PayoutRequestFilter:
       type: object
       properties:

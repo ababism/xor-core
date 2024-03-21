@@ -19,14 +19,21 @@ type ProductCreate struct {
 	Price float32 `json:"Price"`
 }
 
+// ProductFilter defines model for ProductFilter.
+type ProductFilter struct {
+	Name  *string             `json:"Name,omitempty"`
+	Price *float32            `json:"Price,omitempty"`
+	UUID  *openapi_types.UUID `json:"UUID,omitempty"`
+}
+
 // ProductGet defines model for ProductGet.
 type ProductGet struct {
-	CreatedAt     *time.Time          `json:"CreatedAt,omitempty"`
-	IsAvailable   *bool               `json:"IsAvailable,omitempty"`
-	LastUpdatedAt *time.Time          `json:"LastUpdatedAt,omitempty"`
-	Name          *string             `json:"Name,omitempty"`
-	Price         *float32            `json:"Price,omitempty"`
-	UUID          *openapi_types.UUID `json:"UUID,omitempty"`
+	CreatedAt     time.Time          `json:"CreatedAt"`
+	IsAvailable   bool               `json:"IsAvailable"`
+	LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
+	Name          string             `json:"Name"`
+	Price         float32            `json:"Price"`
+	UUID          openapi_types.UUID `json:"UUID"`
 }
 
 // ProductUpdate defines model for ProductUpdate.
@@ -37,23 +44,32 @@ type ProductUpdate struct {
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = ProductCreate
+// GetListParams defines parameters for GetList.
+type GetListParams struct {
+	Filter ProductFilter `form:"filter" json:"filter"`
+}
 
-// UpdateJSONRequestBody defines body for Update for application/json ContentType.
-type UpdateJSONRequestBody = ProductUpdate
+// CreateParams defines parameters for Create.
+type CreateParams struct {
+	Model ProductCreate `form:"model" json:"model"`
+}
+
+// UpdateParams defines parameters for Update.
+type UpdateParams struct {
+	Model ProductUpdate `form:"model" json:"model"`
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List products
 	// (GET /products)
-	GetList(c *gin.Context)
+	GetList(c *gin.Context, params GetListParams)
 	// Create a product
 	// (POST /products)
-	Create(c *gin.Context)
+	Create(c *gin.Context, params CreateParams)
 	// Update a product
 	// (PUT /products)
-	Update(c *gin.Context)
+	Update(c *gin.Context, params UpdateParams)
 	// Get product by ID
 	// (GET /products/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -74,6 +90,26 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetListParams
+
+	// ------------- Required query parameter "filter" -------------
+
+	if paramValue := c.Query("filter"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -81,12 +117,32 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetList(c, params)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateParams
+
+	// ------------- Required query parameter "model" -------------
+
+	if paramValue := c.Query("model"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -94,12 +150,32 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.Create(c, params)
 }
 
 // Update operation middleware
 func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateParams
+
+	// ------------- Required query parameter "model" -------------
+
+	if paramValue := c.Query("model"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -107,7 +183,7 @@ func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Update(c)
+	siw.Handler.Update(c, params)
 }
 
 // Get operation middleware

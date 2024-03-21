@@ -27,6 +27,11 @@ paths:
     get:
       operationId: getList
       summary: List discounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/DiscountFilter'
       responses:
         '200':
           description: Successful operation
@@ -39,29 +44,29 @@ paths:
     post:
       operationId: create
       summary: Create a discount
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DiscountCreate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/DiscountCreate'
       responses:
         '200':
           description: Successful operation
     put:
       operationId: update
       summary: Update a discount
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DiscountUpdate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/DiscountUpdate'
       responses:
         '200':
           description: Successful operation
   /discounts/{id}/end:
-    put:
+    patch:
       operationId: end
       summary: End a discount
       parameters:
@@ -103,6 +108,16 @@ components:
         LastUpdateAt:
           type: string
           format: date-time
+      required:
+        - UUID
+        - CreatedBy
+        - Percent
+        - StandAlone
+        - StartedAt
+        - EndedAt
+        - Status
+        - CreatedAt
+        - LastUpdateAt
     DiscountCreate:
       type: object
       properties:
@@ -130,14 +145,6 @@ components:
         - Status
     DiscountUpdate:
       type: object
-      required:
-        - UUID
-        - CreatedBy
-        - Percent
-        - StandAlone
-        - StartedAt
-        - EndedAt
-        - Status
       properties:
         UUID:
           type: string
@@ -157,6 +164,14 @@ components:
           format: date-time
         Status:
           type: string
+      required:
+        - UUID
+        - CreatedBy
+        - Percent
+        - StandAlone
+        - StartedAt
+        - EndedAt
+        - Status
     DiscountFilter:
       type: object
       properties:

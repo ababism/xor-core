@@ -16,7 +16,7 @@ import (
 // PayoutRequestCreate defines model for PayoutRequestCreate.
 type PayoutRequestCreate struct {
 	Amount     float32            `json:"Amount"`
-	Data       *PayoutRequestData `json:"Data,omitempty"`
+	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
 }
@@ -24,26 +24,41 @@ type PayoutRequestCreate struct {
 // PayoutRequestData defines model for PayoutRequestData.
 type PayoutRequestData = map[string]interface{}
 
+// PayoutRequestFilter defines model for PayoutRequestFilter.
+type PayoutRequestFilter struct {
+	Amount     *float32            `json:"Amount,omitempty"`
+	ReceivedAt *time.Time          `json:"ReceivedAt,omitempty"`
+	Receiver   *openapi_types.UUID `json:"Receiver,omitempty"`
+	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
+}
+
 // PayoutRequestGet defines model for PayoutRequestGet.
 type PayoutRequestGet struct {
 	Amount     float32            `json:"Amount"`
-	Data       *PayoutRequestData `json:"Data,omitempty"`
+	Data       PayoutRequestData  `json:"Data"`
 	ReceivedAt time.Time          `json:"ReceivedAt"`
 	Receiver   openapi_types.UUID `json:"Receiver"`
 	UUID       openapi_types.UUID `json:"UUID"`
 }
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = PayoutRequestCreate
+// GetListParams defines parameters for GetList.
+type GetListParams struct {
+	Filter PayoutRequestFilter `form:"filter" json:"filter"`
+}
+
+// CreateParams defines parameters for Create.
+type CreateParams struct {
+	Model PayoutRequestCreate `form:"model" json:"model"`
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List payout requests
 	// (GET /payout-requests)
-	GetList(c *gin.Context)
+	GetList(c *gin.Context, params GetListParams)
 	// Create a payout request
 	// (POST /payout-requests)
-	Create(c *gin.Context)
+	Create(c *gin.Context, params CreateParams)
 	// Get payout request by ID
 	// (GET /payout-requests/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -64,6 +79,26 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetListParams
+
+	// ------------- Required query parameter "filter" -------------
+
+	if paramValue := c.Query("filter"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -71,12 +106,32 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetList(c, params)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateParams
+
+	// ------------- Required query parameter "model" -------------
+
+	if paramValue := c.Query("model"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -84,7 +139,7 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.Create(c, params)
 }
 
 // Get operation middleware

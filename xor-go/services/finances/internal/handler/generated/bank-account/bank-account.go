@@ -24,18 +24,27 @@ type BankAccountCreate struct {
 // BankAccountData defines model for BankAccountData.
 type BankAccountData = map[string]interface{}
 
+// BankAccountFilter defines model for BankAccountFilter.
+type BankAccountFilter struct {
+	AccountUUID *openapi_types.UUID `json:"AccountUUID,omitempty"`
+	Funds       *float32            `json:"Funds,omitempty"`
+	Login       *string             `json:"Login,omitempty"`
+	Status      *string             `json:"Status,omitempty"`
+	UUID        *openapi_types.UUID `json:"UUID,omitempty"`
+}
+
 // BankAccountGet defines model for BankAccountGet.
 type BankAccountGet struct {
-	AccountUUID  *openapi_types.UUID   `json:"AccountUUID,omitempty"`
-	CreatedAt    *time.Time            `json:"CreatedAt,omitempty"`
-	Data         *BankAccountData      `json:"Data,omitempty"`
-	Funds        *float32              `json:"Funds,omitempty"`
-	LastDealAt   *time.Time            `json:"LastDealAt,omitempty"`
-	LastUpdateAt *time.Time            `json:"LastUpdateAt,omitempty"`
-	Login        *string               `json:"Login,omitempty"`
-	Payments     *[]openapi_types.UUID `json:"Payments,omitempty"`
-	Status       *string               `json:"Status,omitempty"`
-	UUID         *openapi_types.UUID   `json:"UUID,omitempty"`
+	AccountUUID  openapi_types.UUID   `json:"AccountUUID"`
+	CreatedAt    time.Time            `json:"CreatedAt"`
+	Data         BankAccountData      `json:"Data"`
+	Funds        *float32             `json:"Funds,omitempty"`
+	LastDealAt   time.Time            `json:"LastDealAt"`
+	LastUpdateAt time.Time            `json:"LastUpdateAt"`
+	Login        string               `json:"Login"`
+	Payments     []openapi_types.UUID `json:"Payments"`
+	Status       string               `json:"Status"`
+	UUID         openapi_types.UUID   `json:"UUID"`
 }
 
 // BankAccountUpdate defines model for BankAccountUpdate.
@@ -50,37 +59,43 @@ type BankAccountUpdate struct {
 	UUID        openapi_types.UUID   `json:"UUID"`
 }
 
-// ChangeJSONBody defines parameters for Change.
-type ChangeJSONBody struct {
-	NewFunds *float32 `json:"newFunds,omitempty"`
+// GetListParams defines parameters for GetList.
+type GetListParams struct {
+	Filter *BankAccountFilter `form:"filter,omitempty" json:"filter,omitempty"`
 }
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = BankAccountCreate
+// CreateParams defines parameters for Create.
+type CreateParams struct {
+	Model BankAccountCreate `form:"model" json:"model"`
+}
 
-// UpdateJSONRequestBody defines body for Update for application/json ContentType.
-type UpdateJSONRequestBody = BankAccountUpdate
+// UpdateParams defines parameters for Update.
+type UpdateParams struct {
+	Model BankAccountUpdate `form:"model" json:"model"`
+}
 
-// ChangeJSONRequestBody defines body for Change for application/json ContentType.
-type ChangeJSONRequestBody ChangeJSONBody
+// ChangeParams defines parameters for Change.
+type ChangeParams struct {
+	NewFunds float32 `form:"newFunds" json:"newFunds"`
+}
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List bank accounts
 	// (GET /bank-accounts)
-	GetList(c *gin.Context)
+	GetList(c *gin.Context, params GetListParams)
 	// Create a bank account
 	// (POST /bank-accounts)
-	Create(c *gin.Context)
+	Create(c *gin.Context, params CreateParams)
 	// Update a bank account
 	// (PUT /bank-accounts)
-	Update(c *gin.Context)
+	Update(c *gin.Context, params UpdateParams)
 	// Get bank account by login
 	// (GET /bank-accounts/{login})
 	Get(c *gin.Context, login string)
 	// Change bank account funds
 	// (PUT /bank-accounts/{login}/change-funds)
-	Change(c *gin.Context, login string)
+	Change(c *gin.Context, login string, params ChangeParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -95,6 +110,19 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetListParams
+
+	// ------------- Optional query parameter "filter" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -102,12 +130,32 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetList(c, params)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateParams
+
+	// ------------- Required query parameter "model" -------------
+
+	if paramValue := c.Query("model"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -115,12 +163,32 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.Create(c, params)
 }
 
 // Update operation middleware
 func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateParams
+
+	// ------------- Required query parameter "model" -------------
+
+	if paramValue := c.Query("model"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -128,7 +196,7 @@ func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Update(c)
+	siw.Handler.Update(c, params)
 }
 
 // Get operation middleware
@@ -169,6 +237,24 @@ func (siw *ServerInterfaceWrapper) Change(c *gin.Context) {
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ChangeParams
+
+	// ------------- Required query parameter "newFunds" -------------
+
+	if paramValue := c.Query("newFunds"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument newFunds is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "newFunds", c.Request.URL.Query(), &params.NewFunds)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter newFunds: %w", err), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -176,7 +262,7 @@ func (siw *ServerInterfaceWrapper) Change(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Change(c, login)
+	siw.Handler.Change(c, login, params)
 }
 
 // GinServerOptions provides options for the Gin server.

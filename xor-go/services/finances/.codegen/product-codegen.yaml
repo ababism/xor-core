@@ -27,6 +27,12 @@ paths:
     get:
       operationId: getList
       summary: List products
+      parameters:
+        - in: query
+          name: filter
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductFilter'
       responses:
         '200':
           description: Successful operation
@@ -39,24 +45,24 @@ paths:
     post:
       operationId: create
       summary: Create a product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProductCreate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductCreate'
       responses:
         '200':
           description: Successful operation
     put:
       operationId: update
       summary: Update a product
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProductUpdate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductUpdate'
       responses:
         '200':
           description: Successful operation
@@ -94,6 +100,13 @@ components:
         LastUpdatedAt:
           type: string
           format: date-time
+      required:
+        - UUID
+        - Name
+        - Price
+        - IsAvailable
+        - CreatedAt
+        - LastUpdatedAt
     ProductCreate:
       type: object
       properties:

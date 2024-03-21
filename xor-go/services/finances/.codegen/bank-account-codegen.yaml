@@ -30,6 +30,11 @@ paths:
     get:
       operationId: getList
       summary: List bank accounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/BankAccountFilter'
       responses:
         '200':
           description: Successful operation
@@ -42,12 +47,12 @@ paths:
     post:
       operationId: create
       summary: Create a bank account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BankAccountCreate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountCreate'
       responses:
         '201':
           description: Successful operation
@@ -56,12 +61,12 @@ paths:
     put:
       operationId: update
       summary: Update a bank account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BankAccountUpdate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountUpdate'
       responses:
         '200':
           description: Successful operation
@@ -79,15 +84,11 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                newFunds:
-                  type: number
+        - in: query
+          name: newFunds
+          required: true
+          schema:
+            type: number
       responses:
         '200':
           description: Successful operation
@@ -131,6 +132,16 @@ components:
           items:
             type: string
             format: uuid
+      required:
+        - UUID
+        - AccountUUID
+        - Login
+        - Data
+        - Status
+        - LastDealAt
+        - CreatedAt
+        - LastUpdateAt
+        - Payments
     BankAccountCreate:
       type: object
       properties:
@@ -185,3 +196,18 @@ components:
         - Status
         - LastDealAt
         - Payments
+    BankAccountFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Status:
+          type: string
