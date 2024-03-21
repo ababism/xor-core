@@ -30,9 +30,8 @@ paths:
       parameters:
         - in: query
           name: filter
-          required: true
           schema:
-            $ref: '#/components/schemas/PurchaseRequestGet'
+            $ref: '#/components/schemas/PurchaseRequestFilter'
       responses:
         '200':
           description: Successful operation

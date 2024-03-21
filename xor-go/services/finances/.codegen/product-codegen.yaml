@@ -30,7 +30,6 @@ paths:
       parameters:
         - in: query
           name: filter
-          required: true
           schema:
             $ref: '#/components/schemas/ProductFilter'
       responses:
