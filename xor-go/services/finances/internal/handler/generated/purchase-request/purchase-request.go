@@ -46,7 +46,7 @@ type GetListParams struct {
 
 // CreateParams defines parameters for Create.
 type CreateParams struct {
-	Filter PurchaseRequestCreate `form:"filter" json:"filter"`
+	Model PurchaseRequestCreate `form:"model" json:"model"`
 }
 
 // ServerInterface represents all server handlers.
@@ -108,18 +108,18 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params CreateParams
 
-	// ------------- Required query parameter "filter" -------------
+	// ------------- Required query parameter "model" -------------
 
-	if paramValue := c.Query("filter"); paramValue != "" {
+	if paramValue := c.Query("model"); paramValue != "" {
 
 	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument filter is required, but not found"), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, true, "filter", c.Request.URL.Query(), &params.Filter)
+	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
 		return
 	}
 
