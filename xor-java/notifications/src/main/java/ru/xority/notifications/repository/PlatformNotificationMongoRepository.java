@@ -63,6 +63,6 @@ public class PlatformNotificationMongoRepository implements PlatformNotification
         ObjectId id = new ObjectId(platformNotificationMongo.getId().toHexString());
         query.addCriteria(Criteria.where(PlatformNotificationMongoEntity.ID_FIELD).is(id));
 
-        mongoTemplate.replace(query, platformNotificationMongo, PLATFORM_NOTIFICATION_COLLECTION);
+        mongoTemplate.findAndReplace(query, platformNotificationMongo, PLATFORM_NOTIFICATION_COLLECTION);
     }
 }

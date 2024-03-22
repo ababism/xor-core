@@ -33,4 +33,4 @@ spring:
         debug: false
 
 email-notification:
-  from: email
+  sender-email: email
