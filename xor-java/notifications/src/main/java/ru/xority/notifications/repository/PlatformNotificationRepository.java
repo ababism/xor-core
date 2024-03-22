@@ -14,7 +14,7 @@ public interface PlatformNotificationRepository {
 
     Optional<PlatformNotificationEntity> get(PlatformNotificationFilter filter);
 
-    String create(PlatformNotificationEntity platformNotification);
+    void create(PlatformNotificationEntity platformNotification);
 
     void update(PlatformNotificationEntity platformNotification);
 }

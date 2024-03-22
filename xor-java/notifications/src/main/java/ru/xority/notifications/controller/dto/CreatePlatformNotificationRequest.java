@@ -13,8 +13,6 @@ import lombok.Data;
 public class CreatePlatformNotificationRequest {
     @NotNull
     private UUID receiverUuid;
-    @NotNull
-    private UUID senderUuid;
     @NotBlank
     private String message;
 }

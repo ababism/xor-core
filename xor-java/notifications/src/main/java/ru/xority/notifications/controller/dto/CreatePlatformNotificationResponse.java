@@ -1,5 +1,7 @@
 package ru.xority.notifications.controller.dto;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +12,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CreatePlatformNotificationResponse {
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("uuid")
+    private UUID uuid;
 }

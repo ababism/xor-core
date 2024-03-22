@@ -3,6 +3,7 @@ package ru.xority.notifications.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,13 @@ public class PlatformNotificationService {
         return platformNotificationRepository.list(filter);
     }
 
-    public String create(PlatformNotificationEntity platformNotification) {
-        return platformNotificationRepository.create(platformNotification);
+    public UUID create(PlatformNotificationEntity notification) {
+        platformNotificationRepository.create(notification);
+        return notification.getUuid();
     }
 
-    public void check(String notificationId) {
-        PlatformNotificationFilter filter = PlatformNotificationFilter.byId(notificationId);
+    public void check(UUID notificationUuid) {
+        PlatformNotificationFilter filter = PlatformNotificationFilter.byNotificationUuid(notificationUuid);
         Optional<PlatformNotificationEntity> platformNotificationO = platformNotificationRepository.get(filter);
 
         platformNotificationO.orElseThrow(() -> new BadRequestException("Platform notification is not found"));

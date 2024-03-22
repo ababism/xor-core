@@ -8,11 +8,6 @@ management:
         enabled: true
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017
-      database: notifications
-
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=qwerty
     driver-class-name: org.postgresql.Driver

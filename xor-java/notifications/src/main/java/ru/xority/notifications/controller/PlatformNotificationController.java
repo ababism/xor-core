@@ -5,13 +5,13 @@ import java.util.UUID;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +23,7 @@ import ru.xority.notifications.entity.PlatformNotificationEntity;
 import ru.xority.notifications.entity.PlatformNotificationFilter;
 import ru.xority.notifications.service.PlatformNotificationService;
 import ru.xority.response.SuccessResponse;
+import ru.xority.sage.SageHeader;
 
 /**
  * @author foxleren
@@ -36,23 +37,24 @@ public class PlatformNotificationController {
     @GetMapping("/list")
     public ResponseEntity<?> list(@RequestParam UUID recieverUuid) {
         PlatformNotificationFilter filter = PlatformNotificationFilter.byReceiverUuid(recieverUuid);
-        List<GetPlatformNotificationResponse> platformNotifications = platformNotificationService.list(filter)
-                .stream().map(GetPlatformNotificationResponse::fromPlatformNotificationEntity)
+        List<GetPlatformNotificationResponse> notifications = platformNotificationService.list(filter)
+                .stream()
+                .map(GetPlatformNotificationResponse::fromPlatformNotificationEntity)
                 .toList();
-        return new ResponseEntity<>(platformNotifications, HttpStatus.OK);
+        return ResponseEntity.ok(notifications);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody @Valid CreatePlatformNotificationRequest request) {
-        PlatformNotificationEntity platformNotification = PlatformNotificationEntity.fromCreatePlatformNotificationRequest(request);
-        String id = platformNotificationService.create(platformNotification);
-        CreatePlatformNotificationResponse response = new CreatePlatformNotificationResponse(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> create(@RequestHeader(SageHeader.ACCOUNT_UUID) UUID accountUuid,
+                                    @RequestBody @Valid CreatePlatformNotificationRequest request) {
+        PlatformNotificationEntity notification = PlatformNotificationEntity.fromCreatePlatformNotificationRequest(accountUuid, request);
+        UUID uuid = platformNotificationService.create(notification);
+        return ResponseEntity.ok(new CreatePlatformNotificationResponse(uuid));
     }
 
-    @PutMapping("/check/{notificationId}")
-    public ResponseEntity<?> check(@PathVariable String notificationId) {
-        platformNotificationService.check(notificationId);
+    @PutMapping("/check/{notificationUuid}")
+    public ResponseEntity<?> check(@PathVariable UUID notificationUuid) {
+        platformNotificationService.check(notificationUuid);
         return SuccessResponse.create200("Platform notification is checked");
     }
 }

@@ -12,13 +12,13 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PlatformNotificationFilter {
-    private Optional<String> id;
-    private Optional<UUID> receiverUuid;
+    private Optional<UUID> notificationUuid;
     private Optional<UUID> senderUuid;
+    private Optional<UUID> receiverUuid;
 
-    public static PlatformNotificationFilter byId(String id) {
+    public static PlatformNotificationFilter byNotificationUuid(UUID notificationUuid) {
         return new PlatformNotificationFilter(
-                Optional.of(id),
+                Optional.of(notificationUuid),
                 Optional.empty(),
                 Optional.empty()
         );
@@ -27,8 +27,8 @@ public class PlatformNotificationFilter {
     public static PlatformNotificationFilter byReceiverUuid(UUID receiverUuid) {
         return new PlatformNotificationFilter(
                 Optional.empty(),
-                Optional.of(receiverUuid),
-                Optional.empty()
+                Optional.empty(),
+                Optional.of(receiverUuid)
         );
     }
 }

@@ -18,12 +18,12 @@ import ru.xority.notifications.entity.PlatformNotificationEntity;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class GetPlatformNotificationResponse {
-    @JsonProperty("id")
-    private String id;
-    @JsonProperty("receiverUuid")
-    private UUID receiverUuid;
+    @JsonProperty("uuid")
+    private UUID uuid;
     @JsonProperty("senderUuid")
     private UUID senderUuid;
+    @JsonProperty("receiverUuid")
+    private UUID receiverUuid;
     @JsonProperty("message")
     private String message;
     @JsonProperty("checked")
@@ -35,9 +35,9 @@ public class GetPlatformNotificationResponse {
 
     public static GetPlatformNotificationResponse fromPlatformNotificationEntity(PlatformNotificationEntity platformNotification) {
         return new GetPlatformNotificationResponse(
-                platformNotification.getId().orElse(null),
-                platformNotification.getReceiverUuid(),
+                platformNotification.getUuid(),
                 platformNotification.getSenderUuid(),
+                platformNotification.getReceiverUuid(),
                 platformNotification.getMessage(),
                 platformNotification.isChecked(),
                 platformNotification.getCreatedAt(),
