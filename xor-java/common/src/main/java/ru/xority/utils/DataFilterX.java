@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * @author foxleren
  */
-public class DataFilter {
+public class DataFilterX {
     public static <T> T single(List<T> items) {
         if (items.size() != 1) {
             throw new RuntimeException("List must contain single result");

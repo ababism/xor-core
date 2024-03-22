@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import ru.xority.idm.entity.AccountEntity;
 import ru.xority.idm.entity.AccountFilter;
 import ru.xority.sql.SqlQueryHelper;
-import ru.xority.utils.DataFilter;
+import ru.xority.utils.DataFilterX;
 
 /**
  * @author foxleren
@@ -56,7 +56,7 @@ public class AccountPostgresRepository implements AccountRepository {
     @Override
     public Optional<AccountEntity> get(AccountFilter filter) {
         List<AccountEntity> account = this.list(filter);
-        return DataFilter.singleO(account);
+        return DataFilterX.singleO(account);
     }
 
     @Override
