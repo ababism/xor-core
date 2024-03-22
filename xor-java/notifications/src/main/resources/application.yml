@@ -12,3 +12,21 @@ spring:
     mongodb:
       uri: ${URI}
       database: ${DB}
+
+  mail:
+    host: smtp.yandex.ru
+    port: 25
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: false
+
+email-notification:
+  from: ${EMAIL_NOTIFICATIONS_FROM}

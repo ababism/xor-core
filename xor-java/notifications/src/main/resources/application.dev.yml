@@ -12,3 +12,21 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017
       database: notifications
+
+  mail:
+    host: smtp.yandex.ru
+    port: 25
+    username: email
+    password: password
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: false
+
+email-notification:
+  from: email
