@@ -11,7 +11,7 @@ import ru.xority.exception.BadRequestException;
  * @author foxleren
  */
 @RestControllerAdvice
-public class DefaultExceptionHandler {
+public class DefaultExceptionController {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<BadRequestResponse> handleBadRequestException(BadRequestException e) {
         return BadRequestResponse.create(HttpStatus.BAD_REQUEST, e.getMessage());

@@ -2,3 +2,4 @@ rootProject.name = 'xor-java'
 
 include 'common'
 include 'idm'
+include 'notifications'
