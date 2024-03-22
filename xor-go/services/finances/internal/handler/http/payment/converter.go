@@ -2,18 +2,17 @@ package payment
 
 import (
 	"xor-go/services/finances/internal/domain"
-	"xor-go/services/finances/internal/handler/generated/payment"
 )
 
-func DataToDomain(data payment.PaymentData) domain.PaymentData {
+func DataToDomain(data PaymentData) domain.PaymentData {
 	return domain.PaymentData{}
 }
 
-func DataToPayment(data domain.PaymentData) payment.PaymentData {
-	return payment.PaymentData{}
+func DataToPayment(data domain.PaymentData) PaymentData {
+	return PaymentData{}
 }
 
-func CreateToDomain(create payment.PaymentCreate) domain.PaymentCreate {
+func CreateToDomain(create PaymentCreate) domain.PaymentCreate {
 	return domain.PaymentCreate{
 		Sender:   create.Sender,
 		Receiver: create.Receiver,
@@ -24,8 +23,8 @@ func CreateToDomain(create payment.PaymentCreate) domain.PaymentCreate {
 	}
 }
 
-func DomainToGet(get domain.PaymentGet) payment.PaymentGet {
-	return payment.PaymentGet{
+func DomainToGet(get domain.PaymentGet) PaymentGet {
+	return PaymentGet{
 		UUID:      get.UUID,
 		Sender:    get.Sender,
 		Receiver:  get.Receiver,
@@ -37,7 +36,7 @@ func DomainToGet(get domain.PaymentGet) payment.PaymentGet {
 	}
 }
 
-func FilterToDomain(filter *payment.PaymentFilter) *domain.PaymentFilter {
+func FilterToDomain(filter *PaymentFilter) *domain.PaymentFilter {
 	if filter == nil {
 		return nil
 	}
@@ -51,8 +50,8 @@ func FilterToDomain(filter *payment.PaymentFilter) *domain.PaymentFilter {
 	}
 }
 
-func FilterToPayment(filter domain.PaymentFilter) payment.PaymentFilter {
-	return payment.PaymentFilter{
+func FilterToPayment(filter domain.PaymentFilter) PaymentFilter {
+	return PaymentFilter{
 		UUID:     filter.UUID,
 		Sender:   filter.Sender,
 		Receiver: filter.Receiver,

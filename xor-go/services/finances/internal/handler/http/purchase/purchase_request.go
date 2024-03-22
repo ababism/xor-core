@@ -7,7 +7,6 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	purchaserequest "xor-go/services/finances/internal/handler/generated/purchase-request"
 	http2 "xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -16,7 +15,7 @@ const (
 	spanDefaultPurchaseRequest = "purchase-request/handler."
 )
 
-var _ purchaserequest.ServerInterface = &Handler{}
+var _ ServerInterface = &Handler{}
 
 type Handler struct {
 	purchaseRequestService adapters.PurchaseRequestService
@@ -48,7 +47,7 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params purchaserequest.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -58,7 +57,7 @@ func (h *Handler) GetList(c *gin.Context, params purchaserequest.GetListParams) 
 		return
 	}
 
-	list := make([]purchaserequest.PurchaseRequestGet, len(models))
+	list := make([]PurchaseRequestGet, len(models))
 	for i, item := range models {
 		list[i] = DomainToGet(item)
 	}
@@ -66,7 +65,7 @@ func (h *Handler) GetList(c *gin.Context, params purchaserequest.GetListParams) 
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params purchaserequest.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params CreateParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Create")
 	defer span.End()
 

@@ -1,6 +1,6 @@
 # purchase-request-codegen-config.yaml for purchase-request api + server
 
-output: internal/handler/http/purchase/purchase.go
+output: internal/handler/http/purchase/purchase_gen.go
 package: purchase
 generate:
   - types

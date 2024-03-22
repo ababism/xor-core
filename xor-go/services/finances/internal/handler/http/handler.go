@@ -4,18 +4,12 @@ import (
 	"fmt"
 	"strings"
 	"xor-go/services/finances/internal/config"
-	bank_account "xor-go/services/finances/internal/handler/generated/bank-account"
-	"xor-go/services/finances/internal/handler/generated/discount"
-	"xor-go/services/finances/internal/handler/generated/payment"
-	payout_request "xor-go/services/finances/internal/handler/generated/payout-request"
-	"xor-go/services/finances/internal/handler/generated/product"
-	purchase_request "xor-go/services/finances/internal/handler/generated/purchase-request"
-	"xor-go/services/finances/internal/handler/http/bank_account_api"
-	"xor-go/services/finances/internal/handler/http/discount_api"
-	"xor-go/services/finances/internal/handler/http/payment_api"
-	"xor-go/services/finances/internal/handler/http/payout_request_api"
-	"xor-go/services/finances/internal/handler/http/product_api"
-	"xor-go/services/finances/internal/handler/http/purchase_request_api"
+	"xor-go/services/finances/internal/handler/http/bank"
+	"xor-go/services/finances/internal/handler/http/discount"
+	"xor-go/services/finances/internal/handler/http/payment"
+	"xor-go/services/finances/internal/handler/http/payout"
+	"xor-go/services/finances/internal/handler/http/product"
+	"xor-go/services/finances/internal/handler/http/purchase"
 	"xor-go/services/finances/internal/service/adapters"
 
 	"github.com/gin-gonic/gin"
@@ -62,8 +56,8 @@ func HandleError(c *gin.Context, err error, statusCode int) {
 	c.JSON(statusCode, gin.H{"error": err.Error()})
 }
 
-func ConvertToBankAccount(middlewareMainArr []MiddlewareFunc) []bank_account.MiddlewareFunc {
-	result := make([]bank_account.MiddlewareFunc, len(middlewareMainArr))
+func ConvertToBankAccount(middlewareMainArr []MiddlewareFunc) []bank.MiddlewareFunc {
+	result := make([]bank.MiddlewareFunc, len(middlewareMainArr))
 	for i, middlewareMain := range middlewareMainArr {
 		result[i] = func(c *gin.Context) {
 			middlewareMain(c)
@@ -102,8 +96,8 @@ func ConvertToPayment(middlewareMainArr []MiddlewareFunc) []payment.MiddlewareFu
 	return result
 }
 
-func ConvertToPayoutRequest(middlewareMainArr []MiddlewareFunc) []payout_request.MiddlewareFunc {
-	result := make([]payout_request.MiddlewareFunc, len(middlewareMainArr))
+func ConvertToPayoutRequest(middlewareMainArr []MiddlewareFunc) []payout.MiddlewareFunc {
+	result := make([]payout.MiddlewareFunc, len(middlewareMainArr))
 	for i, middlewareMain := range middlewareMainArr {
 		result[i] = func(c *gin.Context) {
 			middlewareMain(c)
@@ -112,8 +106,8 @@ func ConvertToPayoutRequest(middlewareMainArr []MiddlewareFunc) []payout_request
 	return result
 }
 
-func ConvertToPurchaseRequest(middlewareMainArr []MiddlewareFunc) []purchase_request.MiddlewareFunc {
-	result := make([]purchase_request.MiddlewareFunc, len(middlewareMainArr))
+func ConvertToPurchaseRequest(middlewareMainArr []MiddlewareFunc) []purchase.MiddlewareFunc {
+	result := make([]purchase.MiddlewareFunc, len(middlewareMainArr))
 	for i, middlewareMain := range middlewareMainArr {
 		result[i] = func(c *gin.Context) {
 			middlewareMain(c)
@@ -129,16 +123,16 @@ func InitHandler(
 ) {
 	baseUrl := fmt.Sprintf("%s/%s", httpPrefix, getVersion())
 
-	bank_account.RegisterHandlersWithOptions(router,
-		bank_account_api.NewBankAccountHandler(handler.bankAccountService),
-		bank_account.GinServerOptions{
+	bank.RegisterHandlersWithOptions(router,
+		bank.NewBankAccountHandler(handler.bankAccountService),
+		bank.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToBankAccount(middlewares),
 			ErrorHandler: HandleError,
 		})
 
 	discount.RegisterHandlersWithOptions(router,
-		discount_api.NewDiscountHandler(handler.discountService),
+		discount.NewDiscountHandler(handler.discountService),
 		discount.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToDiscount(middlewares),
@@ -146,7 +140,7 @@ func InitHandler(
 		})
 
 	product.RegisterHandlersWithOptions(router,
-		product_api.NewProductHandler(handler.productService),
+		product.NewProductHandler(handler.productService),
 		product.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToProduct(middlewares),
@@ -154,24 +148,24 @@ func InitHandler(
 		})
 
 	payment.RegisterHandlersWithOptions(router,
-		payment_api.NewPaymentHandler(handler.paymentService),
+		payment.NewPaymentHandler(handler.paymentService),
 		payment.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToPayment(middlewares),
 			ErrorHandler: HandleError,
 		})
 
-	purchase_request.RegisterHandlersWithOptions(router,
-		purchase_request_api.NewPurchaseRequestHandler(handler.purchaseRequestService),
-		purchase_request.GinServerOptions{
+	purchase.RegisterHandlersWithOptions(router,
+		purchase.NewPurchaseRequestHandler(handler.purchaseRequestService),
+		purchase.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToPurchaseRequest(middlewares),
 			ErrorHandler: HandleError,
 		})
 
-	payout_request.RegisterHandlersWithOptions(router,
-		payout_request_api.NewPayoutRequestHandler(handler.payoutRequestService),
-		payout_request.GinServerOptions{
+	payout.RegisterHandlersWithOptions(router,
+		payout.NewPayoutRequestHandler(handler.payoutRequestService),
+		payout.GinServerOptions{
 			BaseURL:      baseUrl,
 			Middlewares:  ConvertToPayoutRequest(middlewares),
 			ErrorHandler: HandleError,

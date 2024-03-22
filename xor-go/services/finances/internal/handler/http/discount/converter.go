@@ -2,10 +2,9 @@ package discount
 
 import (
 	"xor-go/services/finances/internal/domain"
-	"xor-go/services/finances/internal/handler/generated/discount"
 )
 
-func CreateToDomain(create discount.DiscountCreate) domain.DiscountCreate {
+func CreateToDomain(create DiscountCreate) domain.DiscountCreate {
 	return domain.DiscountCreate{
 		CreatedBy:  create.CreatedBy,
 		Percent:    create.Percent,
@@ -16,8 +15,8 @@ func CreateToDomain(create discount.DiscountCreate) domain.DiscountCreate {
 	}
 }
 
-func DomainToGet(get domain.DiscountGet) discount.DiscountGet {
-	return discount.DiscountGet{
+func DomainToGet(get domain.DiscountGet) DiscountGet {
+	return DiscountGet{
 		UUID:         get.UUID,
 		CreatedBy:    get.CreatedBy,
 		Percent:      get.Percent,
@@ -30,7 +29,7 @@ func DomainToGet(get domain.DiscountGet) discount.DiscountGet {
 	}
 }
 
-func UpdateToDomain(update discount.DiscountUpdate) domain.DiscountUpdate {
+func UpdateToDomain(update DiscountUpdate) domain.DiscountUpdate {
 	return domain.DiscountUpdate{
 		UUID:       update.UUID,
 		CreatedBy:  update.CreatedBy,
@@ -42,7 +41,7 @@ func UpdateToDomain(update discount.DiscountUpdate) domain.DiscountUpdate {
 	}
 }
 
-func FilterToDomain(filter *discount.DiscountFilter) *domain.DiscountFilter {
+func FilterToDomain(filter *DiscountFilter) *domain.DiscountFilter {
 	if filter == nil {
 		return nil
 	}

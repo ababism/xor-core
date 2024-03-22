@@ -2,18 +2,17 @@ package bank
 
 import (
 	"xor-go/services/finances/internal/domain"
-	bankaccount "xor-go/services/finances/internal/handler/generated/bank-account"
 )
 
-func ToBankAccountDataDomain(data bankaccount.BankAccountData) domain.BankAccountData {
+func ToBankAccountDataDomain(data BankAccountData) domain.BankAccountData {
 	return domain.BankAccountData{}
 }
 
-func ToBankAccountDataGet(data domain.BankAccountData) bankaccount.BankAccountData {
-	return bankaccount.BankAccountData{}
+func ToBankAccountDataGet(data domain.BankAccountData) BankAccountData {
+	return BankAccountData{}
 }
 
-func CreateToDomain(input bankaccount.BankAccountCreate) domain.BankAccountCreate {
+func CreateToDomain(input BankAccountCreate) domain.BankAccountCreate {
 	return domain.BankAccountCreate{
 		AccountUUID: input.AccountUUID,
 		Login:       input.Login,
@@ -22,7 +21,7 @@ func CreateToDomain(input bankaccount.BankAccountCreate) domain.BankAccountCreat
 	}
 }
 
-func UpdateToDomain(input bankaccount.BankAccountUpdate) domain.BankAccountUpdate {
+func UpdateToDomain(input BankAccountUpdate) domain.BankAccountUpdate {
 	return domain.BankAccountUpdate{
 		UUID:        input.UUID,
 		AccountUUID: input.AccountUUID,
@@ -35,8 +34,8 @@ func UpdateToDomain(input bankaccount.BankAccountUpdate) domain.BankAccountUpdat
 	}
 }
 
-func DomainToGet(input domain.BankAccountGet) bankaccount.BankAccountGet {
-	return bankaccount.BankAccountGet{
+func DomainToGet(input domain.BankAccountGet) BankAccountGet {
+	return BankAccountGet{
 		UUID:         input.UUID,
 		AccountUUID:  input.AccountUUID,
 		Login:        input.Login,
@@ -50,7 +49,7 @@ func DomainToGet(input domain.BankAccountGet) bankaccount.BankAccountGet {
 	}
 }
 
-func FilterToDomain(input *bankaccount.BankAccountFilter) *domain.BankAccountFilter {
+func FilterToDomain(input *BankAccountFilter) *domain.BankAccountFilter {
 	if input == nil {
 		return nil
 	}

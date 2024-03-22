@@ -7,7 +7,6 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	"xor-go/services/finances/internal/handler/generated/payment"
 	http2 "xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -16,7 +15,7 @@ const (
 	spanDefaultPayment = "payment/handler."
 )
 
-var _ payment.ServerInterface = &Handler{}
+var _ ServerInterface = &Handler{}
 
 type Handler struct {
 	paymentService adapters.PaymentService
@@ -48,7 +47,7 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params payment.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 	_, newCtx, span := getPaymentTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -58,7 +57,7 @@ func (h *Handler) GetList(c *gin.Context, params payment.GetListParams) {
 		return
 	}
 
-	list := make([]payment.PaymentGet, len(domains))
+	list := make([]PaymentGet, len(domains))
 	for i, item := range domains {
 		list[i] = DomainToGet(item)
 	}
@@ -66,7 +65,7 @@ func (h *Handler) GetList(c *gin.Context, params payment.GetListParams) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params payment.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params CreateParams) {
 	_, newCtx, span := getPaymentTracerSpan(c, ".Create")
 	defer span.End()
 

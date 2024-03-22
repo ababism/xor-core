@@ -7,7 +7,6 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	"xor-go/services/finances/internal/handler/generated/discount"
 	http2 "xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -16,7 +15,7 @@ const (
 	spanDefaultDiscount = "discount/handler."
 )
 
-var _ discount.ServerInterface = &Handler{}
+var _ ServerInterface = &Handler{}
 
 type Handler struct {
 	discountService adapters.DiscountService
@@ -48,7 +47,7 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params discount.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -58,7 +57,7 @@ func (h *Handler) GetList(c *gin.Context, params discount.GetListParams) {
 		return
 	}
 
-	list := make([]discount.DiscountGet, len(domains))
+	list := make([]DiscountGet, len(domains))
 	for i, item := range domains {
 		list[i] = DomainToGet(item)
 	}
@@ -66,7 +65,7 @@ func (h *Handler) GetList(c *gin.Context, params discount.GetListParams) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params discount.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params CreateParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".Create")
 	defer span.End()
 
@@ -80,7 +79,7 @@ func (h *Handler) Create(c *gin.Context, params discount.CreateParams) {
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(c *gin.Context, params discount.UpdateParams) {
+func (h *Handler) Update(c *gin.Context, params UpdateParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".Update")
 	defer span.End()
 

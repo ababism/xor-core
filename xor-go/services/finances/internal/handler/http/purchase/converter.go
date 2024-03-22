@@ -2,10 +2,9 @@ package purchase
 
 import (
 	"xor-go/services/finances/internal/domain"
-	purchaserequest "xor-go/services/finances/internal/handler/generated/purchase-request"
 )
 
-func CreateToDomain(create purchaserequest.PurchaseRequestCreate) domain.PurchaseRequestCreate {
+func CreateToDomain(create PurchaseRequestCreate) domain.PurchaseRequestCreate {
 	return domain.PurchaseRequestCreate{
 		Sender:     create.Sender,
 		Receiver:   create.Receiver,
@@ -14,8 +13,8 @@ func CreateToDomain(create purchaserequest.PurchaseRequestCreate) domain.Purchas
 	}
 }
 
-func DomainToGet(get domain.PurchaseRequestGet) purchaserequest.PurchaseRequestGet {
-	return purchaserequest.PurchaseRequestGet{
+func DomainToGet(get domain.PurchaseRequestGet) PurchaseRequestGet {
+	return PurchaseRequestGet{
 		UUID:       get.UUID,
 		Sender:     get.Sender,
 		Receiver:   get.Receiver,
@@ -24,7 +23,7 @@ func DomainToGet(get domain.PurchaseRequestGet) purchaserequest.PurchaseRequestG
 	}
 }
 
-func FilterToDomain(filter *purchaserequest.PurchaseRequestFilter) *domain.PurchaseRequestFilter {
+func FilterToDomain(filter *PurchaseRequestFilter) *domain.PurchaseRequestFilter {
 	if filter == nil {
 		return nil
 	}

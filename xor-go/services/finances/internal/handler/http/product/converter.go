@@ -2,11 +2,10 @@ package product
 
 import (
 	"xor-go/services/finances/internal/domain"
-	"xor-go/services/finances/internal/handler/generated/product"
 )
 
-func DomainToGet(get domain.ProductGet) product.ProductGet {
-	return product.ProductGet{
+func DomainToGet(get domain.ProductGet) ProductGet {
+	return ProductGet{
 		UUID:          get.UUID,
 		Name:          get.Name,
 		Price:         get.Price,
@@ -16,14 +15,14 @@ func DomainToGet(get domain.ProductGet) product.ProductGet {
 	}
 }
 
-func CreateToDomain(create product.ProductCreate) domain.ProductCreate {
+func CreateToDomain(create ProductCreate) domain.ProductCreate {
 	return domain.ProductCreate{
 		Name:  create.Name,
 		Price: create.Price,
 	}
 }
 
-func UpdateToDomain(update product.ProductUpdate) domain.ProductUpdate {
+func UpdateToDomain(update ProductUpdate) domain.ProductUpdate {
 	return domain.ProductUpdate{
 		UUID:        update.UUID,
 		Name:        update.Name,
@@ -32,7 +31,7 @@ func UpdateToDomain(update product.ProductUpdate) domain.ProductUpdate {
 	}
 }
 
-func FilterToDomain(filter *product.ProductFilter) *domain.ProductFilter {
+func FilterToDomain(filter *ProductFilter) *domain.ProductFilter {
 	if filter == nil {
 		return nil
 	}

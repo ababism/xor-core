@@ -15,7 +15,7 @@ const (
 	spanDefaultPayoutRequest = "payout-request/handler."
 )
 
-var _ payout_request.ServerInterface = &Handler{}
+var _ ServerInterface = &Handler{}
 
 type Handler struct {
 	payoutRequestService adapters.PayoutRequestService
@@ -47,7 +47,7 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params payout_request.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -57,7 +57,7 @@ func (h *Handler) GetList(c *gin.Context, params payout_request.GetListParams) {
 		return
 	}
 
-	list := make([]payout_request.PayoutRequestGet, len(models))
+	list := make([]PayoutRequestGet, len(models))
 	for i, item := range models {
 		list[i] = DomainToGet(item)
 	}
@@ -65,7 +65,7 @@ func (h *Handler) GetList(c *gin.Context, params payout_request.GetListParams) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params payout_request.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params CreateParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Create")
 	defer span.End()
 

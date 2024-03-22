@@ -2,18 +2,17 @@ package payout
 
 import (
 	"xor-go/services/finances/internal/domain"
-	payoutrequest "xor-go/services/finances/internal/handler/generated/payout-request"
 )
 
-func DataToDomain(data payoutrequest.PayoutRequestData) domain.PayoutRequestData {
+func DataToDomain(data PayoutRequestData) domain.PayoutRequestData {
 	return domain.PayoutRequestData{}
 }
 
-func DataToPayment(data domain.PayoutRequestData) payoutrequest.PayoutRequestData {
-	return payoutrequest.PayoutRequestData{}
+func DataToPayment(data domain.PayoutRequestData) PayoutRequestData {
+	return PayoutRequestData{}
 }
 
-func CreateToDomain(create payoutrequest.PayoutRequestCreate) domain.PayoutRequestCreate {
+func CreateToDomain(create PayoutRequestCreate) domain.PayoutRequestCreate {
 	return domain.PayoutRequestCreate{
 		Receiver:   create.Receiver,
 		Amount:     create.Amount,
@@ -22,8 +21,8 @@ func CreateToDomain(create payoutrequest.PayoutRequestCreate) domain.PayoutReque
 	}
 }
 
-func DomainToGet(get domain.PayoutRequestGet) payoutrequest.PayoutRequestGet {
-	return payoutrequest.PayoutRequestGet{
+func DomainToGet(get domain.PayoutRequestGet) PayoutRequestGet {
+	return PayoutRequestGet{
 		UUID:       get.UUID,
 		Receiver:   get.Receiver,
 		Amount:     get.Amount,
@@ -32,7 +31,7 @@ func DomainToGet(get domain.PayoutRequestGet) payoutrequest.PayoutRequestGet {
 	}
 }
 
-func FilterToDomain(filter *payoutrequest.PayoutRequestFilter) *domain.PayoutRequestFilter {
+func FilterToDomain(filter *PayoutRequestFilter) *domain.PayoutRequestFilter {
 	if filter == nil {
 		return nil
 	}

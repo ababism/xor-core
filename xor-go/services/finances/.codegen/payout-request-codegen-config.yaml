@@ -1,6 +1,6 @@
 # payout-request-codegen-config.yaml for payout-request api + server
 
-output: internal/handler/http/payout/payout.go
+output: internal/handler/http/payout/payout_gen.go
 package: payout
 generate:
   - types
