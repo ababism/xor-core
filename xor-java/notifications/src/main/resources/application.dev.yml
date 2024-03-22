@@ -13,6 +13,10 @@ spring:
       uri: mongodb://localhost:27017
       database: notifications
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=qwerty
+    driver-class-name: org.postgresql.Driver
+
   mail:
     host: smtp.yandex.ru
     port: 25
