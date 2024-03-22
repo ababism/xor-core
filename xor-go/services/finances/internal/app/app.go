@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 	"xor-go/pkg/xdb/postgres"
@@ -29,7 +30,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	err := log.Init(cfg)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Init Logger")
 	}
 	// Чистим кэш logger при shutdown
 	xshutdown.AddCallback(
@@ -77,9 +78,9 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// REPOSITORY ----------------------------------------------------------------------
 
-	postgresDb, err := postgres.NewDB(cfg.PostgresConfig)
+	postgresDb, err := postgres.NewDB(cfg.Postgres)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Init Postgres DB")
 	}
 
 	bankAccountRepo := postgre.NewBankAccountRepository(postgresDb)
@@ -91,7 +92,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// SERVICE LAYER ----------------------------------------------------------------------
 
-	// Service layer
+	// Name layer
 	bankAccountService := service.NewBankAccountService(bankAccountRepo)
 	discountService := service.NewDiscountService(discountRepo)
 	paymentService := service.NewPaymentService(paymentRepo)
@@ -99,7 +100,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	payoutRequestService := service.NewPayoutRequestService(payoutRequest)
 	purchaseRequestService := service.NewPurchaseRequestService(purchaseRequest)
 
-	log.Logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Service))
+	log.Logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 
 	// TRANSPORT LAYER ----------------------------------------------------------------------
 

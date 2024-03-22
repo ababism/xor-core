@@ -4,26 +4,28 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	log "log"
 )
 
 type Config struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	Username string `yaml:"username"`
-	DBName   string `yaml:"dbname"`
-	Password string `yaml:"password"`
-	SSLMode  string `yaml:"sslmode"`
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Name     string `mapstructure:"name"`
+	Password string `mapstructure:"password"`
+	SSL      string `mapstructure:"ssl"`
 }
 
 func NewDB(cfg *Config) (*sqlx.DB, error) {
-	dbParams := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+	dbParams := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
 		cfg.Host,
 		cfg.Port,
-		cfg.Username,
-		cfg.DBName,
+		cfg.User,
+		cfg.Name,
+		cfg.SSL,
 		cfg.Password,
-		cfg.SSLMode,
 	)
+	log.Println(dbParams)
 	db, err := sqlx.Open("postgres", dbParams)
 	if err != nil {
 		return nil, err

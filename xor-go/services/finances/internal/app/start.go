@@ -19,7 +19,7 @@ func (a *App) Start(ctx context.Context) {
 	go a.startHTTPServer(ctx)
 
 	if err := xshutdown.Wait(a.cfg.GracefulShutdown); err != nil {
-		log.Logger.Error(fmt.Sprintf("Failed to gracefully shutdown %s app: %s", a.cfg.App.Service, err.Error()))
+		log.Logger.Error(fmt.Sprintf("Failed to gracefully shutdown %s app: %s", a.cfg.App.Name, err.Error()))
 	} else {
 		log.Logger.Info("App gracefully stopped")
 	}
@@ -32,7 +32,7 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	// TODO Добавляем системные роуты
 	//router.WithHandleGET("/metrics", metrics.HandleFunc())
 
-	tracerMw := http.MiddlewareFunc(otelgin.Middleware(a.cfg.App.Service, otelgin.WithTracerProvider(a.tracerProvider)))
+	tracerMw := http.MiddlewareFunc(otelgin.Middleware(a.cfg.App.Name, otelgin.WithTracerProvider(a.tracerProvider)))
 	GinZapMw := http.MiddlewareFunc(ginzap.Ginzap(log.Logger, time.RFC3339, true))
 	requestIdMw := http.MiddlewareFunc(requestid.RequestID(nil))
 	middlewares := []http.MiddlewareFunc{
@@ -49,9 +49,9 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	//srv.RegisterRoutes(&router)
 
 	// Стартуем
-	log.Logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Service, a.cfg.Http.Host, a.cfg.Http.Port))
+	log.Logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Name, a.cfg.Http.Host, a.cfg.Http.Port))
 	if err := srv.Start(); err != nil {
-		log.Logger.Error(fmt.Sprintf("Fail with %s HTTP server: %s", a.cfg.App.Service, err.Error()))
+		log.Logger.Error(fmt.Sprintf("Fail with %s HTTP server: %s", a.cfg.App.Name, err.Error()))
 		xshutdown.Now()
 	}
 }

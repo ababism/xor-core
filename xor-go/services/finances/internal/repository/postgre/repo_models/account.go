@@ -18,7 +18,7 @@ type BankAccount struct {
 	Status        string          `db:"status"`
 	LastDealAt    time.Time       `db:"last_deal_at"`
 	CreatedAt     time.Time       `db:"created_at"`
-	LastUpdatedAt *time.Time      `db:"last_updated_at"`
+	LastUpdatedAt time.Time       `db:"last_updated_at"`
 }
 
 func CreateToBankAccountPostgres(model *domain.BankAccountCreate) *BankAccount {
