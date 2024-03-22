@@ -1,4 +1,4 @@
-package product_api
+package product
 
 import (
 	"context"
@@ -16,14 +16,14 @@ const (
 	spanDefaultProduct = "product/handler."
 )
 
-var _ product.ServerInterface = &ProductHandler{}
+var _ product.ServerInterface = &Handler{}
 
-type ProductHandler struct {
+type Handler struct {
 	productService adapters.ProductService
 }
 
-func NewProductHandler(productService adapters.ProductService) *ProductHandler {
-	return &ProductHandler{productService: productService}
+func NewProductHandler(productService adapters.ProductService) *Handler {
+	return &Handler{productService: productService}
 }
 
 func getProductTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
@@ -33,7 +33,7 @@ func getProductTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *ProductHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getProductTracerSpan(c, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *ProductHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *ProductHandler) GetList(c *gin.Context, params product.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params product.GetListParams) {
 	_, newCtx, span := getProductTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -66,7 +66,7 @@ func (h *ProductHandler) GetList(c *gin.Context, params product.GetListParams) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *ProductHandler) Create(c *gin.Context, params product.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params product.CreateParams) {
 	_, newCtx, span := getProductTracerSpan(c, ".Create")
 	defer span.End()
 
@@ -80,7 +80,7 @@ func (h *ProductHandler) Create(c *gin.Context, params product.CreateParams) {
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *ProductHandler) Update(c *gin.Context, params product.UpdateParams) {
+func (h *Handler) Update(c *gin.Context, params product.UpdateParams) {
 	_, newCtx, span := getProductTracerSpan(c, ".Update")
 	defer span.End()
 
@@ -94,7 +94,7 @@ func (h *ProductHandler) Update(c *gin.Context, params product.UpdateParams) {
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *ProductHandler) Disable(c *gin.Context, id openapitypes.UUID) {
+func (h *Handler) Disable(c *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getProductTracerSpan(c, ".Disable")
 	defer span.End()
 

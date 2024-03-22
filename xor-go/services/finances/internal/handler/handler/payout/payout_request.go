@@ -1,4 +1,4 @@
-package purchase_request_api
+package payout
 
 import (
 	"context"
@@ -7,37 +7,36 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	"xor-go/services/finances/internal/handler/generated/purchase-request"
 	http2 "xor-go/services/finances/internal/handler/handler"
 	"xor-go/services/finances/internal/service/adapters"
 )
 
 const (
-	spanDefaultPurchaseRequest = "purchase-request/handler."
+	spanDefaultPayoutRequest = "payout-request/handler."
 )
 
-var _ purchase_request.ServerInterface = &PurchaseRequestHandler{}
+var _ payout_request.ServerInterface = &Handler{}
 
-type PurchaseRequestHandler struct {
-	purchaseRequestService adapters.PurchaseRequestService
+type Handler struct {
+	payoutRequestService adapters.PayoutRequestService
 }
 
-func NewPurchaseRequestHandler(purchaseRequestService adapters.PurchaseRequestService) *PurchaseRequestHandler {
-	return &PurchaseRequestHandler{purchaseRequestService: purchaseRequestService}
+func NewPayoutRequestHandler(payoutRequestService adapters.PayoutRequestService) *Handler {
+	return &Handler{payoutRequestService: payoutRequestService}
 }
 
 func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
-	tr := global.Tracer(adapters.ServiceNamePurchaseRequest)
-	newCtx, span := tr.Start(ctx, spanDefaultPurchaseRequest+name)
+	tr := global.Tracer(adapters.ServiceNamePayoutRequest)
+	newCtx, span := tr.Start(ctx, spanDefaultPayoutRequest+name)
 
 	return tr, newCtx, span
 }
 
-func (h *PurchaseRequestHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Get")
 	defer span.End()
 
-	domain, err := h.purchaseRequestService.Get(newCtx, uuid)
+	domain, err := h.payoutRequestService.Get(newCtx, uuid)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
@@ -48,17 +47,17 @@ func (h *PurchaseRequestHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *PurchaseRequestHandler) GetList(c *gin.Context, params purchase_request.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params payout_request.GetListParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
 	defer span.End()
 
-	models, err := h.purchaseRequestService.List(newCtx, FilterToDomain(params.Filter))
+	models, err := h.payoutRequestService.List(newCtx, FilterToDomain(params.Filter))
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	list := make([]purchase_request.PurchaseRequestGet, len(models))
+	list := make([]payout_request.PayoutRequestGet, len(models))
 	for i, item := range models {
 		list[i] = DomainToGet(item)
 	}
@@ -66,12 +65,12 @@ func (h *PurchaseRequestHandler) GetList(c *gin.Context, params purchase_request
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *PurchaseRequestHandler) Create(c *gin.Context, params purchase_request.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params payout_request.CreateParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Create")
 	defer span.End()
 
 	domain := CreateToDomain(params.Model)
-	err := h.purchaseRequestService.Create(newCtx, &domain)
+	err := h.payoutRequestService.Create(newCtx, &domain)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
@@ -80,11 +79,11 @@ func (h *PurchaseRequestHandler) Create(c *gin.Context, params purchase_request.
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *PurchaseRequestHandler) Archive(c *gin.Context, id openapitypes.UUID) {
+func (h *Handler) Archive(c *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Archive")
 	defer span.End()
 
-	err := h.purchaseRequestService.Archive(newCtx, id)
+	err := h.payoutRequestService.Archive(newCtx, id)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return

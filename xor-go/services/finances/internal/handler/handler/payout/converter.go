@@ -1,4 +1,4 @@
-package payout_request_api
+package payout
 
 import (
 	"xor-go/services/finances/internal/domain"

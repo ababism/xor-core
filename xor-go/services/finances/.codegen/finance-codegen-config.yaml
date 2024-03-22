@@ -1,7 +1,7 @@
 # finance-codegen-config.yaml for finance api + server
 
-output: internal/handler/generated/finance.go
-package: finance_gen
+output: internal/handler/http/generated-api/generated_gen.go
+package: finance
 generate:
   - types
   - gin-server

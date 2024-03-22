@@ -1,7 +1,7 @@
 # payout-request-codegen-config.yaml for payout-request api + server
 
 output: internal/handler/generated/payout-request/payout-request.go
-package: payout_request
+package: payout
 generate:
   - types
   - gin-server

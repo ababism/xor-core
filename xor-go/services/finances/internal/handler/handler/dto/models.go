@@ -1,4 +1,4 @@
-package dto_models
+package dto
 
 import (
 	"github.com/google/uuid"

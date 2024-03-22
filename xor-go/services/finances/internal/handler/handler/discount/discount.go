@@ -1,4 +1,4 @@
-package discount_api
+package discount
 
 import (
 	"context"
@@ -16,14 +16,14 @@ const (
 	spanDefaultDiscount = "discount/handler."
 )
 
-var _ discount.ServerInterface = &DiscountHandler{}
+var _ discount.ServerInterface = &Handler{}
 
-type DiscountHandler struct {
+type Handler struct {
 	discountService adapters.DiscountService
 }
 
-func NewDiscountHandler(discountService adapters.DiscountService) *DiscountHandler {
-	return &DiscountHandler{discountService: discountService}
+func NewDiscountHandler(discountService adapters.DiscountService) *Handler {
+	return &Handler{discountService: discountService}
 }
 
 func getDiscountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
@@ -33,7 +33,7 @@ func getDiscountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context
 	return tr, newCtx, span
 }
 
-func (h *DiscountHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *DiscountHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *DiscountHandler) GetList(c *gin.Context, params discount.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params discount.GetListParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -66,7 +66,7 @@ func (h *DiscountHandler) GetList(c *gin.Context, params discount.GetListParams)
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *DiscountHandler) Create(c *gin.Context, params discount.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params discount.CreateParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".Create")
 	defer span.End()
 
@@ -80,7 +80,7 @@ func (h *DiscountHandler) Create(c *gin.Context, params discount.CreateParams) {
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *DiscountHandler) Update(c *gin.Context, params discount.UpdateParams) {
+func (h *Handler) Update(c *gin.Context, params discount.UpdateParams) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".Update")
 	defer span.End()
 
@@ -94,7 +94,7 @@ func (h *DiscountHandler) Update(c *gin.Context, params discount.UpdateParams) {
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *DiscountHandler) End(c *gin.Context, id openapitypes.UUID) {
+func (h *Handler) End(c *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getDiscountTracerSpan(c, ".End")
 	defer span.End()
 

@@ -1,4 +1,4 @@
-package discount_api
+package discount
 
 import (
 	"xor-go/services/finances/internal/domain"

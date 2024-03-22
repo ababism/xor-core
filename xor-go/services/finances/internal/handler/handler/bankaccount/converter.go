@@ -1,4 +1,4 @@
-package bank_account_api
+package bankaccount
 
 import (
 	"xor-go/services/finances/internal/domain"

@@ -1,7 +1,7 @@
 # bank-account-codegen-config.yaml for bank-account api + server
 
-output: internal/handler/generated/bank-account/bank-account.go
-package: bank_account
+output: internal/handler/http/bank-account-api/bank_account_gen.go
+package: bank
 generate:
   - types
   - gin-server

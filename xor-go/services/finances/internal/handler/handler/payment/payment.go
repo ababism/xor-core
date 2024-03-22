@@ -1,4 +1,4 @@
-package payment_api
+package payment
 
 import (
 	"context"
@@ -16,14 +16,14 @@ const (
 	spanDefaultPayment = "payment/handler."
 )
 
-var _ payment.ServerInterface = &PaymentHandler{}
+var _ payment.ServerInterface = &Handler{}
 
-type PaymentHandler struct {
+type Handler struct {
 	paymentService adapters.PaymentService
 }
 
-func NewPaymentHandler(paymentService adapters.PaymentService) *PaymentHandler {
-	return &PaymentHandler{paymentService: paymentService}
+func NewPaymentHandler(paymentService adapters.PaymentService) *Handler {
+	return &Handler{paymentService: paymentService}
 }
 
 func getPaymentTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
@@ -33,7 +33,7 @@ func getPaymentTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *PaymentHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getPaymentTracerSpan(c, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *PaymentHandler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *PaymentHandler) GetList(c *gin.Context, params payment.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params payment.GetListParams) {
 	_, newCtx, span := getPaymentTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -66,7 +66,7 @@ func (h *PaymentHandler) GetList(c *gin.Context, params payment.GetListParams) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *PaymentHandler) Create(c *gin.Context, params payment.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params payment.CreateParams) {
 	_, newCtx, span := getPaymentTracerSpan(c, ".Create")
 	defer span.End()
 

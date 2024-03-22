@@ -1,4 +1,4 @@
-package purchase_request_api
+package purchase
 
 import (
 	"xor-go/services/finances/internal/domain"

@@ -1,6 +1,6 @@
 # discount-codegen-config.yaml for discount api + server
 
-output: internal/handler/generated/discount/discount.go
+output: internal/handler/http/discount-api/discount_gen.go
 package: discount
 generate:
   - types

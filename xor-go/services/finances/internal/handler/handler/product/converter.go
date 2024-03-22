@@ -1,4 +1,4 @@
-package product_api
+package product
 
 import (
 	"xor-go/services/finances/internal/domain"

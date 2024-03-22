@@ -1,4 +1,4 @@
-package bank_account_api
+package bankaccount
 
 import (
 	"context"
@@ -15,14 +15,14 @@ const (
 	spanDefaultBankAccount = "bank-account/handler."
 )
 
-var _ bankaccount.ServerInterface = &BankAccountHandler{}
+var _ bankaccount.ServerInterface = &Handler{}
 
-type BankAccountHandler struct {
+type Handler struct {
 	bankAccountService adapters.BankAccountService
 }
 
-func NewBankAccountHandler(bankAccountService adapters.BankAccountService) *BankAccountHandler {
-	return &BankAccountHandler{bankAccountService: bankAccountService}
+func NewBankAccountHandler(bankAccountService adapters.BankAccountService) *Handler {
+	return &Handler{bankAccountService: bankAccountService}
 }
 
 func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
@@ -32,7 +32,7 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *BankAccountHandler) Get(c *gin.Context, login string) {
+func (h *Handler) Get(c *gin.Context, login string) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Get")
 	defer span.End()
 
@@ -47,7 +47,7 @@ func (h *BankAccountHandler) Get(c *gin.Context, login string) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *BankAccountHandler) GetList(c *gin.Context, params bankaccount.GetListParams) {
+func (h *Handler) GetList(c *gin.Context, params bankaccount.GetListParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
 	defer span.End()
 
@@ -65,7 +65,7 @@ func (h *BankAccountHandler) GetList(c *gin.Context, params bankaccount.GetListP
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *BankAccountHandler) Create(c *gin.Context, params bankaccount.CreateParams) {
+func (h *Handler) Create(c *gin.Context, params bankaccount.CreateParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Create")
 	defer span.End()
 
@@ -79,7 +79,7 @@ func (h *BankAccountHandler) Create(c *gin.Context, params bankaccount.CreatePar
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *BankAccountHandler) Update(c *gin.Context, params bankaccount.UpdateParams) {
+func (h *Handler) Update(c *gin.Context, params bankaccount.UpdateParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Update")
 	defer span.End()
 
@@ -93,7 +93,7 @@ func (h *BankAccountHandler) Update(c *gin.Context, params bankaccount.UpdatePar
 	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *BankAccountHandler) Change(c *gin.Context, login string, params bankaccount.ChangeParams) {
+func (h *Handler) Change(c *gin.Context, login string, params bankaccount.ChangeParams) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Change")
 	defer span.End()
 

@@ -1,7 +1,7 @@
 # purchase-request-codegen-config.yaml for purchase-request api + server
 
 output: internal/handler/generated/purchase-request/purchase-request.go
-package: purchase_request
+package: purchase
 generate:
   - types
   - gin-server

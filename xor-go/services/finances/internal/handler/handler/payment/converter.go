@@ -1,4 +1,4 @@
-package payment_api
+package payment
 
 import (
 	"xor-go/services/finances/internal/domain"
