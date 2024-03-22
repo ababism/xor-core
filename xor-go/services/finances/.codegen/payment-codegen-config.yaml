@@ -1,0 +1,10 @@
+# payment-codegen-config.yaml for payment api + server
+
+output: internal/handler/http/payment/payment_gen.go
+package: payment
+generate:
+  - types
+  - gin-server
+
+# To RUN from root:
+# oapi-codegen --config .codegen/payment-codegen-config.yaml .codegen/payment-codegen.yaml

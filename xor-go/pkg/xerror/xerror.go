@@ -1,6 +1,7 @@
 package xerror
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"xor-go/pkg/xapp"
@@ -16,17 +17,17 @@ var appConfig *xapp.Config
 
 func init() {
 	appConfig = &xapp.Config{
-		Service:     appUnknown,
-		Environment: xapp.Production,
+		Name:        appUnknown,
+		Environment: xapp.ProductionEnv,
 		Version:     verUnknown,
 	}
 }
 
-func InitAppError(cfg *app.Config) error {
+func InitAppError(cfg *xapp.Config) error {
 	if cfg == nil {
-		appConfig = &app.Config{
+		appConfig = &xapp.Config{
 			Name:        appUnknown,
-			Environment: app.Production,
+			Environment: xapp.ProductionEnv,
 			Version:     verUnknown,
 		}
 		return errors.New("application config is nil")
@@ -60,12 +61,12 @@ func GetLastMessage(err error) string {
 	if errors.As(err, &myErr) {
 		if appConfig.IsProduction() {
 			return myErr.Message
-		} else if appConfig.IsLocal() {
+		} else if appConfig.IsTesting() {
 			return myErr.DevMessage
 		}
 		return myErr.Message
 	} else {
-		if appConfig.IsLocal() {
+		if appConfig.IsTesting() {
 			return err.Error()
 		}
 		return ErrUnknown

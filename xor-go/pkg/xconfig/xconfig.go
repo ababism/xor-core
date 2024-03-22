@@ -31,9 +31,9 @@ func ReplaceWithEnv(config interface{}, prefix string) {
 			//fmt.Printf("%s = %s\n", envName, envValue)
 
 			// Замена значения, если переменная окружения задана
-			if envValue != "" {
+			if envValue != "" && field.String() != envValue {
 				log.Printf(
-					"The configuration value of %s has been overwritten from %s to %s\n",
+					"The configuration value of %s has been overwritten from '%s' to '%s'\n",
 					envName,
 					field.String(),
 					envValue,

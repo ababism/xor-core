@@ -8,7 +8,7 @@ import (
 type DiscountGet struct {
 	UUID         uuid.UUID
 	CreatedBy    uuid.UUID
-	Percent      float64
+	Percent      float32
 	StandAlone   bool
 	StartedAt    time.Time
 	EndedAt      time.Time
@@ -19,7 +19,7 @@ type DiscountGet struct {
 
 type DiscountCreate struct {
 	CreatedBy  uuid.UUID
-	Percent    float64
+	Percent    float32
 	StandAlone bool
 	StartedAt  time.Time
 	EndedAt    time.Time
@@ -29,7 +29,7 @@ type DiscountCreate struct {
 type DiscountUpdate struct {
 	UUID       uuid.UUID
 	CreatedBy  uuid.UUID
-	Percent    float64
+	Percent    float32
 	StandAlone bool
 	StartedAt  time.Time
 	EndedAt    time.Time
@@ -39,7 +39,7 @@ type DiscountUpdate struct {
 type DiscountFilter struct {
 	UUID       *uuid.UUID
 	CreatedBy  *uuid.UUID
-	Percent    *float64
+	Percent    *float32
 	StandAlone *bool
 	Status     *string
 }

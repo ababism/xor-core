@@ -69,7 +69,7 @@ func (s *payoutRequestService) Archive(ctx context.Context, id uuid.UUID) error 
 	_, newCtx, span := getPayoutRequestTracerSpan(ctx, ".Archive")
 	defer span.End()
 
-	err := s.r.Archive(newCtx, id)
+	err := s.r.Delete(newCtx, id)
 	if err != nil {
 		return err
 	}

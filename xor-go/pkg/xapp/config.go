@@ -1,9 +1,10 @@
 package xapp
 
 type Config struct {
-	Service     string
-	Environment Environment
-	Dc          string
+	Name        string      `mapstructure:"name"`
+	Environment Environment `mapstructure:"env"`
+	Version     string      `mapstructure:"version"`
+	Dc          string      `mapstructure:"dc"`
 }
 
 type RawConfig struct {
@@ -18,20 +19,20 @@ func (r *RawConfig) ToConfig() (*Config, error) {
 		return nil, err
 	}
 	return &Config{
-		Service:     r.Service,
+		Name:        r.Service,
 		Environment: parsedEnv,
 		Dc:          r.Dc,
 	}, nil
 }
 
-func (r *Config) IsProdEnvironment() bool {
-	return r.Environment == ProdEnvironment
+func (r *Config) IsProduction() bool {
+	return r.Environment == ProductionEnv
 }
 
-func (r *Config) IsTestEnvironment() bool {
-	return r.Environment == TestEnvironment
+func (r *Config) IsTesting() bool {
+	return r.Environment == TestingEnv
 }
 
-func (r *Config) IsDevEnvironment() bool {
-	return r.Environment == DevEnvironment
+func (r *Config) IsDevelopment() bool {
+	return r.Environment == DevelopmentEnv
 }

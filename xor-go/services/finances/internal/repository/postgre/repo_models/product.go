@@ -9,7 +9,7 @@ import (
 type Product struct {
 	UUID          uuid.UUID `db:"uuid"`
 	Name          string    `db:"name"`
-	Price         float64   `db:"price"`
+	Price         float32   `db:"price"`
 	IsAvailable   bool      `db:"is_available"`
 	CreatedAt     time.Time `db:"created_at"`
 	LastUpdatedAt time.Time `db:"last_updated_at"`

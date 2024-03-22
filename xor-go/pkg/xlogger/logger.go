@@ -16,6 +16,7 @@ const (
 
 type Config struct {
 	Level            string   `yaml:"level" env:"LEVEL"`
+	Env              string   `yaml:"env" env:"ENV"`
 	Encoding         string   `yaml:"encoding" env:"ENCODING"`
 	OutputPaths      []string `yaml:"output_paths" env:"OUTPUT_PATHS"`
 	ErrorOutputPaths []string `yaml:"error_output_paths" env:"ERROR_OUTPUT_PATHS"`
@@ -39,7 +40,7 @@ func Init(cfg *Config, appCfg *xapp.Config) (*zap.Logger, error) {
 	cfgZap.ErrorOutputPaths = cfg.ErrorOutputPaths
 	cfgZap.Encoding = cfg.Encoding
 	cfgZap.InitialFields = map[string]interface{}{
-		serviceTag:     appCfg.Service,
+		serviceTag:     appCfg.Name,
 		environmentTag: string(appCfg.Environment),
 		dcTag:          appCfg.Dc,
 	}
@@ -56,9 +57,9 @@ func configByEnv(env xapp.Environment) (*zap.Config, error) {
 	var config zap.Config
 	var err error = nil
 	switch env {
-	case xapp.DevEnvironment:
+	case xapp.DevelopmentEnv:
 		config = zap.NewDevelopmentConfig()
-	case xapp.ProdEnvironment:
+	case xapp.ProductionEnv:
 		config = zap.NewProductionConfig()
 	default:
 		err = fmt.Errorf("failed to get logger config for env: %s", env)

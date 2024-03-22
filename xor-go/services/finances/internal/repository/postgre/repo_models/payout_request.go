@@ -12,7 +12,7 @@ type PayoutRequestData struct {
 type PayoutRequest struct {
 	UUID       uuid.UUID         `db:"uuid"`
 	Receiver   uuid.UUID         `db:"receiver"`
-	Amount     float64           `db:"amount"`
+	Amount     float32           `db:"amount"`
 	Data       PayoutRequestData `db:"data"`
 	ReceivedAt time.Time         `db:"received_at"`
 }

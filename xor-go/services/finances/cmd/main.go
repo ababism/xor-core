@@ -11,11 +11,12 @@ import (
 )
 
 const MainEnvName = ".env"
-const ServiceName = "Finances Service"
-const ServiceCapsName = "FINANCES SERVICE"
+const ServiceName = "Finances"
+const ServiceCapsName = "FINANCES"
 
 func init() {
-	if err := godotenv.Load(MainEnvName); err != nil {
+	envPath := fmt.Sprintf("services/finances/%s", MainEnvName)
+	if err := godotenv.Load(envPath); err != nil {
 		log.Print(fmt.Sprintf("No '%s' file found", MainEnvName))
 	}
 }
@@ -23,8 +24,9 @@ func init() {
 func main() {
 	ctx := context.Background()
 
-	configPath := os.Getenv("CONFIG_" + ServiceCapsName)
-	log.Println(ServiceName+" config path: ", configPath)
+	cfgEnvName := "CONFIG_" + ServiceCapsName
+	configPath := os.Getenv(cfgEnvName)
+	log.Printf("%s config path (%s): %s", ServiceName, cfgEnvName, configPath)
 
 	// Собираем конфиг приложения
 	cfg, err := config.NewConfig(configPath, ServiceCapsName)
@@ -35,7 +37,7 @@ func main() {
 	// Создаем наше приложение
 	application, err := app.NewApp(cfg)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Fail to create %s app: %s", cfg.App, err))
+		log.Fatal(fmt.Sprintf("Fail to create '%s' service: %s", cfg.App.Name, err))
 	}
 
 	// Запускаем приложение
