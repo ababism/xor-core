@@ -7,6 +7,7 @@ servers:
 paths:
   /bank-accounts/{login}:
     get:
+      operationId: get
       summary: Get bank account by login
       parameters:
         - in: path
@@ -27,7 +28,13 @@ paths:
           description: Bank account not found
   /bank-accounts:
     get:
+      operationId: getList
       summary: List bank accounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/BankAccountFilter'
       responses:
         '200':
           description: Successful operation
@@ -38,26 +45,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/BankAccountGet'
     post:
+      operationId: create
       summary: Create a bank account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BankAccountCreate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountCreate'
       responses:
         '201':
           description: Successful operation
         '400':
           description: Incorrect bank account data
     put:
+      operationId: update
       summary: Update a bank account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BankAccountUpdate'
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountUpdate'
       responses:
         '200':
           description: Successful operation
@@ -65,24 +74,21 @@ paths:
           description: Incorrect bank account data
         '404':
           description: Bank account not found
-  /bank-accounts/{login}/add-funds:
+  /bank-accounts/{login}/change-funds:
     put:
-      summary: Add funds to a bank account
+      operationId: change
+      summary: Change bank account funds
       parameters:
         - in: path
           name: login
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                newFunds:
-                  type: number
+        - in: query
+          name: newFunds
+          required: true
+          schema:
+            type: number
       responses:
         '200':
           description: Successful operation
@@ -126,6 +132,17 @@ components:
           items:
             type: string
             format: uuid
+      required:
+        - UUID
+        - AccountUUID
+        - Login
+        - Data
+        - Status
+        - Funds
+        - LastDealAt
+        - CreatedAt
+        - LastUpdateAt
+        - Payments
     BankAccountCreate:
       type: object
       properties:
@@ -180,3 +197,18 @@ components:
         - Status
         - LastDealAt
         - Payments
+    BankAccountFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        AccountUUID:
+          type: string
+          format: uuid
+        Login:
+          type: string
+        Funds:
+          type: number
+        Status:
+          type: string

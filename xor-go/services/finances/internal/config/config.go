@@ -16,7 +16,7 @@ type Config struct {
 	App              *xapp.Config      `mapstructure:"app"`
 	Http             *xhttp.Config     `mapstructure:"http"`
 	Logger           *xlogger.Config   `mapstructure:"logger"`
-	PostgresConfig   *postgres.Config  `yaml:"postgres"`
+	Postgres         *postgres.Config  `mapstructure:"postgres"`
 	GracefulShutdown *xshutdown.Config `mapstructure:"graceful_shutdown"`
 	Tracer           *xtracer.Config   `mapstructure:"tracer"`
 	//Metrics          *metrics.Config              `mapstructure:"metrics"`

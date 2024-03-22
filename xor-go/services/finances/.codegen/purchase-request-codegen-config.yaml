@@ -1,0 +1,10 @@
+# purchase-request-codegen-config.yaml for purchase-request api + server
+
+output: internal/handler/http/purchase/purchase_gen.go
+package: purchase
+generate:
+  - types
+  - gin-server
+
+# To RUN from root:
+# oapi-codegen --config .codegen/purchase-request-codegen-config.yaml .codegen/purchase-request-codegen.yaml

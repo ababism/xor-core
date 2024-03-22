@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: Product Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /products/{id}:
+    get:
+      operationId: get
+      summary: Get product by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductGet'
+  /products:
+    get:
+      operationId: getList
+      summary: List products
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/ProductFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductGet'
+    post:
+      operationId: create
+      summary: Create a product
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '200':
+          description: Successful operation
+    put:
+      operationId: update
+      summary: Update a product
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200':
+          description: Successful operation
+  /products/{id}/disable:
+    put:
+      operationId: disable
+      summary: Disable a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+components:
+  schemas:
+    ProductGet:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number
+        IsAvailable:
+          type: boolean
+        CreatedAt:
+          type: string
+          format: date-time
+        LastUpdatedAt:
+          type: string
+          format: date-time
+      required:
+        - UUID
+        - Name
+        - Price
+        - IsAvailable
+        - CreatedAt
+        - LastUpdatedAt
+    ProductCreate:
+      type: object
+      properties:
+        Name:
+          type: string
+        Price:
+          type: number
+      required:
+        - Name
+        - Price
+    ProductUpdate:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number
+        IsAvailable:
+          type: boolean
+      required:
+        - UUID
+        - Name
+        - Price
+        - IsAvailable
+    ProductFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Price:
+          type: number

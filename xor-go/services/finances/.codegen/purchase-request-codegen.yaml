@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Purchase Request Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /purchase-requests/{id}:
+    get:
+      operationId: get
+      summary: Get purchase request by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseRequestGet'
+  /purchase-requests:
+    get:
+      operationId: getList
+      summary: List purchase requests
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/PurchaseRequestFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PurchaseRequestGet'
+    post:
+      operationId: create
+      summary: Create a purchase request
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/PurchaseRequestCreate'
+      responses:
+        '200':
+          description: Successful operation
+  /purchase-requests/{id}/archive:
+    put:
+      operationId: archive
+      summary: Archive a purchase request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+components:
+  schemas:
+    PurchaseRequestGet:
+      type: object
+      required:
+        - UUID
+        - Sender
+        - Receiver
+        - WebhookURL
+        - ReceivedAt
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time
+    PurchaseRequestCreate:
+      type: object
+      required:
+        - Sender
+        - Receiver
+        - WebhookURL
+        - ReceivedAt
+      properties:
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time
+    PurchaseRequestFilter:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+        Sender:
+          type: string
+          format: uuid
+        Receiver:
+          type: string
+          format: uuid
+        WebhookURL:
+          type: string
+        ReceivedAt:
+          type: string
+          format: date-time

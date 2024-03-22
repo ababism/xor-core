@@ -1,0 +1,10 @@
+# product-codegen-config.yaml for product api + server
+
+output: internal/handler/http/product/product_gen.go
+package: product
+generate:
+  - types
+  - gin-server
+
+# To RUN from root:
+# oapi-codegen --config .codegen/product-codegen-config.yaml .codegen/product-codegen.yaml

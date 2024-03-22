@@ -21,7 +21,7 @@ func Init(cfg *Config, appCfg *xapp.Config) (*sdktrace.TracerProvider, error) {
 	ctx := context.Background()
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
-			semconv.ServiceNameKey.String(appCfg.Service),
+			semconv.ServiceNameKey.String(appCfg.Name),
 		),
 	)
 	if err != nil {

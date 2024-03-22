@@ -69,7 +69,7 @@ func (s *purchaseRequestService) Archive(ctx context.Context, id uuid.UUID) erro
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Archive")
 	defer span.End()
 
-	err := s.r.Archive(newCtx, id)
+	err := s.r.Delete(newCtx, id)
 	if err != nil {
 		return err
 	}
