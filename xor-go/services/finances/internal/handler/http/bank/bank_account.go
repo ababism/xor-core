@@ -1,4 +1,4 @@
-package bankaccount
+package bank
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	bankaccount "xor-go/services/finances/internal/handler/generated/bank-account"
-	http2 "xor-go/services/finances/internal/handler/handler"
+	http2 "xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/service/adapters"
 )
 

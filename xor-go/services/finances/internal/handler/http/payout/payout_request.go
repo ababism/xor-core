@@ -7,7 +7,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
-	http2 "xor-go/services/finances/internal/handler/handler"
+	http2 "xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/service/adapters"
 )
 

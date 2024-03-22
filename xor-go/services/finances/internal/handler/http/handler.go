@@ -1,4 +1,4 @@
-package handler
+package http
 
 import (
 	"fmt"
@@ -10,12 +10,12 @@ import (
 	payout_request "xor-go/services/finances/internal/handler/generated/payout-request"
 	"xor-go/services/finances/internal/handler/generated/product"
 	purchase_request "xor-go/services/finances/internal/handler/generated/purchase-request"
-	"xor-go/services/finances/internal/handler/handler/bank_account_api"
-	"xor-go/services/finances/internal/handler/handler/discount_api"
-	"xor-go/services/finances/internal/handler/handler/payment_api"
-	"xor-go/services/finances/internal/handler/handler/payout_request_api"
-	"xor-go/services/finances/internal/handler/handler/product_api"
-	"xor-go/services/finances/internal/handler/handler/purchase_request_api"
+	"xor-go/services/finances/internal/handler/http/bank_account_api"
+	"xor-go/services/finances/internal/handler/http/discount_api"
+	"xor-go/services/finances/internal/handler/http/payment_api"
+	"xor-go/services/finances/internal/handler/http/payout_request_api"
+	"xor-go/services/finances/internal/handler/http/product_api"
+	"xor-go/services/finances/internal/handler/http/purchase_request_api"
 	"xor-go/services/finances/internal/service/adapters"
 
 	"github.com/gin-gonic/gin"

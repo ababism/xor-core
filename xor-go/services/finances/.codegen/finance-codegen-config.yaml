@@ -1,6 +1,6 @@
 # finance-codegen-config.yaml for finance api + server
 
-output: internal/handler/http/generated-api/generated_gen.go
+output: internal/handler/http/generated_gen.go
 package: finance
 generate:
   - types

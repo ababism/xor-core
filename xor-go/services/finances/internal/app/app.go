@@ -10,7 +10,7 @@ import (
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/finances/internal/config"
-	"xor-go/services/finances/internal/handler/handler"
+	"xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/log"
 	"xor-go/services/finances/internal/repository/postgre"
 	"xor-go/services/finances/internal/service"
@@ -18,7 +18,7 @@ import (
 
 type App struct {
 	cfg            *config.Config
-	handler        handler.Handler
+	handler        http.Handler
 	address        string
 	tracerProvider *trace.TracerProvider
 }
@@ -103,7 +103,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// TRANSPORT LAYER ----------------------------------------------------------------------
 
-	mainHandler := handler.NewHandler(
+	mainHandler := http.NewHandler(
 		cfg,
 		bankAccountService,
 		discountService,

@@ -1,6 +1,6 @@
 # product-codegen-config.yaml for product api + server
 
-output: internal/handler/generated/product/product.go
+output: internal/handler/http/product/product.go
 package: product
 generate:
   - types

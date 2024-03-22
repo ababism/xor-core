@@ -1,6 +1,6 @@
 # payment-codegen-config.yaml for payment api + server
 
-output: internal/handler/generated/payment/payment.go
+output: internal/handler/http/payment/payment_gen.go
 package: payment
 generate:
   - types
