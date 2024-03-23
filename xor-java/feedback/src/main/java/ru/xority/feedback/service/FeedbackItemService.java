@@ -50,29 +50,13 @@ public class FeedbackItemService {
         feedbackItemRepository.update(item);
     }
 
-    public void deactivate(UUID itemUuid) {
+    public void setActive(UUID itemUuid, boolean active) {
         FeedbackItemFilter filter = FeedbackItemFilter.byItemUuid(itemUuid);
         Optional<FeedbackItemEntity> itemFromRepoO = feedbackItemRepository.get(filter);
         itemFromRepoO.orElseThrow(FeedbackItemNotFoundException::new);
 
         FeedbackItemEntity item = itemFromRepoO.get();
-        if (!item.isActive()) {
-            throw new BadRequestException("Feedback item is already deactivated");
-        }
-        item.setActive(false);
-        feedbackItemRepository.update(item);
-    }
-
-    public void activate(UUID itemUuid) {
-        FeedbackItemFilter filter = FeedbackItemFilter.byItemUuid(itemUuid);
-        Optional<FeedbackItemEntity> itemFromRepoO = feedbackItemRepository.get(filter);
-        itemFromRepoO.orElseThrow(FeedbackItemNotFoundException::new);
-
-        FeedbackItemEntity item = itemFromRepoO.get();
-        if (item.isActive()) {
-            throw new BadRequestException("Feedback item is already activated");
-        }
-        item.setActive(true);
+        item.setActive(active);
         feedbackItemRepository.update(item);
     }
 }

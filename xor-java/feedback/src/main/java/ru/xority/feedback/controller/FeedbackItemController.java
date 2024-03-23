@@ -72,15 +72,10 @@ public class FeedbackItemController {
         return SuccessResponse.create200("Feedback item info is updated");
     }
 
-    @PutMapping("/deactivate/{itemUuid}")
-    public ResponseEntity<SuccessResponse> deactivate(@PathVariable UUID itemUuid) {
-        feedbackItemService.deactivate(itemUuid);
-        return SuccessResponse.create200("Feedback item is deactivated");
-    }
-
-    @PutMapping("/activate/{itemUuid}")
-    public ResponseEntity<SuccessResponse> activate(@PathVariable UUID itemUuid) {
-        feedbackItemService.activate(itemUuid);
-        return SuccessResponse.create200("Feedback item is activated");
+    @PutMapping("/set-active/{itemUuid}")
+    public ResponseEntity<SuccessResponse> deactivate(@PathVariable UUID itemUuid,
+                                                      @RequestParam boolean active) {
+        feedbackItemService.setActive(itemUuid, active);
+        return SuccessResponse.create200("Feedback item active status is updated");
     }
 }

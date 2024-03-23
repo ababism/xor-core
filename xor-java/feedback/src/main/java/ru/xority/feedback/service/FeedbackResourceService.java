@@ -7,7 +7,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import ru.xority.exception.BadRequestException;
 import ru.xority.feedback.entity.FeedbackResourceEntity;
 import ru.xority.feedback.entity.FeedbackResourceFilter;
 import ru.xority.feedback.exception.FeedbackResourceNotFoundException;
@@ -41,29 +40,13 @@ public class FeedbackResourceService {
         feedbackResourceRepository.update(resource);
     }
 
-    public void deactivate(UUID resourceUuid) {
+    public void setActive(UUID resourceUuid, boolean active) {
         FeedbackResourceFilter filter = FeedbackResourceFilter.byResourceUuid(resourceUuid);
         Optional<FeedbackResourceEntity> resourceO = feedbackResourceRepository.get(filter);
         resourceO.orElseThrow(FeedbackResourceNotFoundException::new);
+
         FeedbackResourceEntity resource = resourceO.get();
-
-        if (!resource.isActive()) {
-            throw new BadRequestException("Feedback resource is already deactivated");
-        }
-        resource.setActive(false);
-        feedbackResourceRepository.update(resource);
-    }
-
-    public void activate(UUID resourceUuid) {
-        FeedbackResourceFilter filter = FeedbackResourceFilter.byResourceUuid(resourceUuid);
-        Optional<FeedbackResourceEntity> resourceO = feedbackResourceRepository.get(filter);
-        resourceO.orElseThrow(FeedbackResourceNotFoundException::new);
-        FeedbackResourceEntity resource = resourceO.get();
-
-        if (resource.isActive()) {
-            throw new BadRequestException("Feedback resource is already activated");
-        }
-        resource.setActive(true);
+        resource.setActive(active);
         feedbackResourceRepository.update(resource);
     }
 }

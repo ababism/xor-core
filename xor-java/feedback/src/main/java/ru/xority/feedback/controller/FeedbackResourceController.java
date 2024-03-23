@@ -72,15 +72,10 @@ public class FeedbackResourceController {
         return SuccessResponse.create200("Feedback resource info is updated");
     }
 
-    @PutMapping("/deactivate/{resourceUuid}")
-    public ResponseEntity<SuccessResponse> deactivate(@PathVariable UUID resourceUuid) {
-        feedbackResourceService.deactivate(resourceUuid);
-        return SuccessResponse.create200("Feedback resource is deactivated");
-    }
-
-    @PutMapping("/activate/{resourceUuid}")
-    public ResponseEntity<SuccessResponse> activate(@PathVariable UUID resourceUuid) {
-        feedbackResourceService.activate(resourceUuid);
-        return SuccessResponse.create200("Feedback resource is activated");
+    @PutMapping("/set-activate/{resourceUuid}")
+    public ResponseEntity<SuccessResponse> deactivate(@PathVariable UUID resourceUuid,
+                                                      @RequestParam boolean active) {
+        feedbackResourceService.setActive(resourceUuid, active);
+        return SuccessResponse.create200("Feedback resource active status is updated");
     }
 }

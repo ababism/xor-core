@@ -43,16 +43,11 @@ public class AccountController {
         return ResponseEntity.ok(accounts);
     }
 
-    @PutMapping("/deactivate/{uuid}")
-    public ResponseEntity<?> deactivate(@PathVariable UUID uuid) {
-        accountService.deactivate(uuid);
-        return SuccessResponse.create200("Account is deactivated");
-    }
-
-    @PutMapping("/activate/{uuid}")
-    public ResponseEntity<?> activate(@PathVariable UUID uuid) {
-        accountService.activate(uuid);
-        return SuccessResponse.create200("Account is activated");
+    @PutMapping("/set-activate/{uuid}")
+    public ResponseEntity<?> deactivate(@PathVariable UUID uuid,
+                                        @RequestParam boolean active) {
+        accountService.setActive(uuid, active);
+        return SuccessResponse.create200("Account active status is updated");
     }
 
     @PutMapping("/update-password/{uuid}")

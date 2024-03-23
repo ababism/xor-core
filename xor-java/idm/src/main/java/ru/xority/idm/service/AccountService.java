@@ -32,31 +32,13 @@ public class AccountService {
         return accountRepository.get(filter);
     }
 
-    public void deactivate(UUID uuid) {
+    public void setActive(UUID uuid, boolean active) {
         Optional<AccountEntity> accountO = accountRepository.get(AccountFilter.byUuid(uuid));
         if (accountO.isEmpty()) {
             throw new AccountNotFoundException();
         }
         AccountEntity account = accountO.get();
-        if (!account.isActive()) {
-            throw new BadRequestException("Account is already deactivated");
-        }
-
-        account.setActive(false);
-        accountRepository.update(account);
-    }
-
-    public void activate(UUID uuid) {
-        Optional<AccountEntity> accountO = accountRepository.get(AccountFilter.byUuid(uuid));
-        if (accountO.isEmpty()) {
-            throw new AccountNotFoundException();
-        }
-        AccountEntity account = accountO.get();
-        if (account.isActive()) {
-            throw new BadRequestException("Account is already activated");
-        }
-
-        account.setActive(true);
+        account.setActive(active);
         accountRepository.update(account);
     }
 
