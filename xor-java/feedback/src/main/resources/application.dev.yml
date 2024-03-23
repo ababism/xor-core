@@ -1,0 +1,13 @@
+server:
+  port: 7359
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=qwerty
+    driver-class-name: org.postgresql.Driver
