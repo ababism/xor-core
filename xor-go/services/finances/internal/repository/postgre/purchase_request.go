@@ -26,6 +26,10 @@ const (
 		INSERT INTO purchase_requests (sender, receiver, webhook_url, received_at)
 		VALUES ($1, $2, $3, $4)
 	`
+	createPurchaseProductsQuery = `
+		INSERT INTO purchase_requests_products (request_uuid, product_uuid)
+		VALUES ($1, $2)
+	`
 	deletePurchaseRequestQuery = `
 		DELETE FROM purchase_requests WHERE uuid = $1
 	`

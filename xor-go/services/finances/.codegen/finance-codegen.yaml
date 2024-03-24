@@ -3,7 +3,7 @@ info:
   title: Integrated API
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api/v1/finances
 paths:
   /bank-accounts/{login}:
     get:

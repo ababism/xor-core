@@ -8,6 +8,7 @@ func CreateToDomain(create PurchaseRequestCreate) domain.PurchaseRequestCreate {
 	return domain.PurchaseRequestCreate{
 		Sender:     create.Sender,
 		Receiver:   create.Receiver,
+		Products:   create.Products,
 		WebhookURL: create.WebhookURL,
 		ReceivedAt: create.ReceivedAt,
 	}
@@ -17,6 +18,7 @@ func DomainToGet(get domain.PurchaseRequestGet) PurchaseRequestGet {
 	return PurchaseRequestGet{
 		UUID:       get.UUID,
 		Sender:     get.Sender,
+		Products:   get.Products,
 		Receiver:   get.Receiver,
 		WebhookURL: get.WebhookURL,
 		ReceivedAt: get.ReceivedAt,
