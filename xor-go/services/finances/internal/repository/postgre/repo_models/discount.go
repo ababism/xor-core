@@ -15,7 +15,7 @@ type Discount struct {
 	EndedAt       time.Time `db:"ended_at"`
 	Status        string    `db:"status"`
 	CreatedAt     time.Time `db:"created_at"`
-	LastUpdatedAt time.Time `db:"last_updated_at"`
+	LastUpdatedAt time.Time `db:"updated_at"`
 }
 
 func CreateToDiscountPostgres(model *domain.DiscountCreate) *Discount {

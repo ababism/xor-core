@@ -80,7 +80,7 @@ func (r *purchaseRequestRepository) Create(ctx context.Context, purchase *domain
 		purchasePostgres.Sender,
 		purchasePostgres.Receiver,
 		purchasePostgres.WebhookURL,
-		purchasePostgres.ReceivedAt,
+		purchasePostgres.CreatedAt,
 	)
 	return err
 }

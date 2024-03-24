@@ -11,7 +11,7 @@ type PurchaseRequest struct {
 	Sender     uuid.UUID `db:"sender"`
 	Receiver   uuid.UUID `db:"receiver"`
 	WebhookURL string    `db:"webhook_url"`
-	ReceivedAt time.Time `db:"received_at"`
+	CreatedAt  time.Time `db:"created_at"`
 }
 
 func CreateToPurchaseRequestPostgres(model *domain.PurchaseRequestCreate) *PurchaseRequest {
@@ -21,7 +21,7 @@ func CreateToPurchaseRequestPostgres(model *domain.PurchaseRequestCreate) *Purch
 		Sender:     model.Sender,
 		Receiver:   model.Receiver,
 		WebhookURL: model.WebhookURL,
-		ReceivedAt: time.Now(),
+		CreatedAt:  time.Now(),
 	}
 }
 
@@ -31,6 +31,6 @@ func ToPurchaseRequestDomain(model *PurchaseRequest) *domain.PurchaseRequestGet 
 		Sender:     model.Sender,
 		Receiver:   model.Receiver,
 		WebhookURL: model.WebhookURL,
-		ReceivedAt: model.ReceivedAt,
+		ReceivedAt: model.CreatedAt,
 	}
 }

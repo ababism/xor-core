@@ -12,7 +12,7 @@ type Product struct {
 	Price         float32   `db:"price"`
 	IsAvailable   bool      `db:"is_available"`
 	CreatedAt     time.Time `db:"created_at"`
-	LastUpdatedAt time.Time `db:"last_updated_at"`
+	LastUpdatedAt time.Time `db:"updated_at"`
 }
 
 func CreateToProductPostgres(model *domain.ProductCreate) *Product {

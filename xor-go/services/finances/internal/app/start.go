@@ -42,7 +42,7 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	}
 
 	// TODO Добавляем роуты api
-	http.InitHandler(a.handler, router.Router(), middlewares)
+	http.InitHandler(a.handler, router.Router(), middlewares, "finances")
 
 	// TODO Создаем сервер
 	srv := xhttp.NewServer(a.cfg.Http, router)

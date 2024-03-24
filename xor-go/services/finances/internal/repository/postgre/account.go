@@ -17,7 +17,7 @@ const (
 
 const (
 	baseBankAccountGetQuery = `
-		SELECT uuid, account_uuid, login, funds, data, status, last_deal_at, created_at, last_updated_at
+		SELECT uuid, account_uuid, login, funds, data, status, last_deal_at, created_at, updated_at
 		FROM  bank_accounts
 		WHERE uuid = $1
 	`

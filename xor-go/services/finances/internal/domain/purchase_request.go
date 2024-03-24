@@ -9,6 +9,7 @@ type PurchaseRequestGet struct {
 	UUID       uuid.UUID
 	Sender     uuid.UUID
 	Receiver   uuid.UUID
+	Products   []uuid.UUID
 	WebhookURL string
 	ReceivedAt time.Time
 }
@@ -16,6 +17,7 @@ type PurchaseRequestGet struct {
 type PurchaseRequestCreate struct {
 	Sender     uuid.UUID
 	Receiver   uuid.UUID
+	Products   []uuid.UUID
 	WebhookURL string
 	ReceivedAt time.Time
 }

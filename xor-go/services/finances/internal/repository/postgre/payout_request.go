@@ -79,7 +79,7 @@ func (r *payoutRequestRepository) Create(ctx context.Context, payout *domain.Pay
 		payoutPostgres.Receiver,
 		payoutPostgres.Amount,
 		payoutPostgres.Data,
-		payoutPostgres.ReceivedAt,
+		payoutPostgres.CreatedAt,
 	)
 	return err
 }

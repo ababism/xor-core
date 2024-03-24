@@ -97,6 +97,7 @@ components:
       required:
         - Sender
         - Receiver
+        - Products
         - WebhookURL
         - ReceivedAt
       properties:
@@ -106,6 +107,11 @@ components:
         Receiver:
           type: string
           format: uuid
+        Products:
+          type: array
+          items:
+            type: string
+            format: uuid
         WebhookURL:
           type: string
         ReceivedAt:
