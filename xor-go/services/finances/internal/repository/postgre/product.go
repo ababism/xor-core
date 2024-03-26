@@ -18,7 +18,7 @@ const (
 
 const (
 	baseProductGetQuery = `
-		SELECT uuid, name, price, is_available, created_at, last_updated_at
+		SELECT uuid, name, price, is_available, created_at, updated_at
 		FROM products
 		WHERE uuid = $1
 	`

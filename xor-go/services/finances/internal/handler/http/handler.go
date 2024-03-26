@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	httpPrefix = "api"
-	version    = "1"
+	apiPrefix = "api"
+	version   = "1"
 )
 
 type MiddlewareFunc func(c *gin.Context)
@@ -120,8 +120,9 @@ func InitHandler(
 	handler Handler,
 	router gin.IRouter,
 	middlewares []MiddlewareFunc,
+	httpPrefix string,
 ) {
-	baseUrl := fmt.Sprintf("%s/%s", httpPrefix, getVersion())
+	baseUrl := fmt.Sprintf("%s/%s/%s", apiPrefix, getVersion(), httpPrefix)
 
 	bank.RegisterHandlersWithOptions(router,
 		bank.NewBankAccountHandler(handler.bankAccountService),

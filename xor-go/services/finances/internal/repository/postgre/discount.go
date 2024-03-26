@@ -18,7 +18,7 @@ const (
 
 const (
 	baseDiscountGetQuery = `
-		SELECT uuid, created_by, percent, stand_alone, started_at, ended_at, status, created_at, last_updated_at
+		SELECT uuid, created_by, percent, stand_alone, started_at, ended_at, status, created_at, updated_at
 		FROM discounts
 		WHERE uuid = $1
 	`

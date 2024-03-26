@@ -15,10 +15,11 @@ import (
 
 // PurchaseRequestCreate defines model for PurchaseRequestCreate.
 type PurchaseRequestCreate struct {
-	ReceivedAt time.Time          `json:"ReceivedAt"`
-	Receiver   openapi_types.UUID `json:"Receiver"`
-	Sender     openapi_types.UUID `json:"Sender"`
-	WebhookURL string             `json:"WebhookURL"`
+	Products   []openapi_types.UUID `json:"Products"`
+	ReceivedAt time.Time            `json:"ReceivedAt"`
+	Receiver   openapi_types.UUID   `json:"Receiver"`
+	Sender     openapi_types.UUID   `json:"Sender"`
+	WebhookURL string               `json:"WebhookURL"`
 }
 
 // PurchaseRequestFilter defines model for PurchaseRequestFilter.
@@ -32,11 +33,12 @@ type PurchaseRequestFilter struct {
 
 // PurchaseRequestGet defines model for PurchaseRequestGet.
 type PurchaseRequestGet struct {
-	ReceivedAt time.Time          `json:"ReceivedAt"`
-	Receiver   openapi_types.UUID `json:"Receiver"`
-	Sender     openapi_types.UUID `json:"Sender"`
-	UUID       openapi_types.UUID `json:"UUID"`
-	WebhookURL string             `json:"WebhookURL"`
+	Products   []openapi_types.UUID `json:"Products"`
+	ReceivedAt time.Time            `json:"ReceivedAt"`
+	Receiver   openapi_types.UUID   `json:"Receiver"`
+	Sender     openapi_types.UUID   `json:"Sender"`
+	UUID       openapi_types.UUID   `json:"UUID"`
+	WebhookURL string               `json:"WebhookURL"`
 }
 
 // GetListParams defines parameters for GetList.
