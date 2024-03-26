@@ -1,1 +1,1 @@
-"""payments package."""
+"""payments_service package."""
