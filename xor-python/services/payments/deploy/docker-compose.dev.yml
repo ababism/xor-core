@@ -12,4 +12,4 @@ services:
     - .:/app/src/
     environment:
       # Enables autoreload.
-      PAYMENTS_RELOAD: "True"
+      payments_RELOAD: "True"

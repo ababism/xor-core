@@ -68,18 +68,18 @@ This application can be configured with environment variables.
 You can create `.env` file in the root directory and place all
 environment variables here.
 
-All environment variables should start with "PAYMENTS_" prefix.
+All environment variables should start with "payments_" prefix.
 
 For example if you see in your "payments/settings.py" a variable named like
-`random_parameter`, you should provide the "PAYMENTS_RANDOM_PARAMETER"
+`random_parameter`, you should provide the "payments_RANDOM_PARAMETER"
 variable to configure the value. This behaviour can be changed by overriding `env_prefix` property
 in `payments.settings.Settings.Config`.
 
 An example of .env file:
 ```bash
-PAYMENTS_RELOAD="True"
-PAYMENTS_PORT="8000"
-PAYMENTS_ENVIRONMENT="dev"
+payments_RELOAD="True"
+payments_PORT="8000"
+payments_ENVIRONMENT="dev"
 ```
 
 You can read more about BaseSettings class here: https://pydantic-docs.helpmanual.io/usage/settings/

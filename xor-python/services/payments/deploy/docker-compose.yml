@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: ./deploy/Dockerfile
       target: prod
-    image: payments:${PAYMENTS_VERSION:-latest}
+    image: payments:${payments_VERSION:-latest}
     restart: always
     env_file:
     - .env
     environment:
-      PAYMENTS_HOST: 0.0.0.0
+      payments_HOST: 0.0.0.0

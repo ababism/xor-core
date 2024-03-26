@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     opentelemetry_endpoint: Optional[str] = None
     model_config = SettingsConfigDict(
         env_file=".env",
-        env_prefix="PAYMENTS_",
+        env_prefix="payments_",
         env_file_encoding="utf-8",
     )
 
