@@ -1,0 +1,148 @@
+
+openapi: 3.0.0
+info:
+  title: Course Management API
+  description: API for managing courses, lessons, and user profiles
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /buy-course:
+    post:
+      summary: Purchase a course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                course_id:
+                  type: string
+                  format: uuid
+                user_id:
+                  type: string
+                  format: uuid
+              required:
+                - course_id
+                - user_id
+      responses:
+        '200':
+          description: Course purchased successfully
+  /courses:
+    get:
+      summary: Get all courses
+      responses:
+        '200':
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+  /courses/{course_id}:
+    get:
+      summary: Get course details
+      parameters:
+        - name: course_id
+          in: path
+          description: ID of the course to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Course details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+  /courses/{course_id}/lessons:
+    get:
+      summary: Get lessons for a course
+      parameters:
+        - name: course_id
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of lessons for the course
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lesson'
+  /courses/{course_id}/lessons/{lesson_id}:
+    get:
+      summary: Get lesson details
+      parameters:
+        - name: course_id
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: lesson_id
+          in: path
+          description: ID of the lesson
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lesson details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        feedback_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        discipline:
+          type: string
+        landing:
+          type: byte
+        visibility:
+          type: string
+          enum:
+            - Hidden
+            - Visible
+            - Unlocked
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        transcript:
+          type: string
+        video_uri:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - Hidden
+            - Visible
+            - Unlocked

@@ -1,0 +1,20 @@
+# driver-oapi-codegen.yaml for driver api + server
+
+package: generated
+generate:
+  - types
+  - gin-server
+  - models
+  - embedded-spec
+import-mapping:
+  ./course/spec.yaml: github.com/deepmap/oapi-codegen/internal/test/externalref/packageA
+  ./teacher/spec.yaml: github.com/deepmap/oapi-codegen/internal/test/externalref/packageB
+output: services/courses/internal/handler/generated/coursesCodegen.go
+output-options:
+  skip-prune: true
+
+
+
+
+# To RUN from root:
+# oapi-codegen --config oapi/courses/chat-oapi-codegen.yaml .codegen/chat.yaml
