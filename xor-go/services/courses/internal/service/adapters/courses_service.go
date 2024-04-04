@@ -15,7 +15,7 @@ type CoursesService interface {
 
 type CourseService interface {
 	// CreateCourse GetCourse UpdateCourse DeleteCourse — teacher courseCRUD
-	CreateCourse(ctx context.Context, actor domain.Actor, course *domain.Course) (uuid.UUID, error)
+	CreateCourse(ctx context.Context, actor domain.Actor, course *domain.Course) (*domain.Course, error)
 	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
 	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) error
 	DeleteCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error

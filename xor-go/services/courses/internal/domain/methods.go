@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 func (c *Actor) HasRole(role string) bool {
 	return c.roles.Contains(role)
@@ -16,6 +18,12 @@ func (c *Course) ApplyVisibility() {
 			c.Sections[i].ApplyVisibility()
 		}
 	}
+}
+
+func (c *Course) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid course fields", err)
+	return nil
 }
 
 func (s *Section) ApplyVisibility() {
