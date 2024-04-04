@@ -5,6 +5,8 @@ import (
 	"xor-go/services/courses/internal/domain"
 )
 
+// TODO Review
+
 const (
 	CourseCollectionName              = "course"
 	LessonCollectionName              = "lesson"

@@ -4,6 +4,8 @@ import (
 	"xor-go/services/courses/internal/domain"
 )
 
+// TODO Rewrite
+
 func ToMongoModelCourse(course *domain.Course) Course {
 	var sections []Section
 	for _, sec := range course.Sections {

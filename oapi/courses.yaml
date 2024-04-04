@@ -194,7 +194,6 @@ components:
           enum:
             - Hidden
             - Visible
-            - Unlocked
     Lesson:
       type: object
       properties:
@@ -210,7 +209,6 @@ components:
           enum:
             - Hidden
             - Visible
-            - Unlocked
     Teacher:
       type: object
       properties:
