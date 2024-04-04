@@ -17,14 +17,14 @@ type CourseService interface {
 	// CreateCourse GetCourse UpdateCourse DeleteCourse — teacher courseCRUD
 	CreateCourse(ctx context.Context, actor domain.Actor, course *domain.Course) (*domain.Course, error)
 	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
-	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) error
+	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) (*domain.Course, error)
 	DeleteCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
 
 	// ReadCourse  — user gets published course (with visibility applied)
 	ReadCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error)
 
 	// ConfirmAccess Finances system from webhook confirms payment
-	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, productIDs []uuid.UUID) error
+	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, products []domain.Product) error
 
 	//registerCourseFeedback(ctx context.Context, courseID uuid.UUID) (feedbackID uuid.UUID, err error)
 	//registerProducts(ctx context.Context, courseID uuid.UUID) error
