@@ -3,12 +3,12 @@ version: '3.9'
 services:
   api:
     build:
-      context: .
+      context: ../
       dockerfile: ./deploy/Dockerfile
       target: prod
     image: payments:${payments_VERSION:-latest}
     restart: always
     env_file:
-    - .env
+    - ./../.env
     environment:
       payments_HOST: 0.0.0.0
