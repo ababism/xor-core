@@ -2,7 +2,6 @@
 up:
 	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait
 
-
 up-d:
 	docker compose --file ./deploy/docker-compose.yml --env-file ./.env up -d --build --wait
 

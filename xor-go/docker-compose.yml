@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  finances-svc:
+    image: 'finances-svc:latest'
+    build:
+      context: './'
+      dockerfile: 'finances.Dockerfile'
+    ports:
+      - "8084:8084"
+    depends_on:
+      finances_db:
+        condition: service_healthy
+    environment:
+      - LOGGER_LEVEL=release
+      - DB_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
+
+  finances_db:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5436:5436"
+    environment:
+      - POSTGRES_DB=${FINANCES_POSTGRES_NAME}
+      - POSTGRES_HOST=${FINANCES_POSTGRES_HOST}
+      - POSTGRES_USER=${FINANCES_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d finances_db" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+networks:
+  finances:
+    name: finances
