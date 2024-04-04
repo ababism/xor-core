@@ -30,7 +30,7 @@ http:
   read_timeout: "1s"
   write_timeout: "1s"
 
-location_client:
+finances_client:
   uri: "http://localhost:8084"
 
 mongo:

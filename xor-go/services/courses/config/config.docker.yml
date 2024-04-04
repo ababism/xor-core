@@ -31,7 +31,7 @@ http:
   read_timeout: "15s"
   write_timeout: "15s"
 
-location_client:
+finances_client:
   uri: "http://location-svc:8084/api/v1"
 
 mongo:

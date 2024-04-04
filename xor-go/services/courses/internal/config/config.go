@@ -20,7 +20,7 @@ import (
 type Config struct {
 	App              *app.Config                  `mapstructure:"app"`
 	Http             *http_server.Config          `mapstructure:"http"`
-	FinancesClient   *financesclient.ClientConfig `mapstructure:"location_client"`
+	FinancesClient   *financesclient.ClientConfig `mapstructure:"finances_client"`
 	Logger           *mylogger.Config             `mapstructure:"logger"`
 	Mongo            *mongo.Config                `mapstructure:"mongo"`
 	MigrationsMongo  *mongo.ConfigMigrations      `mapstructure:"migrations_mongo"`

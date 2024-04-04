@@ -34,13 +34,19 @@ const (
 	Accessible
 )
 
+// Actor represents a user of system with data taken from request
+type Actor struct {
+	ID   uuid.UUID
+	role string
+}
+
 // Teacher represents a teacher entity
 type Teacher struct {
 	AccountID uuid.UUID
-	Courses   []uuid.UUID
+	//Courses   []uuid.UUID
 }
 
-// Student represents a student entity
+// Student represents a student entity — registered user in this system
 type Student struct {
 	AccountID uuid.UUID
 }
@@ -57,7 +63,6 @@ type Course struct {
 	Sections   []Section
 }
 
-// Section represents a section entity
 type Section struct {
 	ID          uuid.UUID
 	ProductID   uuid.UUID
@@ -68,7 +73,6 @@ type Section struct {
 	Themes      []Theme
 }
 
-// Theme represents a theme entity
 type Theme struct {
 	ID         uuid.UUID
 	ProductID  uuid.UUID
