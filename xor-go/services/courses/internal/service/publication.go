@@ -6,12 +6,12 @@ import (
 	"xor-go/services/courses/internal/domain"
 )
 
-func (s *CoursesService) RequestCoursePublication(ctx context.Context, courseID uuid.UUID) (domain.PublicationRequest, error) {
+func (c CoursesService) RequestCoursePublication(ctx context.Context, courseID uuid.UUID) (domain.PublicationRequest, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (s *CoursesService) UpdatePublicationRequest(ctx context.Context, requestID domain.PublicationRequest) error {
+func (c CoursesService) UpdatePublicationRequest(ctx context.Context, requestID domain.PublicationRequest) (domain.PublicationRequest, error) {
 	//TODO implement me
 	panic("implement me")
 }

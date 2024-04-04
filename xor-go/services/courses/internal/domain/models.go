@@ -1,12 +1,16 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+	"xor-go/pkg/xstringset"
+)
 
 const (
 	ServiceName = "xor-go/courses"
 )
 
-// Visibility represents the visibility status of an entity
+// Visibility represents the visibility status of an entity: Hidden, Visible
 type Visibility int
 
 const (
@@ -15,6 +19,7 @@ const (
 	Visible
 )
 
+// RequestsStatus Unwatched, Approved or Rejected
 type RequestsStatus int
 
 const (
@@ -24,6 +29,7 @@ const (
 	Rejected
 )
 
+// AccessStatus for user to course Inaccessible, Pending or Accessible
 type AccessStatus int
 
 const (
@@ -35,8 +41,8 @@ const (
 
 // Actor represents a user of system with data taken from request
 type Actor struct {
-	ID   uuid.UUID
-	role string
+	ID    uuid.UUID
+	roles xstringset.Set
 }
 
 // Teacher represents a teacher entity
@@ -103,7 +109,18 @@ type Product struct {
 }
 
 type PublicationRequest struct {
-	ID         uuid.UUID
-	CourseID   uuid.UUID
-	AssigneeID uuid.UUID
+	ID            uuid.UUID
+	CourseID      uuid.UUID
+	AssigneeID    uuid.UUID
+	requestStatus RequestsStatus
+	Comment       *string
+	UpdatedAt     *time.Time
+}
+
+type LessonAccess struct {
+	ID           uuid.UUID
+	LessonID     uuid.UUID
+	StudentID    uuid.UUID
+	accessStatus AccessStatus
+	UpdatedAt    *time.Time
 }

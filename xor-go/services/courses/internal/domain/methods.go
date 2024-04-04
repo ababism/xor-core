@@ -2,6 +2,10 @@ package domain
 
 import "github.com/google/uuid"
 
+func (c *Actor) HasRole(role string) bool {
+	return c.roles.Contains(role)
+}
+
 func (c *Course) ApplyVisibility() {
 	if c.Visibility == Hidden {
 		c.FeedbackID = uuid.Nil

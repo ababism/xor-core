@@ -9,37 +9,25 @@ import (
 type CoursesService interface {
 	CourseService
 	LessonService
-	UserService
 	PublicationRequestService
-}
-
-type UserService interface {
-	BuyCourse(ctx context.Context, studentID uuid.UUID, courseID uuid.UUID) error
-
-	RegisterStudentProfile(ctx context.Context, accountID uuid.UUID, profile domain.Student) error
-	RegisterTeacherProfile(ctx context.Context, accountID uuid.UUID, profile domain.Teacher) error
-	//isLessonAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
-	//IsCourseAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
-
-	ChangeCourseAccess(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) error
+	UserService
 }
 
 type CourseService interface {
-	// Teacher
-	CreateCourse(ctx context.Context, teacherID uuid.UUID, course *domain.Course) (uuid.UUID, error)
-	GetCourse(ctx context.Context, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
-	UpdateCourse(ctx context.Context, courseID uuid.UUID, course *domain.Course) error
-	DeleteCourse(ctx context.Context, courseID uuid.UUID) error
+	// CreateCourse GetCourse UpdateCourse DeleteCourse — teacher courseCRUD
+	CreateCourse(ctx context.Context, actor domain.Actor, course *domain.Course) (uuid.UUID, error)
+	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
+	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) error
+	DeleteCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
 
-	// moderator from request
-	// TODO
-	//publishCourse(ctx context.Context, courseID uuid.UUID) error
+	// ReadCourse  — user gets published course (with visibility applied)
+	ReadCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error)
+
+	// ConfirmAccess Finances system from webhook confirms payment
+	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, productIDs []uuid.UUID) error
 
 	//registerCourseFeedback(ctx context.Context, courseID uuid.UUID) (feedbackID uuid.UUID, err error)
 	//registerProducts(ctx context.Context, courseID uuid.UUID) error
-
-	// Finance system
-	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, productIDs []uuid.UUID) error
 }
 
 // LessonService represents the service interface for managing lessons.
@@ -59,8 +47,27 @@ type LessonService interface {
 }
 
 type PublicationRequestService interface {
-	// Teacher
+	// RequestCoursePublication Teacher requests publication of his course
 	RequestCoursePublication(ctx context.Context, courseID uuid.UUID) (domain.PublicationRequest, error)
-	// Moderator
-	UpdatePublicationRequest(ctx context.Context, requestID domain.PublicationRequest) error
+	// UpdatePublicationRequest Moderator reviews publication, if
+	UpdatePublicationRequest(ctx context.Context, requestID domain.PublicationRequest) (domain.PublicationRequest, error)
+}
+
+type UserService interface {
+	// BuyCourse student buy course
+	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
+	// BuyLesson student buy lesson
+	BuyLesson(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
+	// RegisterStudentProfile student registers his profile
+	RegisterStudentProfile(ctx context.Context, actor domain.Actor, profile domain.Student) error
+	// RegisterTeacherProfile admin or moderator  registers teachers profile
+	RegisterTeacherProfile(ctx context.Context, actor domain.Actor, teacherID uuid.UUID, profile domain.Teacher) error
+
+	// ChangeCourseAccess admin or moderator gives access to lesson for a user
+	ChangeCourseAccess(ctx context.Context, actor domain.Actor, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error)
+
+	// GetCourseAccess student gets his access to lesson for a user
+	GetCourseAccess(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.LessonAccess, error)
+	//isLessonAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
+	//IsCourseAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
 }

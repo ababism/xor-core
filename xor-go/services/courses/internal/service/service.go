@@ -18,9 +18,6 @@ type CoursesService struct {
 	financesClient adapters.FinancesClient
 }
 
-func NewCoursesServiceTemp() *CoursesService {
-	return &CoursesService{}
-}
 func NewCoursesService(courseRepository adapters.CourseRepository,
 	lessonRepository adapters.LessonRepository,
 	teacherRepository adapters.TeacherRepository,

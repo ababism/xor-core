@@ -4,5 +4,7 @@ package domain
 const (
 	StudentRole      = "student"
 	TeacherRole      = "teacher"
+	AdminRole        = "admin"
+	ModeratorRole    = "moderator"
 	UnregisteredRole = "unregistered"
 )
