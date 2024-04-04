@@ -35,7 +35,7 @@ func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "driver/repository/mongo.InsertTrip")
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Create")
 	defer span.End()
 
 	mongoCourse := models.ToMongoModelCourse(course)

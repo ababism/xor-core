@@ -20,7 +20,7 @@ const (
 type Handler struct {
 	logger              *zap.Logger
 	cfg                 *config.Config
-	driverHandler       *coursesAPI.CoursesHandler
+	coursesHandler      *coursesAPI.CoursesHandler
 	userServiceProvider adapters.CourseService
 }
 
@@ -33,16 +33,16 @@ func InitHandler(
 	router gin.IRouter,
 	logger *zap.Logger,
 	middlewares []generated.MiddlewareFunc,
-	driverService adapters.CourseService,
+	coursesService adapters.CoursesService,
 ) {
-	driverHandler := coursesAPI.NewDriverHandler(logger, driverService)
+	coursesHandler := coursesAPI.NewCoursesHandler(logger, coursesService)
 
 	ginOpts := generated.GinServerOptions{
 		BaseURL:      fmt.Sprintf("%s/%s", httpPrefix, getVersion()),
 		Middlewares:  middlewares,
 		ErrorHandler: HandleError,
 	}
-	generated.RegisterHandlersWithOptions(router, driverHandler, ginOpts)
+	generated.RegisterHandlersWithOptions(router, coursesHandler, ginOpts)
 }
 
 func getVersion() string {

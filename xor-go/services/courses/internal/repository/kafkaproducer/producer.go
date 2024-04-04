@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/juju/zaputil/zapctx"
+	"github.com/segmentio/kafka-go"
 	global "go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
-var _ adapters.financesClient = &KafkaProducer{}
+var _ adapters.KafkaClient = &KafkaProducer{}
 
 type KafkaProducer struct {
 	producer *kafka.Writer
@@ -29,24 +30,24 @@ func NewKafkaProducer(cfg *Config) *KafkaProducer {
 	}
 }
 
-func (kp *KafkaProducer) SendUpdate(ctx context.Context, trip domain.Trip, commandType domain.CommandType, reason *string) error {
+func (kp *KafkaProducer) SendMessage(ctx context.Context, message string) error {
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "driver.repository: SendUpdate")
+	newCtx, span := tr.Start(ctx, "courses/repository/kafka.SendMessage")
 	defer span.End()
 
-	tc := ToTripCommand(trip, commandType, reason)
-
-	message, err := json.Marshal(tc)
+	messageJSON, err := json.Marshal(message)
 	if err != nil {
 		logger.Error("failed to marshal Command to message:", zap.Error(err))
+		// TODO AppError
 		return fmt.Errorf("failed to marshal Command to message: %w", domain.ErrInternal)
 	}
 
-	err = kp.SendMessageWithKaKafka(newCtx, message)
+	err = kp.SendMessageWithKaKafka(newCtx, messageJSON)
 	if err != nil {
 		logger.Error("failed write message to kafka:", zap.Error(err))
+		// TODO AppError
 		return fmt.Errorf("failed to send message to Kafka: %w", domain.ErrInternal)
 	}
 	return nil

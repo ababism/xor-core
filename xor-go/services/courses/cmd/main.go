@@ -23,12 +23,12 @@ func main() {
 	ctx := context.Background()
 
 	configPath := os.Getenv("CONFIG_" + AppCapsName)
-	log.Println("Driver config path: ", configPath)
+	log.Println("Courses config path: ", configPath)
 
 	// Собираем конфиг приложения
 	cfg, err := config.NewConfig(configPath, AppCapsName)
 	if err != nil {
-		log.Fatal("Fail to parse driver config: ", err)
+		log.Fatal("Fail to parse courses config: ", err)
 	}
 
 	// Создаем наше приложение

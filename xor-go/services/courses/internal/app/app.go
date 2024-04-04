@@ -26,7 +26,7 @@ type App struct {
 	address        string
 	logger         *zap.Logger
 	tracerProvider *trace.TracerProvider
-	service        adapters.CourseService
+	service        adapters.CoursesService
 }
 
 func NewApp(cfg *config.Config) (*App, error) {
@@ -127,12 +127,12 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// SERVICE LAYER ----------------------------------------------------------------------
 
 	// Service layer
-	driverService := service.NewCoursesService(courseRepo, lessonRepo, teacherRepo, studentRepo, publicationRepo, financesCLi)
+	coursesService := service.NewCoursesService(courseRepo, lessonRepo, teacherRepo, studentRepo, publicationRepo, financesCLi)
 
 	logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 
 	// Scraper for event calling
-	scr := scraper.NewScraper(logger, driverService)
+	scr := scraper.NewScraper(logger, coursesService)
 	graceful_shutdown.AddCallback(
 		&graceful_shutdown.Callback{
 			Name:  "Data scraper stop",
@@ -152,7 +152,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// TRANSPORT LAYER ----------------------------------------------------------------------
 
 	// Kafka consumer in transport layer
-	consumer := kafkaConsumer.NewKafkaConsumer(cfg.KafkaReader, driverService)
+	consumer := kafkaConsumer.NewKafkaConsumer(cfg.KafkaReader, coursesService)
 	kafkaConsumerClose := consumer.Start(ctx)
 	graceful_shutdown.AddCallback(&graceful_shutdown.Callback{
 		Name: "kafkaConsumer Close",
@@ -168,7 +168,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	return &App{
 		cfg:            cfg,
 		logger:         logger,
-		service:        driverService,
+		service:        coursesService,
 		address:        address,
 		tracerProvider: tp,
 	}, nil

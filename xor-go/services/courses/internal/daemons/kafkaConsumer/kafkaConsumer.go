@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/juju/zaputil/zapctx"
+	"github.com/segmentio/kafka-go"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
@@ -14,10 +15,10 @@ import (
 
 type KafkaConsumer struct {
 	reader        *kafka.Reader
-	driverService adapters.CourseService
+	courseService adapters.CourseService
 }
 
-func NewKafkaConsumer(cfg *Config, driverService adapters.CourseService) *KafkaConsumer {
+func NewKafkaConsumer(cfg *Config, courseService adapters.CourseService) *KafkaConsumer {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:        cfg.Brokers,
 		Topic:          cfg.Topic,
@@ -29,7 +30,7 @@ func NewKafkaConsumer(cfg *Config, driverService adapters.CourseService) *KafkaC
 
 	return &KafkaConsumer{
 		reader:        reader,
-		driverService: driverService,
+		courseService: courseService,
 	}
 }
 
@@ -56,7 +57,7 @@ func (kc *KafkaConsumer) consumeMessages(mainCtx context.Context) {
 		}
 
 		tr := global.Tracer(domain.ServiceName)
-		ctxTrace, span := tr.Start(ctx, "driver.daemon.kafkaConsumer: ConsumeMessage", trace.WithNewRoot())
+		ctxTrace, span := tr.Start(ctx, "courses/daemon/kafkaConsumer.ConsumeMessage", trace.WithNewRoot())
 		ctxLog := zapctx.WithLogger(ctxTrace, logger)
 
 		var event Event

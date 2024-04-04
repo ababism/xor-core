@@ -14,14 +14,14 @@ import (
 
 type Scraper struct {
 	stop          chan bool
-	driverService adapters.CourseService
+	courseService adapters.CourseService
 	logger        *zap.Logger
 }
 
-func NewScraper(logger *zap.Logger, driverService adapters.CourseService) *Scraper {
+func NewScraper(logger *zap.Logger, courseService adapters.CourseService) *Scraper {
 	return &Scraper{
 		logger:        logger,
-		driverService: driverService,
+		courseService: courseService,
 		stop:          make(chan bool)}
 }
 
@@ -63,8 +63,10 @@ func (s *Scraper) scrape(scrapeInterval time.Duration) {
 	ctxLogger := zapctx.WithLogger(requestIdCtx, s.logger)
 
 	tr := global.Tracer(domain.ServiceName)
-	_, span := tr.Start(ctxLogger, "driver.daemon.scraper: Scrape", trace.WithNewRoot())
+	_, span := tr.Start(ctxLogger, "courses/daemon/scraper.Scrape", trace.WithNewRoot())
 	defer span.End()
+
+	// Your functionality
 
 	time.Sleep(scrapeInterval)
 }

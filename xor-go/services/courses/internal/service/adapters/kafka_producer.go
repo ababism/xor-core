@@ -5,5 +5,5 @@ import (
 )
 
 type KafkaClient interface {
-	SendUpdate(ctx context.Context, message string, topic string) error
+	SendMessage(ctx context.Context, message string) error
 }

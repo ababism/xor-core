@@ -12,10 +12,10 @@ var _ generated.ServerInterface = &CoursesHandler{}
 
 type CoursesHandler struct {
 	logger         *zap.Logger
-	coursesService adapters.CourseService
+	coursesService adapters.CoursesService
 }
 
-func NewDriverHandler(logger *zap.Logger, coursesService adapters.CourseService) *CoursesHandler {
+func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
 	return &CoursesHandler{logger: logger, coursesService: coursesService}
 }
 
