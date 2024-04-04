@@ -18,10 +18,13 @@ import (
 //var _ adapters.CourseRepository = &Database{}
 
 type Database struct {
-	client *mongo.Client
-	db     *mongo.Database
+	client   *mongo.Client
+	database *mongo.Database
 
-	logger *zap.Logger
+	//databaseName string
+
+	clientOptions *options.ClientOptions
+	logger        *zap.Logger
 }
 
 func NewDatabase(logger *zap.Logger) *Database {
@@ -30,6 +33,42 @@ func NewDatabase(logger *zap.Logger) *Database {
 func createIDFilter(ID uuid.UUID) bson.M {
 	filter := bson.M{"_id": ID}
 	return filter
+}
+
+func (r *Database) Connect(ctx context.Context, cfg *Config, migrateCfg *ConfigMigrations) (func(ctx context.Context) error, error) {
+	// TODO take from context
+	// TODO AppError
+	r.logger.Info("Connecting to mongo...")
+	r.logger.Info(fmt.Sprintf("mongo params: uri: %s; database: %s", cfg.Uri, cfg.Database))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Uri))
+	if err != nil {
+		r.logger.Error("new mongo client create error:", zap.Error(err))
+		return nil, fmt.Errorf("new mongo client create error: %w", err)
+	}
+
+	r.clientOptions = options.Client().ApplyURI(cfg.Uri)
+
+	err = client.Ping(ctx, readpref.Primary())
+	if err != nil {
+		r.logger.Error("new mongo primary node connect error:", zap.Error(err))
+		return client.Disconnect, fmt.Errorf("new mongo primary node connect error: %w", err)
+	}
+
+	r.client = client
+	database := client.Database(cfg.Database)
+
+	//r.databaseName = cfg.Database
+
+	if migrateCfg.Enabled {
+		migrationSvc := migrate.NewMigrationsService(r.logger, database)
+		err = migrationSvc.RunMigrations(migrateCfg.Path)
+		if err != nil {
+			r.logger.Fatal("run migrations failed", zap.Error(err))
+			return client.Disconnect, fmt.Errorf("run migrations failed")
+		}
+	}
+
+	return client.Disconnect, nil
 }
 
 func handleMongoError(err error, log *zap.Logger) error {
@@ -66,35 +105,4 @@ func handleMongoError(err error, log *zap.Logger) error {
 		return apperror.NewAppError(http.StatusInternalServerError, "internal server error", "MongoDB marshal error", tErr)
 	}
 	return nil
-}
-
-func (r *Database) Connect(ctx context.Context, cfg *Config, migrateCfg *ConfigMigrations) (func(ctx context.Context) error, error) {
-	// TODO take from context
-	r.logger.Info("Connecting to mongo...")
-	r.logger.Info(fmt.Sprintf("mongo params: uri: %s; database: %s", cfg.Uri, cfg.Database))
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Uri))
-	if err != nil {
-		r.logger.Error("new mongo client create error:", zap.Error(err))
-		return nil, fmt.Errorf("new mongo client create error: %w", err)
-	}
-
-	err = client.Ping(ctx, readpref.Primary())
-	if err != nil {
-		r.logger.Error("new mongo primary node connect error:", zap.Error(err))
-		return client.Disconnect, fmt.Errorf("new mongo primary node connect error: %w", err)
-	}
-
-	r.client = client
-	database := client.Database(cfg.Database)
-
-	if migrateCfg.Enabled {
-		migrationSvc := migrate.NewMigrationsService(r.logger, database)
-		err = migrationSvc.RunMigrations(migrateCfg.Path)
-		if err != nil {
-			r.logger.Fatal("run migrations failed", zap.Error(err))
-			return client.Disconnect, fmt.Errorf("run migrations failed")
-		}
-	}
-
-	return client.Disconnect, nil
 }

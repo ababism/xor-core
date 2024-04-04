@@ -17,7 +17,7 @@ import (
 var _ adapters.CourseRepository = &CourseRepository{}
 
 func NewCourseRepository(database *Database) *CourseRepository {
-	courseCollection := database.db.Collection(models.CourseCollectionName)
+	courseCollection := database.database.Collection(models.CourseCollectionName)
 
 	return &CourseRepository{
 		db:     database,
@@ -107,3 +107,12 @@ func (cr CourseRepository) Delete(ctx context.Context, courseID uuid.UUID) error
 	//TODO implement me
 	panic("implement me")
 }
+
+//func (cr CourseRepository) CreateWithTx(tx Session, ctx context.Context, course *domain.Course) (*domain.Course, error) {
+//	newCr := NewCourseRepository(tx.DB)
+//	return newCr.Create(ctx, course)
+//}
+
+//func (cr CourseRepository) WithTX(tx Session) *adapters.CourseRepository{
+//	return NewCourseRepository(tx.DB)
+//}

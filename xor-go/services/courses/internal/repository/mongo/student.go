@@ -12,7 +12,7 @@ import (
 var _ adapters.StudentRepository = &StudentRepository{}
 
 func NewStudentRepository(database *Database) *StudentRepository {
-	courseCollection := database.db.Collection(models.StudentCollectionName)
+	courseCollection := database.database.Collection(models.StudentCollectionName)
 
 	return &StudentRepository{
 		db:     database,

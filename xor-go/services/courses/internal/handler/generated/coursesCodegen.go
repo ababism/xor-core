@@ -14,9 +14,8 @@ import (
 
 // Defines values for CourseVisibility.
 const (
-	CourseVisibilityHidden   CourseVisibility = "Hidden"
-	CourseVisibilityUnlocked CourseVisibility = "Unlocked"
-	CourseVisibilityVisible  CourseVisibility = "Visible"
+	CourseVisibilityHidden  CourseVisibility = "Hidden"
+	CourseVisibilityVisible CourseVisibility = "Visible"
 )
 
 // Defines values for LessonVisibility.

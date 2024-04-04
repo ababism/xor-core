@@ -43,3 +43,13 @@ type PublicationRequestRepository interface {
 	Update(ctx context.Context, req domain.PublicationRequest) error
 	//Delete(ctx context.Context, lessonID uuid.UUID) error
 }
+
+type Transaction interface {
+	Start(ctx context.Context) error
+	Commit(ctx context.Context) error
+	Rollback(ctx context.Context) error
+}
+
+type ExampleRepository interface {
+	Create(ctx context.Context, tx *Transaction, lesson *domain.Lesson) error
+}

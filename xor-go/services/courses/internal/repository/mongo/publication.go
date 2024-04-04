@@ -12,7 +12,7 @@ import (
 var _ adapters.PublicationRequestRepository = &PublicationRequestRepository{}
 
 func NewPublicationRepository(database *Database) *PublicationRequestRepository {
-	courseCollection := database.db.Collection(models.PublicationRequestsCollectionName)
+	courseCollection := database.database.Collection(models.PublicationRequestsCollectionName)
 
 	return &PublicationRequestRepository{
 		db:     database,
