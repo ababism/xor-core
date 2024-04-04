@@ -55,6 +55,7 @@ type Course struct {
 	ID         uuid.UUID
 	ProductID  uuid.UUID
 	FeedbackID uuid.UUID
+	TeacherID  uuid.UUID
 	Name       string
 	Discipline string
 	Landing    []byte
@@ -79,12 +80,15 @@ type Theme struct {
 	Heading    string
 	Visibility Visibility
 	// TODO MB Make uuid.UUID?
+	// Lessons in most cases nil
 	Lessons []Lesson
 }
 
 // Lesson represents a lesson entity
 type Lesson struct {
 	ID         uuid.UUID
+	SectionID  uuid.UUID
+	TeacherID  uuid.UUID
 	Product    Product
 	Visibility Visibility
 	Transcript string
