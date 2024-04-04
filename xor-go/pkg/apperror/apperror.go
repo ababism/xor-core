@@ -44,7 +44,7 @@ type AppError struct {
 	Err        error  // Underlying error from the repository or other layers
 }
 
-func NewAppError(code int, message string, devMessage string, err error) AppError {
+func New(code int, message string, devMessage string, err error) AppError {
 	return AppError{Code: code, Message: message, DevMessage: devMessage, Err: err}
 }
 

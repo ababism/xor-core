@@ -44,7 +44,7 @@ func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*
 		return nil, mErr
 	}
 	if err != nil {
-		appErr := apperror.NewAppError(http.StatusBadRequest, "trip already created",
+		appErr := apperror.New(http.StatusBadRequest, "trip already created",
 			"failed to create trip in MongoDB", err)
 		return nil, appErr
 	}
@@ -52,13 +52,13 @@ func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*
 	insertedID, ok := insertRes.InsertedID.(string)
 	if !ok {
 		logger.Error("MongoDB id is not a string error", zap.Error(err))
-		return nil, apperror.NewAppError(http.StatusInternalServerError,
+		return nil, apperror.New(http.StatusInternalServerError,
 			"internal server error", "MongoDB _id is not a string", err)
 	}
 	resultID, err := uuid.Parse(insertedID)
 	if err != nil {
 		logger.Error("MongoDB id is not valid uuid", zap.Error(err))
-		return nil, apperror.NewAppError(http.StatusInternalServerError,
+		return nil, apperror.New(http.StatusInternalServerError,
 			"internal server error", "MongoDB _id is not a uuid", err)
 	}
 	course.ID = resultID
@@ -79,7 +79,7 @@ func (cr CourseRepository) Get(ctx context.Context, courseID uuid.UUID) (*domain
 		return nil, mErr
 	}
 	if err != nil {
-		appErr := apperror.NewAppError(http.StatusNotFound, "can't find course", "error fetching course from MongoDB", err)
+		appErr := apperror.New(http.StatusNotFound, "can't find course", "error fetching course from MongoDB", err)
 		return nil, appErr
 	}
 

@@ -35,7 +35,7 @@ func TestInitAppError(t *testing.T) {
 func TestNewAppError(t *testing.T) {
 	t.Parallel()
 
-	err := NewAppError(http.StatusNotFound, "Not Found", "Resource not found", errors.New("not found"))
+	err := New(http.StatusNotFound, "Not Found", "Resource not found", errors.New("not found"))
 	require.NotNil(t, err)
 	assert.Equal(t, http.StatusNotFound, err.Code)
 	assert.Equal(t, "Not Found", err.Message)
@@ -51,7 +51,7 @@ func TestGetLastMessage(t *testing.T) {
 		devMessage = "Unexpected error occurred"
 	)
 
-	testErr := NewAppError(http.StatusInternalServerError, message, devMessage, errors.New("internal error"))
+	testErr := New(http.StatusInternalServerError, message, devMessage, errors.New("internal error"))
 
 	t.Run("AppErrorProduction", func(t *testing.T) {
 
@@ -100,10 +100,10 @@ func TestGetLastMessage(t *testing.T) {
 	})
 
 	t.Run("DoubleWrappedProduction", func(t *testing.T) {
-		insideAppErr := NewAppError(http.StatusBadRequest, "inside "+message, "inside "+devMessage,
+		insideAppErr := New(http.StatusBadRequest, "inside "+message, "inside "+devMessage,
 			errors.New("double inside text"))
 
-		doubleErr := NewAppError(http.StatusInternalServerError, message, devMessage, insideAppErr)
+		doubleErr := New(http.StatusInternalServerError, message, devMessage, insideAppErr)
 		const errorText = "random error"
 
 		appConfig = &app.Config{
@@ -116,10 +116,10 @@ func TestGetLastMessage(t *testing.T) {
 	})
 
 	t.Run("DoubleWrappedLocal", func(t *testing.T) {
-		insideAppErr := NewAppError(http.StatusBadRequest, "inside "+message, "inside "+devMessage,
+		insideAppErr := New(http.StatusBadRequest, "inside "+message, "inside "+devMessage,
 			errors.New("double inside text"))
 
-		doubleErr := NewAppError(http.StatusInternalServerError, message, devMessage, insideAppErr)
+		doubleErr := New(http.StatusInternalServerError, message, devMessage, insideAppErr)
 
 		appConfig = &app.Config{
 			Environment: app.Local,
@@ -154,7 +154,7 @@ func TestGetLastMessage(t *testing.T) {
 func TestGetCode(t *testing.T) {
 	t.Parallel()
 
-	err := NewAppError(http.StatusNotFound, "Not Found", "Resource not found", errors.New("not found"))
+	err := New(http.StatusNotFound, "Not Found", "Resource not found", errors.New("not found"))
 
 	t.Run("AppError", func(t *testing.T) {
 		t.Parallel()
@@ -173,7 +173,7 @@ func TestGetCode(t *testing.T) {
 
 func TestAppErrorUnwrap(t *testing.T) {
 	innerErr := errors.New("inner error")
-	appErr := NewAppError(http.StatusInternalServerError, "Internal Server Error", "Unexpected error occurred", innerErr)
+	appErr := New(http.StatusInternalServerError, "Internal Server Error", "Unexpected error occurred", innerErr)
 
 	unwrappedErr := appErr.Unwrap()
 	assert.Equal(t, innerErr, unwrappedErr)
@@ -189,14 +189,14 @@ func TestAppErrorError(t *testing.T) {
 
 	t.Run("GoodScenario", func(t *testing.T) {
 		innerErr := errors.New(errorText)
-		appErr := NewAppError(http.StatusInternalServerError, message, devMessage, innerErr)
+		appErr := New(http.StatusInternalServerError, message, devMessage, innerErr)
 
 		expectedErrorMessage := fmt.Sprintf("[%d %s]: %s: %s", http.StatusInternalServerError, message, devMessage, errorText)
 		assert.Equal(t, expectedErrorMessage, appErr.Error())
 	})
 	t.Run("NilErrScenario", func(t *testing.T) {
 
-		appErr := NewAppError(http.StatusInternalServerError, message, devMessage,
+		appErr := New(http.StatusInternalServerError, message, devMessage,
 			nil)
 
 		expectedErrorMessage := fmt.Sprintf("[%d %s]: %s", http.StatusInternalServerError, message, devMessage)
