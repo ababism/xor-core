@@ -20,7 +20,7 @@ type Course struct {
 	FeedbackID uuid.UUID         `bson:"feedback_id"`
 	Name       string            `bson:"name"`
 	Discipline string            `bson:"discipline"`
-	Landing    byte              `bson:"landing"`
+	Landing    []byte            `bson:"landing"`
 	Visibility domain.Visibility `bson:"visibility"`
 	Sections   []Section         `bson:"sections"`
 }
@@ -48,11 +48,11 @@ type Theme struct {
 
 // Lesson represents a lesson entity
 type Lesson struct {
-	Product    Product           `bson:"product"`
 	ID         uuid.UUID         `bson:"_id"`
+	Product    Product           `bson:"product"`
+	Visibility domain.Visibility `bson:"visibility"`
 	Transcript string            `bson:"transcript"`
 	VideoURI   string            `bson:"video_uri"`
-	Visibility domain.Visibility `bson:"visibility"`
 }
 
 // Product represents a product entity

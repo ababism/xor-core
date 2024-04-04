@@ -13,7 +13,6 @@ const (
 	_ Visibility = iota
 	Hidden
 	Visible
-	Unlocked
 )
 
 type RequestsStatus int
@@ -58,7 +57,7 @@ type Course struct {
 	FeedbackID uuid.UUID
 	Name       string
 	Discipline string
-	Landing    byte
+	Landing    []byte
 	Visibility Visibility
 	Sections   []Section
 }
@@ -79,16 +78,17 @@ type Theme struct {
 	FeedbackID uuid.UUID
 	Heading    string
 	Visibility Visibility
-	Lessons    []Lesson
+	// TODO MB Make uuid.UUID?
+	Lessons []Lesson
 }
 
 // Lesson represents a lesson entity
 type Lesson struct {
-	Product    Product
 	ID         uuid.UUID
+	Product    Product
+	Visibility Visibility
 	Transcript string
 	VideoURI   string
-	Visibility Visibility
 }
 
 type Product struct {
