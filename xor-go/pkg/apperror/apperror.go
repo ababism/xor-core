@@ -53,10 +53,16 @@ func (a AppError) Unwrap() error {
 }
 
 func (a AppError) Error() string {
+	if a.Err == nil {
+		return fmt.Sprintf("[%d %s]: %s", a.Code, a.Message, a.DevMessage)
+	}
 	return fmt.Sprintf("[%d %s]: %s: %s", a.Code, a.Message, a.DevMessage, a.Err.Error())
 }
 
 func GetLastMessage(err error) string {
+	if err == nil {
+		return ""
+	}
 	var myErr AppError
 	if errors.As(err, &myErr) {
 		if appConfig.IsProduction() {

@@ -129,6 +129,26 @@ func TestGetLastMessage(t *testing.T) {
 		resultMessage := GetLastMessage(doubleErr)
 		assert.Equal(t, devMessage, resultMessage)
 	})
+
+	t.Run("NilErrProduction", func(t *testing.T) {
+		appConfig = &app.Config{
+			Environment: app.Production,
+		}
+		require.Equal(t, appConfig.IsProduction(), true)
+
+		resultMessage := GetLastMessage(nil)
+		assert.Equal(t, "", resultMessage)
+	})
+
+	t.Run("NilErrLocal", func(t *testing.T) {
+		appConfig = &app.Config{
+			Environment: app.Local,
+		}
+		require.Equal(t, appConfig.IsLocal(), true)
+
+		resultMessage := GetLastMessage(nil)
+		assert.Equal(t, "", resultMessage)
+	})
 }
 
 func TestGetCode(t *testing.T) {
@@ -167,9 +187,20 @@ func TestAppErrorError(t *testing.T) {
 		errorText = "inner error"
 	)
 
-	innerErr := errors.New(errorText)
-	appErr := NewAppError(http.StatusInternalServerError, message, devMessage, innerErr)
+	t.Run("GoodScenario", func(t *testing.T) {
+		innerErr := errors.New(errorText)
+		appErr := NewAppError(http.StatusInternalServerError, message, devMessage, innerErr)
 
-	expectedErrorMessage := fmt.Sprintf("[%d %s]: %s: %s", http.StatusInternalServerError, message, devMessage, errorText)
-	assert.Equal(t, expectedErrorMessage, appErr.Error())
+		expectedErrorMessage := fmt.Sprintf("[%d %s]: %s: %s", http.StatusInternalServerError, message, devMessage, errorText)
+		assert.Equal(t, expectedErrorMessage, appErr.Error())
+	})
+	t.Run("NilErrScenario", func(t *testing.T) {
+
+		appErr := NewAppError(http.StatusInternalServerError, message, devMessage,
+			nil)
+
+		expectedErrorMessage := fmt.Sprintf("[%d %s]: %s", http.StatusInternalServerError, message, devMessage)
+		assert.Equal(t, expectedErrorMessage, appErr.Error())
+	})
+
 }
