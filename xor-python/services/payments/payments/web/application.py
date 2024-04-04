@@ -35,7 +35,7 @@ def get_app() -> FastAPI:
     register_shutdown_event(app)
 
     # Main router for the API.
-    app.include_router(router=api_router, prefix="/payments/api/v1")
+    app.include_router(router=api_router, prefix="/payments")
     # Adds static directory.
     # This directory is used to access swagger files.
     app.mount(
@@ -43,5 +43,7 @@ def get_app() -> FastAPI:
         StaticFiles(directory=APP_ROOT / "static"),
         name="static",
     )
+
+    print("Routes", app.routes)
 
     return app

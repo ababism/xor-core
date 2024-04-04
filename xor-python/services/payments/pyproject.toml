@@ -3,15 +3,15 @@ name = "payments"
 version = "0.1.0"
 description = ""
 authors = [
-
+    "Artem Fedorov <aofedorov@edu.hse.ru>"
 ]
 maintainers = [
-
+    "Artem Fedorov <aofedorov@edu.hse.ru>"
 ]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.12"
 fastapi = "^0.100.0"
 uvicorn = { version = "^0.22.0", extras = ["standard"] }
 pydantic = "^2"
@@ -26,6 +26,7 @@ opentelemetry-exporter-otlp = "^1.18.0"
 opentelemetry-instrumentation = "^0.39b0"
 opentelemetry-instrumentation-fastapi = "^0.39b0"
 loguru = "^0.7.0"
+yookassa = "^3.0.1"
 
 
 [tool.poetry.dev-dependencies]
@@ -45,7 +46,7 @@ httpx = "^0.23.3"
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-src_paths = ["payments",]
+src_paths = ["payments", ]
 
 [tool.mypy]
 strict = true
