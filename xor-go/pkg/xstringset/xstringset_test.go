@@ -50,6 +50,15 @@ func TestSet(t *testing.T) {
 		assert.Contains(t, items, teacherKey)
 		assert.Contains(t, items, adminKey)
 	})
+
+	t.Run("Test nil set", func(t *testing.T) {
+		t.Parallel()
+
+		set := make(Set)
+		set = nil
+
+		assert.False(t, set.Contains(studentKey))
+	})
 }
 
 func TestSet_AddItems(t *testing.T) {

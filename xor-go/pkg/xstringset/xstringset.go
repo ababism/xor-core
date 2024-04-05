@@ -5,6 +5,11 @@ type Set map[string]struct{}
 func (s Set) Add(item string) {
 	s[item] = struct{}{}
 }
+func New(item ...string) Set {
+	s := Set(make(map[string]struct{}))
+	s.AddItems(item)
+	return s
+}
 
 func (s Set) AddItems(items []string) {
 	for _, item := range items {
@@ -17,6 +22,9 @@ func (s Set) Remove(item string) {
 }
 
 func (s Set) Contains(item string) bool {
+	if s == nil {
+		return false
+	}
 	_, found := s[item]
 	return found
 }
