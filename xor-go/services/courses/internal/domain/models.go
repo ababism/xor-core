@@ -45,6 +45,13 @@ type Actor struct {
 	roles xstringset.Set
 }
 
+func NewActor(ID uuid.UUID, roles []string) *Actor {
+	a := &Actor{ID: ID,
+		roles: xstringset.New()}
+	a.initRoles(roles)
+	return a
+}
+
 // Teacher represents a teacher entity
 type Teacher struct {
 	AccountID uuid.UUID

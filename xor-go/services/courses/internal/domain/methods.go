@@ -8,6 +8,36 @@ func (c *Actor) HasRole(role string) bool {
 	return c.roles.Contains(role)
 }
 
+func (c *Actor) HasOneOfRoles(roles ...string) bool {
+	if roles == nil || len(roles) == 0 {
+		return true
+	}
+
+	for _, role := range roles {
+		if c.roles.Contains(role) {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Actor) HasAllRoles(roles ...string) bool {
+	if roles == nil || len(roles) == 0 {
+		return true
+	}
+
+	for _, role := range roles {
+		if !c.roles.Contains(role) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c *Actor) initRoles(roles []string) {
+	c.roles.AddItems(roles)
+}
+
 func (c *Course) ApplyVisibility() {
 	if c.Visibility == Hidden {
 		c.FeedbackID = uuid.Nil
@@ -54,4 +84,10 @@ func (l *Lesson) ApplyVisibility() {
 		l.VideoURI = ""
 		l.Transcript = ""
 	}
+}
+
+func (l *Lesson) ApplyPaywall() {
+	l.VideoURI = ""
+	l.Transcript = ""
+
 }
