@@ -18,15 +18,15 @@ type CourseRepository interface {
 type LessonRepository interface {
 	Create(ctx context.Context, lesson *domain.Lesson) (*domain.Lesson, error)
 	Get(ctx context.Context, lessonID uuid.UUID) (*domain.Lesson, error)
-	GetAllByCourse(ctx context.Context, courseID uuid.UUID, offset, limit int) ([]*domain.Lesson, error)
+	GetAllByCourse(ctx context.Context, courseID uuid.UUID) ([]*domain.Lesson, error)
 	Update(ctx context.Context, lesson *domain.Lesson) error
 	Delete(ctx context.Context, lessonID uuid.UUID) error
 }
 
 type StudentRepository interface {
 	Create(ctx context.Context, profile domain.Student) error
-	GetLessonAccessStatus(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.AccessStatus, error)
-	CreateAccessToLesson(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID, status domain.AccessStatus) error
+	GetLessonAccess(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error)
+	CreateAccessToLesson(ctx context.Context, lessonAccess domain.LessonAccess) (domain.LessonAccess, error)
 }
 
 type TeacherRepository interface {
@@ -42,4 +42,5 @@ type PublicationRequestRepository interface {
 	GetAllFrom(ctx context.Context, teacher int, offset, limit int) ([]domain.PublicationRequest, error)
 	Update(ctx context.Context, req domain.PublicationRequest) error
 	//Delete(ctx context.Context, lessonID uuid.UUID) error
+	NewSession(ctx context.Context) (*Session, error)
 }

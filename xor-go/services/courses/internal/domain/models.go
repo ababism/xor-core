@@ -119,15 +119,18 @@ type PublicationRequest struct {
 	ID            uuid.UUID
 	CourseID      uuid.UUID
 	AssigneeID    uuid.UUID
-	requestStatus RequestsStatus
+	RequestStatus RequestsStatus
 	Comment       *string
-	UpdatedAt     *time.Time
+	UpdatedAt     time.Time
 }
 
 type LessonAccess struct {
 	ID           uuid.UUID
 	LessonID     uuid.UUID
 	StudentID    uuid.UUID
-	accessStatus AccessStatus
-	UpdatedAt    *time.Time
+	AccessStatus AccessStatus
+	UpdatedAt    time.Time
+}
+type PaymentRedirect struct {
+	response []byte
 }

@@ -38,7 +38,7 @@ func (lr LessonRepository) Get(ctx context.Context, lessonID uuid.UUID) (*domain
 	panic("implement me")
 }
 
-func (lr LessonRepository) GetAllByCourse(ctx context.Context, courseID uuid.UUID, offset, limit int) ([]*domain.Lesson, error) {
+func (lr LessonRepository) GetAllByCourse(ctx context.Context, courseID uuid.UUID) ([]*domain.Lesson, error) {
 	//TODO implement me
 	panic("implement me")
 }

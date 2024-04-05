@@ -50,17 +50,6 @@ func (c *Course) ApplyVisibility() {
 	}
 }
 
-func (c *Course) Validate() error {
-	// TODO
-	//apperror.New(http.StatusInternalServerError, message, "invalid course fields", err)
-	return nil
-}
-
-func (l *Lesson) Validate() error {
-	// TODO
-	//apperror.New(http.StatusInternalServerError, message, "invalid lesson fields", err)
-	return nil
-}
 func (s *Section) ApplyVisibility() {
 	if s.Visibility == Hidden {
 		s.Description = ""
@@ -95,4 +84,40 @@ func (l *Lesson) ApplyPaywall() {
 	l.VideoURI = ""
 	l.Transcript = ""
 
+}
+
+func (c *Course) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid course fields", err)
+	return nil
+}
+
+func (s *Section) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid section fields", err)
+	return nil
+}
+
+func (t *Theme) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid theme fields", err)
+	return nil
+}
+
+func (l *Lesson) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid lesson fields", err)
+	return nil
+}
+
+func (s Student) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid student profile fields", err)
+	return nil
+}
+
+func (t Teacher) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid teacher profile fields", err)
+	return nil
 }

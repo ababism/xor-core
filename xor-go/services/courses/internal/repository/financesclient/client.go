@@ -19,7 +19,7 @@ func (c Client) RegisterProducts(ctx context.Context, lessonIDs []uuid.UUID, tea
 	panic("implement me")
 }
 
-func (c Client) CreatePurchase(ctx context.Context, productIDs []uuid.UUID) (string, error) {
+func (c Client) CreatePurchase(ctx context.Context, productIDs []domain.Product) (domain.PaymentRedirect, error) {
 	//TODO implement me
 	panic("implement me")
 }

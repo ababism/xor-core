@@ -28,17 +28,17 @@ type StudentRepository struct {
 	course         *mongo.Collection
 }
 
+func (sr StudentRepository) GetLessonAccess(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (sr StudentRepository) CreateAccessToLesson(ctx context.Context, lessonAccess domain.LessonAccess) (domain.LessonAccess, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (sr StudentRepository) Create(ctx context.Context, profile domain.Student) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (sr StudentRepository) GetLessonAccessStatus(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.AccessStatus, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (sr StudentRepository) CreateAccessToLesson(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID, status domain.AccessStatus) error {
 	//TODO implement me
 	panic("implement me")
 }

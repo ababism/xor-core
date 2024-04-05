@@ -48,26 +48,26 @@ type LessonService interface {
 
 type PublicationRequestService interface {
 	// RequestCoursePublication Teacher requests publication of his course
-	RequestCoursePublication(ctx context.Context, courseID uuid.UUID) (domain.PublicationRequest, error)
+	RequestCoursePublication(ctx context.Context, actor domain.Actor, request domain.PublicationRequest) (domain.PublicationRequest, error)
 	// UpdatePublicationRequest Moderator reviews publication, if
-	UpdatePublicationRequest(ctx context.Context, requestID domain.PublicationRequest) (domain.PublicationRequest, error)
+	UpdatePublicationRequest(ctx context.Context, actor domain.Actor, requestID domain.PublicationRequest) (domain.PublicationRequest, error)
 }
 
 type UserService interface {
 	// BuyCourse student buy course
-	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
+	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error)
 	// BuyLesson student buy lesson
-	BuyLesson(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
+	BuyLesson(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, domain.LessonAccess, error)
 	// RegisterStudentProfile student registers his profile
 	RegisterStudentProfile(ctx context.Context, actor domain.Actor, profile domain.Student) error
 	// RegisterTeacherProfile admin or moderator  registers teachers profile
-	RegisterTeacherProfile(ctx context.Context, actor domain.Actor, teacherID uuid.UUID, profile domain.Teacher) error
+	RegisterTeacherProfile(ctx context.Context, actor domain.Actor, profile domain.Teacher) error
 
 	// ChangeCourseAccess admin or moderator gives access to lesson for a user
-	ChangeCourseAccess(ctx context.Context, actor domain.Actor, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error)
+	ChangeCourseAccess(ctx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error)
 
 	// GetCourseAccess student gets his access to lesson for a user
-	GetCourseAccess(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.LessonAccess, error)
+	GetLessonAccess(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.LessonAccess, error)
 	//isLessonAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
 	//IsCourseAccessible(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (bool, error)
 }

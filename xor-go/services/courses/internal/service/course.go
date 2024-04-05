@@ -7,6 +7,7 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
 	"net/http"
+	"time"
 	"xor-go/pkg/apperror"
 	"xor-go/services/courses/internal/domain"
 )
@@ -127,7 +128,14 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	defer span.End()
 
 	for _, pr := range products {
-		err := c.student.CreateAccessToLesson(ctx, buyerID, pr.Item, domain.Accessible)
+		lessonAccess := domain.LessonAccess{
+			ID:           uuid.UUID{},
+			LessonID:     pr.Item,
+			StudentID:    buyerID,
+			AccessStatus: domain.Accessible,
+			UpdatedAt:    time.Now(),
+		}
+		_, err := c.student.CreateAccessToLesson(ctx, lessonAccess)
 		if err != nil {
 			return err
 		}

@@ -19,17 +19,17 @@ func (c CoursesService) ReadLesson(initialCtx context.Context, actor domain.Acto
 	ctx, span := tr.Start(initialCtx, "courses/service.ReadLesson")
 	defer span.End()
 
-	lesson, err := c.lessonEdit.Get(ctx, lessonID)
+	lesson, err := c.lesson.Get(ctx, lessonID)
 	if err != nil {
 		return nil, err
 	}
 
-	access, err := c.student.GetLessonAccessStatus(ctx, actor.ID, lessonID)
+	access, err := c.student.GetLessonAccess(ctx, actor.ID, lessonID)
 	if err != nil {
 		return nil, err
 	}
 
-	if access != domain.Accessible && !actor.HasRole(domain.AdminRole) {
+	if access.AccessStatus != domain.Accessible && !actor.HasRole(domain.AdminRole) {
 		lesson.ApplyPaywall()
 	}
 
