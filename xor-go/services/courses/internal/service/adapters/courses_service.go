@@ -36,9 +36,9 @@ type LessonService interface {
 	ReadLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (*domain.Lesson, error)
 
 	// Teacher
-	CreateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) error
+	CreateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) (*domain.Lesson, error)
 	GetLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (*domain.Lesson, error)
-	UpdateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) error
+	UpdateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) (*domain.Lesson, error)
 	DeleteLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) error
 
 	// TODO

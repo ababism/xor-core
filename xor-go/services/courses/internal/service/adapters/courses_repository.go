@@ -16,7 +16,7 @@ type CourseRepository interface {
 }
 
 type LessonRepository interface {
-	Create(ctx context.Context, lesson *domain.Lesson) error
+	Create(ctx context.Context, lesson *domain.Lesson) (*domain.Lesson, error)
 	Get(ctx context.Context, lessonID uuid.UUID) (*domain.Lesson, error)
 	GetAllByCourse(ctx context.Context, courseID uuid.UUID, offset, limit int) ([]*domain.Lesson, error)
 	Update(ctx context.Context, lesson *domain.Lesson) error

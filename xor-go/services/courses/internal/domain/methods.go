@@ -56,6 +56,11 @@ func (c *Course) Validate() error {
 	return nil
 }
 
+func (l *Lesson) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid lesson fields", err)
+	return nil
+}
 func (s *Section) ApplyVisibility() {
 	if s.Visibility == Hidden {
 		s.Description = ""

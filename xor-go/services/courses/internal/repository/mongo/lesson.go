@@ -28,7 +28,7 @@ type LessonRepository struct {
 	course         *mongo.Collection
 }
 
-func (lr LessonRepository) Create(ctx context.Context, lesson *domain.Lesson) error {
+func (lr LessonRepository) Create(ctx context.Context, lesson *domain.Lesson) (*domain.Lesson, error) {
 	//TODO implement me
 	panic("implement me")
 }
