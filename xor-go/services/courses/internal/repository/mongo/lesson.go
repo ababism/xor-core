@@ -5,25 +5,27 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
 	"xor-go/services/courses/internal/domain"
-	"xor-go/services/courses/internal/repository/mongo/models"
+	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
 var _ adapters.LessonRepository = &LessonRepository{}
 
-func NewLessonRepository(database *Database) *LessonRepository {
-	courseCollection := database.database.Collection(models.LessonCollectionName)
+func NewLessonRepository(database *Database, name collections.CollectionName) *LessonRepository {
+	courseCollection := database.database.Collection(name.String())
 
 	return &LessonRepository{
-		db:     database,
-		course: courseCollection,
+		db:             database,
+		course:         courseCollection,
+		collectionName: name,
 	}
 }
 
 type LessonRepository struct {
 	db *Database
 
-	course *mongo.Collection
+	collectionName collections.CollectionName
+	course         *mongo.Collection
 }
 
 func (lr LessonRepository) Create(ctx context.Context, lesson *domain.Lesson) error {

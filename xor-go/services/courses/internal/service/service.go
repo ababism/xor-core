@@ -7,8 +7,10 @@ import (
 var _ adapters.CoursesService = &CoursesService{}
 
 type CoursesService struct {
-	course adapters.CourseRepository
-	lesson adapters.LessonRepository
+	course     adapters.CourseRepository
+	courseEdit adapters.CourseRepository
+	lesson     adapters.LessonRepository
+	lessonEdit adapters.LessonRepository
 
 	student adapters.StudentRepository
 	teacher adapters.TeacherRepository
@@ -18,8 +20,11 @@ type CoursesService struct {
 	financesClient adapters.FinancesClient
 }
 
-func NewCoursesService(courseRepository adapters.CourseRepository,
+func NewCoursesService(
+	courseRepository adapters.CourseRepository,
+	courseEditRepository adapters.CourseRepository,
 	lessonRepository adapters.LessonRepository,
+	lessonEditRepository adapters.LessonRepository,
 	teacherRepository adapters.TeacherRepository,
 	studentRepository adapters.StudentRepository,
 	publicationRequestRepository adapters.PublicationRequestRepository,
@@ -27,7 +32,9 @@ func NewCoursesService(courseRepository adapters.CourseRepository,
 
 	return &CoursesService{
 		course:         courseRepository,
+		courseEdit:     courseEditRepository,
 		lesson:         lessonRepository,
+		lessonEdit:     lessonEditRepository,
 		student:        studentRepository,
 		teacher:        teacherRepository,
 		publication:    publicationRequestRepository,

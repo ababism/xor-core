@@ -17,6 +17,7 @@ import (
 	financesClient "xor-go/services/courses/internal/repository/financesclient"
 	financesClientGen "xor-go/services/courses/internal/repository/financesclient/generated"
 	"xor-go/services/courses/internal/repository/mongo"
+	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service"
 	"xor-go/services/courses/internal/service/adapters"
 )
@@ -105,8 +106,10 @@ func NewApp(cfg *config.Config) (*App, error) {
 	logger.Info("Mongo connect – success")
 
 	// All repositories
-	courseRepo := mongo.NewCourseRepository(mongoDatabase)
-	lessonRepo := mongo.NewLessonRepository(mongoDatabase)
+	courseRepo := mongo.NewCourseRepository(mongoDatabase, collections.CourseCollectionName)
+	lessonRepo := mongo.NewLessonRepository(mongoDatabase, collections.LessonCollectionName)
+	courseEditRepo := mongo.NewCourseRepository(mongoDatabase, collections.CourseEditorCollectionName)
+	lessonEditRepo := mongo.NewLessonRepository(mongoDatabase, collections.LessonEditorCollectionName)
 	teacherRepo := mongo.NewTeacherRepository(mongoDatabase)
 	studentRepo := mongo.NewStudentRepository(mongoDatabase)
 	publicationRepo := mongo.NewPublicationRepository(mongoDatabase)
@@ -127,7 +130,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// SERVICE LAYER ----------------------------------------------------------------------
 
 	// Service layer
-	coursesService := service.NewCoursesService(courseRepo, lessonRepo, teacherRepo, studentRepo, publicationRepo, financesCLi)
+	coursesService := service.NewCoursesService(courseRepo, courseEditRepo,
+		lessonRepo, lessonEditRepo, teacherRepo, studentRepo, publicationRepo, financesCLi)
 
 	logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 

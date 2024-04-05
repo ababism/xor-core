@@ -10,25 +10,28 @@ import (
 	"net/http"
 	"xor-go/pkg/apperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/repository/mongo/models"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
 var _ adapters.CourseRepository = &CourseRepository{}
 
-func NewCourseRepository(database *Database) *CourseRepository {
-	courseCollection := database.database.Collection(models.CourseCollectionName)
+func NewCourseRepository(database *Database, name collections.CollectionName) *CourseRepository {
+	courseCollection := database.database.Collection(name.String())
 
 	return &CourseRepository{
-		db:     database,
-		course: courseCollection,
+		db:             database,
+		course:         courseCollection,
+		collectionName: name,
 	}
 }
 
 type CourseRepository struct {
 	db *Database
 
-	course *mongo.Collection
+	collectionName collections.CollectionName
+	course         *mongo.Collection
 }
 
 func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*domain.Course, error) {

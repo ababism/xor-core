@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 	"net/http"
 	"xor-go/pkg/apperror"
+	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
@@ -23,12 +24,12 @@ type Session struct {
 	//clientOpt options.ClientOptions
 }
 
-func (tx Session) SessionLessons(ctx context.Context) adapters.LessonRepository {
-	return NewLessonRepository(tx.DB)
+func (tx Session) SessionLessons(ctx context.Context, name collections.CollectionName) adapters.LessonRepository {
+	return NewLessonRepository(tx.DB, name)
 }
 
-func (tx Session) SessionCourses(ctx context.Context) adapters.CourseRepository {
-	return NewCourseRepository(tx.DB)
+func (tx Session) SessionCourses(ctx context.Context, name collections.CollectionName) adapters.CourseRepository {
+	return NewCourseRepository(tx.DB, name)
 }
 
 func (tx Session) IsPossibleTransaction(dbName string, clientOptions options.ClientOptions) bool {

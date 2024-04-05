@@ -5,25 +5,27 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
 	"xor-go/services/courses/internal/domain"
-	"xor-go/services/courses/internal/repository/mongo/models"
+	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
 var _ adapters.StudentRepository = &StudentRepository{}
 
 func NewStudentRepository(database *Database) *StudentRepository {
-	courseCollection := database.database.Collection(models.StudentCollectionName)
+	courseCollection := database.database.Collection(collections.StudentCollectionName.String())
 
 	return &StudentRepository{
-		db:     database,
-		course: courseCollection,
+		db:             database,
+		course:         courseCollection,
+		collectionName: collections.StudentCollectionName,
 	}
 }
 
 type StudentRepository struct {
 	db *Database
 
-	course *mongo.Collection
+	collectionName collections.CollectionName
+	course         *mongo.Collection
 }
 
 func (sr StudentRepository) Create(ctx context.Context, profile domain.Student) error {

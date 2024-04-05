@@ -7,14 +7,6 @@ import (
 
 // TODO Review
 
-const (
-	CourseCollectionName              = "course"
-	LessonCollectionName              = "lesson"
-	StudentCollectionName             = "student"
-	TeacherCollectionName             = "teacher"
-	PublicationRequestsCollectionName = "publication_request"
-)
-
 // Course represents a course entity
 type Course struct {
 	ID         uuid.UUID         `bson:"_id"`
