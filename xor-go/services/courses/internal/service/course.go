@@ -18,7 +18,7 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateCourse")
 	defer span.End()
 
-	if actor.HasRole(domain.TeacherRole) || actor.HasRole(domain.AdminRole) {
+	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to create course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
@@ -28,7 +28,7 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 		return nil, err
 	}
 
-	newCourse, err := c.course.Create(ctx, course)
+	newCourse, err := c.courseEdit.Create(ctx, course)
 	if err != nil {
 		return nil, err
 	}
@@ -43,13 +43,13 @@ func (c CoursesService) GetCourse(initialCtx context.Context, actor domain.Actor
 	ctx, span := tr.Start(initialCtx, "courses/service.GetCourse")
 	defer span.End()
 
-	course, err := c.course.Get(ctx, courseID)
+	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
+		return nil, apperror.New(http.StatusForbidden, "user does not have rights to read unpublished course",
+			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
+	}
+	course, err := c.courseEdit.Get(ctx, courseID)
 	if err != nil {
 		return nil, err
-	}
-
-	if !actor.HasRole(domain.TeacherRole) && !actor.HasRole(domain.AdminRole) {
-		course.ApplyVisibility()
 	}
 
 	return course, nil
@@ -62,7 +62,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateCourse")
 	defer span.End()
 
-	if actor.HasRole(domain.TeacherRole) || actor.HasRole(domain.AdminRole) {
+	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
@@ -72,7 +72,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 		return nil, err
 	}
 
-	err = c.course.Update(ctx, courseID, course)
+	err = c.courseEdit.Update(ctx, courseID, course)
 	if err != nil {
 		return nil, err
 	}
@@ -87,12 +87,12 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.DeleteCourse")
 	defer span.End()
 
-	if actor.HasRole(domain.TeacherRole) || actor.HasRole(domain.AdminRole) {
+	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return apperror.New(http.StatusForbidden, "user does not have teacher rights to delete course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
-	err := c.course.Delete(ctx, courseID)
+	err := c.courseEdit.Delete(ctx, courseID)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,9 @@ func (c CoursesService) ReadCourse(initialCtx context.Context, actor domain.Acto
 		return nil, err
 	}
 
-	course.ApplyVisibility()
+	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
+		course.ApplyVisibility()
+	}
 
 	return course, nil
 }
@@ -121,7 +123,7 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.CreateCourse")
+	ctx, span := tr.Start(initialCtx, "courses/service.ConfirmAccess")
 	defer span.End()
 
 	for _, pr := range products {

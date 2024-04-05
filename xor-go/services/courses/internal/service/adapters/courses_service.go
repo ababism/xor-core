@@ -33,13 +33,13 @@ type CourseService interface {
 // LessonService represents the service interface for managing lessons.
 type LessonService interface {
 	// User
-	ReadLesson(ctx context.Context, lessonID uuid.UUID) (*domain.Lesson, error)
+	ReadLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (*domain.Lesson, error)
 
 	// Teacher
-	CreateLesson(ctx context.Context, lesson *domain.Lesson) error
-	GetLesson(ctx context.Context, lessonID uuid.UUID) (*domain.Lesson, error)
-	UpdateLesson(ctx context.Context, lesson *domain.Lesson) error
-	DeleteLesson(ctx context.Context, lessonID uuid.UUID) error
+	CreateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) error
+	GetLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (*domain.Lesson, error)
+	UpdateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) error
+	DeleteLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) error
 
 	// TODO
 	//registerLessonFeedback(ctx context.Context, lessonIDs []uuid.UUID) (feedbackIDs []uuid.UUID, err error)
