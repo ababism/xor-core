@@ -24,6 +24,10 @@ type Session struct {
 	//clientOpt options.ClientOptions
 }
 
+func (tx Session) SessionPublications(ctx context.Context) adapters.PublicationRequestRepository {
+	return NewPublicationRepository(tx.DB)
+}
+
 func (tx Session) SessionLessons(ctx context.Context, name collections.CollectionName) adapters.LessonRepository {
 	return NewLessonRepository(tx.DB, name)
 }
@@ -210,7 +214,7 @@ func (tr TeacherRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (pr PublicationRequestRepository) NewSession(ctx context.Context) (*Session, error) {
+func (pr PublicationRequestRepository) NewSession(ctx context.Context) (*adapters.Session, error) {
 	logger := zapctx.Logger(ctx)
 
 	txClient, err := mongo.Connect(ctx, pr.db.clientOptions)
@@ -233,8 +237,10 @@ func (pr PublicationRequestRepository) NewSession(ctx context.Context) (*Session
 		clientOptions: pr.db.clientOptions,
 	}
 
-	return &Session{
+	s := Session{
 		DB:      &newTxDB,
 		session: &session,
-	}, nil
+	}
+	as := adapters.Session(s)
+	return &as, nil
 }

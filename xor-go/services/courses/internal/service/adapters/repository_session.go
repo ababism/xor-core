@@ -12,4 +12,5 @@ type Session interface {
 	EndSession(ctx context.Context)
 	SessionCourses(ctx context.Context, name collections.CollectionName) CourseRepository
 	SessionLessons(ctx context.Context, name collections.CollectionName) LessonRepository
+	SessionPublications(ctx context.Context) PublicationRequestRepository
 }
