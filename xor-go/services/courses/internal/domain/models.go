@@ -65,8 +65,8 @@ type Student struct {
 
 // Course represents a course entity
 type Course struct {
-	ID         uuid.UUID
-	ProductID  uuid.UUID
+	ID uuid.UUID
+	//ProductID  uuid.UUID
 	FeedbackID uuid.UUID
 	TeacherID  uuid.UUID
 	Name       string
@@ -77,8 +77,8 @@ type Course struct {
 }
 
 type Section struct {
-	ID          uuid.UUID
-	ProductID   uuid.UUID
+	ID uuid.UUID
+	//ProductID   uuid.UUID
 	FeedbackID  uuid.UUID
 	Heading     string
 	Description string
@@ -87,8 +87,8 @@ type Section struct {
 }
 
 type Theme struct {
-	ID         uuid.UUID
-	ProductID  uuid.UUID
+	ID uuid.UUID
+	//ProductID  uuid.UUID
 	FeedbackID uuid.UUID
 	Heading    string
 	Visibility Visibility

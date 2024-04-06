@@ -9,7 +9,6 @@ func (cm *Course) ToDomain() domain.Course {
 	}
 	return domain.Course{
 		ID:         cm.ID,
-		ProductID:  cm.ProductID,
 		FeedbackID: cm.FeedbackID,
 		Name:       cm.Name,
 		Discipline: cm.Discipline,
@@ -26,7 +25,6 @@ func (sm *Section) ToDomain() domain.Section {
 	}
 	return domain.Section{
 		ID:          sm.ID,
-		ProductID:   sm.ProductID,
 		FeedbackID:  sm.FeedbackID,
 		Heading:     sm.Heading,
 		Description: sm.Description,
@@ -42,7 +40,6 @@ func (tm *Theme) ToDomain() domain.Theme {
 	}
 	return domain.Theme{
 		ID:         tm.ID,
-		ProductID:  tm.ProductID,
 		FeedbackID: tm.FeedbackID,
 		Heading:    tm.Heading,
 		Visibility: tm.Visibility,

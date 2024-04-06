@@ -13,7 +13,6 @@ func ToMongoModelCourse(course *domain.Course) Course {
 	}
 	return Course{
 		ID:         course.ID,
-		ProductID:  course.ProductID,
 		FeedbackID: course.FeedbackID,
 		Name:       course.Name,
 		Discipline: course.Discipline,
@@ -30,7 +29,6 @@ func ToMongoModelSection(section *domain.Section) Section {
 	}
 	return Section{
 		ID:          section.ID,
-		ProductID:   section.ProductID,
 		FeedbackID:  section.FeedbackID,
 		Heading:     section.Heading,
 		Description: section.Description,
@@ -46,7 +44,6 @@ func ToMongoModelTheme(theme domain.Theme) Theme {
 	}
 	return Theme{
 		ID:         theme.ID,
-		ProductID:  theme.ProductID,
 		FeedbackID: theme.FeedbackID,
 		Heading:    theme.Heading,
 		Visibility: theme.Visibility,

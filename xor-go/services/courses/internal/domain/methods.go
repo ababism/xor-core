@@ -121,3 +121,9 @@ func (t Teacher) Validate() error {
 	//apperror.New(http.StatusInternalServerError, message, "invalid teacher profile fields", err)
 	return nil
 }
+
+func (p Product) Validate() error {
+	// TODO
+	//apperror.New(http.StatusInternalServerError, message, "invalid teacher profile fields", err)
+	return nil
+}

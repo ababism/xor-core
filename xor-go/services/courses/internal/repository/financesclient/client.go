@@ -2,7 +2,6 @@ package financesclient
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/repository/financesclient/generated"
 	"xor-go/services/courses/internal/service/adapters"
@@ -14,7 +13,7 @@ type Client struct {
 	httpDoer *generated.ClientWithResponses
 }
 
-func (c Client) RegisterProducts(ctx context.Context, lessonIDs []uuid.UUID, teacherID uuid.UUID, price float64) ([]domain.Product, error) {
+func (c Client) RegisterProducts(ctx context.Context, products []domain.Product) ([]domain.Product, error) {
 	//TODO implement me
 	panic("implement me")
 }
