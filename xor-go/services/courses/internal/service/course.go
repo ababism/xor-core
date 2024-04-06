@@ -7,7 +7,6 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
 	"net/http"
-	"time"
 	"xor-go/pkg/apperror"
 	"xor-go/services/courses/internal/domain"
 )
@@ -118,28 +117,4 @@ func (c CoursesService) ReadCourse(initialCtx context.Context, actor domain.Acto
 	}
 
 	return course, nil
-}
-
-func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.UUID, products []domain.Product) error {
-	_ = zapctx.Logger(initialCtx)
-
-	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.ConfirmAccess")
-	defer span.End()
-
-	for _, pr := range products {
-		lessonAccess := domain.LessonAccess{
-			ID:           uuid.UUID{},
-			LessonID:     pr.Item,
-			StudentID:    buyerID,
-			AccessStatus: domain.Accessible,
-			UpdatedAt:    time.Now(),
-		}
-		_, err := c.student.CreateAccessToLesson(ctx, lessonAccess)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
