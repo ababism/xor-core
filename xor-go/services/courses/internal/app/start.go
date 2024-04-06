@@ -7,9 +7,9 @@ import (
 	requestid "github.com/sumit-tembe/gin-requestid"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"time"
-	"xor-go/pkg/graceful_shutdown"
 	httpServer "xor-go/pkg/http_server"
 	"xor-go/pkg/metrics"
+	"xor-go/pkg/xshutdown"
 	"xor-go/services/courses/internal/handler/generated"
 	myHttp "xor-go/services/courses/internal/handler/http"
 )
@@ -19,7 +19,7 @@ func (a *App) Start(ctx context.Context) {
 
 	go a.startHTTPServer(ctx)
 
-	if err := graceful_shutdown.Wait(a.cfg.GracefulShutdown); err != nil {
+	if err := xshutdown.Wait(a.cfg.GracefulShutdown); err != nil {
 		a.logger.Error(fmt.Sprintf("Failed to gracefully shutdown %s app: %s", a.cfg.App.Name, err.Error()))
 	} else {
 		a.logger.Info("App gracefully stopped")
@@ -53,6 +53,6 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	a.logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Name, a.cfg.Http.Host, a.cfg.Http.Port))
 	if err := srv.Start(); err != nil {
 		a.logger.Error(fmt.Sprintf("Fail with %s HTTP server: %s", a.cfg.App.Name, err.Error()))
-		graceful_shutdown.Now()
+		xshutdown.Now()
 	}
 }

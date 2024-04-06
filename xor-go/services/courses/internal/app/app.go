@@ -7,10 +7,10 @@ import (
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 	"xor-go/pkg/apperror"
-	"xor-go/pkg/graceful_shutdown"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/mylogger"
 	"xor-go/pkg/mytracer"
+	"xor-go/pkg/xshutdown"
 	"xor-go/services/courses/internal/config"
 	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
 	"xor-go/services/courses/internal/daemons/scraper"
@@ -41,8 +41,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 	// Чистим кэш logger при shutdown
-	graceful_shutdown.AddCallback(
-		&graceful_shutdown.Callback{
+	xshutdown.AddCallback(
+		&xshutdown.Callback{
 			Name: "ZapLoggerCacheWipe",
 			FnCtx: func(ctx context.Context) error {
 				return logger.Sync()
@@ -66,8 +66,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	graceful_shutdown.AddCallback(
-		&graceful_shutdown.Callback{
+	xshutdown.AddCallback(
+		&xshutdown.Callback{
 			Name: "OpenTelemetryShutdown",
 			FnCtx: func(ctx context.Context) error {
 				if err := tp.Shutdown(context.Background()); err != nil {
@@ -96,8 +96,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 	if err != nil {
 		logger.Fatal("error while connecting to Mongo DB:", zap.Error(err))
 	}
-	graceful_shutdown.AddCallback(
-		&graceful_shutdown.Callback{
+	xshutdown.AddCallback(
+		&xshutdown.Callback{
 			Name: "MongoClientDisconnect",
 			FnCtx: func(ctx context.Context) error {
 				return mongoDisconnect(ctx)
@@ -137,8 +137,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// Scraper for event calling
 	scr := scraper.NewScraper(logger, coursesService)
-	graceful_shutdown.AddCallback(
-		&graceful_shutdown.Callback{
+	xshutdown.AddCallback(
+		&xshutdown.Callback{
 			Name:  "Data scraper stop",
 			FnCtx: scr.StopFunc(),
 		})
@@ -158,7 +158,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// Kafka consumer in transport layer
 	consumer := kafkaConsumer.NewKafkaConsumer(cfg.KafkaReader, coursesService)
 	kafkaConsumerClose := consumer.Start(ctx)
-	graceful_shutdown.AddCallback(&graceful_shutdown.Callback{
+	xshutdown.AddCallback(&xshutdown.Callback{
 		Name: "kafkaConsumer Close",
 		FnCtx: func(ctx context.Context) error {
 			return kafkaConsumerClose(consumer)

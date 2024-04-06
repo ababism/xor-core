@@ -4,12 +4,12 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"xor-go/pkg/app"
-	configLib "xor-go/pkg/config"
-	"xor-go/pkg/graceful_shutdown"
 	"xor-go/pkg/http_server"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/mylogger"
 	"xor-go/pkg/mytracer"
+	"xor-go/pkg/xconfig"
+	"xor-go/pkg/xshutdown"
 	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
 	"xor-go/services/courses/internal/daemons/scraper"
 	"xor-go/services/courses/internal/repository/financesclient"
@@ -25,7 +25,7 @@ type Config struct {
 	Mongo            *mongo.Config                `mapstructure:"mongo"`
 	MigrationsMongo  *mongo.ConfigMigrations      `mapstructure:"migrations_mongo"`
 	Metrics          *metrics.Config              `mapstructure:"metrics"`
-	GracefulShutdown *graceful_shutdown.Config    `mapstructure:"graceful_shutdown"`
+	GracefulShutdown *xshutdown.Config            `mapstructure:"graceful_shutdown"`
 	KafkaReader      *kafkaConsumer.Config        `mapstructure:"kafka_reader"`
 	KafkaWriter      *kafkaproducer.Config        `mapstructure:"kafka_writer"`
 	Tracer           *mytracer.Config             `mapstructure:"tracer"`
@@ -45,7 +45,7 @@ func NewConfig(filePath string, appName string) (*Config, error) {
 	}
 
 	// Замена значений из переменных окружения, если они заданы
-	configLib.ReplaceWithEnv(&config, appName)
+	xconfig.ReplaceWithEnv(&config, appName)
 
 	return &config, nil
 }
