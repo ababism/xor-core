@@ -2,7 +2,15 @@ package domain
 
 import (
 	"github.com/google/uuid"
+	"xor-go/pkg/xstringset"
 )
+
+func NewActor(ID uuid.UUID, roles []string) *Actor {
+	a := &Actor{ID: ID,
+		roles: xstringset.New()}
+	a.initRoles(roles)
+	return a
+}
 
 func (c *Actor) HasRole(role string) bool {
 	return c.roles.Contains(role)
