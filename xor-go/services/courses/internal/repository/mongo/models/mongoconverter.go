@@ -1,6 +1,8 @@
 package models
 
-import "xor-go/services/courses/internal/domain"
+import (
+	"xor-go/services/courses/internal/domain"
+)
 
 func (cm *Course) ToDomain() domain.Course {
 	var sections []domain.Section
@@ -34,16 +36,23 @@ func (sm *Section) ToDomain() domain.Section {
 }
 
 func (tm *Theme) ToDomain() domain.Theme {
-	var lessons []domain.Lesson
-	for _, lesson := range tm.Lessons {
-		lessons = append(lessons, lesson.ToDomain())
-	}
+
 	return domain.Theme{
 		ID:         tm.ID,
 		FeedbackID: tm.FeedbackID,
 		Heading:    tm.Heading,
 		Visibility: tm.Visibility,
-		Lessons:    lessons,
+		LessonIDs:  nil,
+	}
+}
+
+func (tm *Theme) ToLessonDomain() domain.Theme {
+	return domain.Theme{
+		ID:         tm.ID,
+		FeedbackID: tm.FeedbackID,
+		Heading:    tm.Heading,
+		Visibility: tm.Visibility,
+		LessonIDs:  tm.LessonIDs,
 	}
 }
 

@@ -37,7 +37,7 @@ type Theme struct {
 	FeedbackID uuid.UUID         `bson:"feedback_id"`
 	Heading    string            `bson:"heading"`
 	Visibility domain.Visibility `bson:"visibility"`
-	Lessons    []Lesson          `bson:"lessons"`
+	LessonIDs  []uuid.UUID
 }
 
 // Lesson represents a lesson entity

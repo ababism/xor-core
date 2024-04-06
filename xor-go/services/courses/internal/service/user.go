@@ -144,7 +144,7 @@ func (c CoursesService) ChangeCourseAccess(initialCtx context.Context, actor dom
 	defer span.End()
 
 	if !actor.HasRole(domain.AdminRole) {
-		return domain.LessonAccess{}, apperror.New(http.StatusForbidden, "user can't give acces to lessons",
+		return domain.LessonAccess{}, apperror.New(http.StatusForbidden, "user can't give access to lessons",
 			fmt.Sprintf("user can't give acces to lessons no %s role", domain.AdminRole), nil)
 	}
 

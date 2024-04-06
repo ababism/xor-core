@@ -65,8 +65,7 @@ type Student struct {
 
 // Course represents a course entity
 type Course struct {
-	ID uuid.UUID
-	//ProductID  uuid.UUID
+	ID         uuid.UUID
 	FeedbackID uuid.UUID
 	TeacherID  uuid.UUID
 	Name       string
@@ -74,33 +73,32 @@ type Course struct {
 	Landing    []byte
 	Visibility Visibility
 	Sections   []Section
+	//ProductID  uuid.UUID
 }
 
 type Section struct {
-	ID uuid.UUID
-	//ProductID   uuid.UUID
+	ID          uuid.UUID
 	FeedbackID  uuid.UUID
 	Heading     string
 	Description string
 	Visibility  Visibility
 	Themes      []Theme
+	//ProductID   uuid.UUID
 }
 
 type Theme struct {
-	ID uuid.UUID
-	//ProductID  uuid.UUID
+	ID         uuid.UUID
 	FeedbackID uuid.UUID
 	Heading    string
 	Visibility Visibility
-	// TODO MB Make uuid.UUID?
-	// Lessons in most cases nil
-	Lessons []Lesson
+	LessonIDs  []uuid.UUID
+	//ProductID  uuid.UUID
 }
 
 // Lesson represents a lesson entity
 type Lesson struct {
 	ID         uuid.UUID
-	SectionID  uuid.UUID
+	ThemeID    uuid.UUID
 	TeacherID  uuid.UUID
 	Product    Product
 	Visibility Visibility

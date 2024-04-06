@@ -38,16 +38,13 @@ func ToMongoModelSection(section *domain.Section) Section {
 }
 
 func ToMongoModelTheme(theme domain.Theme) Theme {
-	var lessons []Lesson
-	for _, lesson := range theme.Lessons {
-		lessons = append(lessons, ToMongoModelLesson(lesson))
-	}
+
 	return Theme{
 		ID:         theme.ID,
 		FeedbackID: theme.FeedbackID,
 		Heading:    theme.Heading,
 		Visibility: theme.Visibility,
-		Lessons:    lessons,
+		LessonIDs:  theme.LessonIDs,
 	}
 }
 
