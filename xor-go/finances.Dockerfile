@@ -18,4 +18,4 @@ COPY --from=build /app/services/finances/config/config.docker.yml ./services/fin
 
 CMD ["./finances-svc"]
 
-EXPOSE 8084
+EXPOSE 8082

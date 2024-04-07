@@ -7,7 +7,7 @@ services:
       context: './'
       dockerfile: 'finances.Dockerfile'
     ports:
-      - "8084:8084"
+      - "8082:8082"
     depends_on:
       finances_db:
         condition: service_healthy
@@ -19,7 +19,7 @@ services:
     restart: always
     image: postgres:latest
     ports:
-      - "5436:5436"
+      - "5436:5432"
     environment:
       - POSTGRES_DB=${FINANCES_POSTGRES_NAME}
       - POSTGRES_HOST=${FINANCES_POSTGRES_HOST}

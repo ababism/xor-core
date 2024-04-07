@@ -2,11 +2,13 @@ package bank
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
+	"xor-go/services/finances/internal/log"
 	"xor-go/services/finances/internal/service/adapters"
 )
 
@@ -69,6 +71,7 @@ func (h *Handler) Create(c *gin.Context, params CreateParams) {
 	defer span.End()
 
 	domain := CreateToDomain(params.Model)
+	log.Logger.Info(fmt.Sprintf("%v", domain))
 	err := h.bankAccountService.Create(newCtx, &domain)
 	if err != nil {
 		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)

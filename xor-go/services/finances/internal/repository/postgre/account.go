@@ -19,11 +19,10 @@ const (
 	baseBankAccountGetQuery = `
 		SELECT uuid, account_uuid, login, funds, data, status, last_deal_at, created_at, updated_at
 		FROM  bank_accounts
-		WHERE uuid = $1
 	`
 	createBankAccountQuery = `
-		INSERT INTO bank_accounts (account_uuid, login, data, status)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO bank_accounts (account_uuid, login, funds, data, status)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 	updateBankAccountQuery = `
 		UPDATE bank_accounts
@@ -86,7 +85,10 @@ func (r *bankAccountRepository) List(ctx context.Context, filter *domain.BankAcc
 	defer span.End()
 
 	paramsMap := mapGetBankAccountRequestParams(filter)
-	query, args := xcommon.QueryWhereAnd(baseBankAccountGetQuery, paramsMap)
+	query, args := xcommon.QueryWhereAnd(
+		baseBankAccountGetQuery,
+		paramsMap,
+	)
 	var accounts []repo_models.BankAccount
 	err := r.db.SelectContext(ctx, &accounts, query, args...)
 	if err != nil {
@@ -129,6 +131,9 @@ func (r *bankAccountRepository) Update(ctx context.Context, account *domain.Bank
 }
 
 func mapGetBankAccountRequestParams(params *domain.BankAccountFilter) map[string]any {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]any)
 	if params.UUID != nil {
 		paramsMap["uuid"] = params.UUID

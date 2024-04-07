@@ -107,6 +107,9 @@ func (r *purchaseRequestRepository) Delete(ctx context.Context, id uuid.UUID) er
 }
 
 func mapGetPurchaseRequestRequestParams(params *domain.PurchaseRequestFilter) map[string]interface{} {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]interface{})
 	if params.UUID != nil {
 		paramsMap["uuid"] = *params.UUID

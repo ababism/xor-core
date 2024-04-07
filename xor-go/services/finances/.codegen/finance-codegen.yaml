@@ -1,10 +1,46 @@
 openapi: 3.0.0
 info:
-  title: Integrated API
-  version: 1.0.0
+  title: Finances Service
+  version: 1.0.6
 servers:
-  - url: http://localhost:8080/api/v1/finances
+  - url: http://localhost:8082/api/v1/finances
 paths:
+  /bank-accounts:
+    get:
+      tags:
+        - Bank Account
+      operationId: getListBankAccounts
+      summary: List bank accounts
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            $ref: '#/components/schemas/BankAccountFilter'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountGet'
+    post:
+      tags:
+        - Bank Account
+      operationId: createBankAccount
+      summary: Create a bank account
+      parameters:
+        - in: query
+          name: model
+          required: true
+          schema:
+            $ref: '#/components/schemas/BankAccountCreate'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Incorrect bank account data
   /bank-accounts/{login}:
     get:
       tags:
@@ -51,42 +87,6 @@ paths:
           description: Incorrect bank account data
         '404':
           description: Bank account not found
-  /bank-accounts:
-    get:
-      tags:
-        - Bank Account
-      operationId: getListBankAccounts
-      summary: List bank accounts
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/BankAccountFilter'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BankAccountGet'
-    post:
-      tags:
-        - Bank Account
-      operationId: createBankAccount
-      summary: Create a bank account
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/BankAccountCreate'
-      responses:
-        '201':
-          description: Successful operation
-        '400':
-          description: Incorrect bank account data
   /bank-accounts/{login}/change-funds:
     put:
       tags:

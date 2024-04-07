@@ -82,6 +82,9 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 }
 
 func mapGetPaymentRequestParams(params *domain.PaymentFilter) map[string]any {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]any)
 	if params.UUID != nil {
 		paramsMap["uuid"] = params.UUID

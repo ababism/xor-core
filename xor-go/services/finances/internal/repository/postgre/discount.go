@@ -128,6 +128,9 @@ func (r *discountRepository) EndDiscount(ctx context.Context, id uuid.UUID) erro
 }
 
 func mapGetDiscountRequestParams(params *domain.DiscountFilter) map[string]interface{} {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]interface{})
 	if params.UUID != nil {
 		paramsMap["uuid"] = *params.UUID
