@@ -24,6 +24,7 @@ const (
 	createPayoutRequestQuery = `
 		INSERT INTO payout_requests (receiver, amount, data, received_at)
 		VALUES ($1, $2, $3, $4)
+		RETURNING uuid
 	`
 	deletePayoutRequestQuery = `
 		DELETE FROM payout_requests WHERE uuid = $1
@@ -52,7 +53,10 @@ func (r *payoutRequestRepository) Get(ctx context.Context, id uuid.UUID) (*domai
 	return xcommon.EnsureSingle(payouts)
 }
 
-func (r *payoutRequestRepository) List(ctx context.Context, filter *domain.PayoutRequestFilter) ([]domain.PayoutRequestGet, error) {
+func (r *payoutRequestRepository) List(
+	ctx context.Context,
+	filter *domain.PayoutRequestFilter,
+) ([]domain.PayoutRequestGet, error) {
 	tr := global.Tracer(adapters.ServiceNamePayoutRequest)
 	_, span := tr.Start(ctx, spanDefaultPayoutRequest+".List")
 	defer span.End()
@@ -67,21 +71,25 @@ func (r *payoutRequestRepository) List(ctx context.Context, filter *domain.Payou
 	return xcommon.ConvertSliceP(payouts, repo_models.ToPayoutRequestDomain), nil
 }
 
-func (r *payoutRequestRepository) Create(ctx context.Context, payout *domain.PayoutRequestCreate) error {
+func (r *payoutRequestRepository) Create(ctx context.Context, payout *domain.PayoutRequestCreate) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNamePayoutRequest)
 	_, span := tr.Start(ctx, spanDefaultPayoutRequest+".Create")
 	defer span.End()
 
 	payoutPostgres := repo_models.CreateToPayoutRequestPostgres(payout)
-	_, err := r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createPayoutRequestQuery,
 		payoutPostgres.Receiver,
 		payoutPostgres.Amount,
 		payoutPostgres.Data,
 		payoutPostgres.CreatedAt,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, nil
 }
 
 func (r *payoutRequestRepository) Delete(ctx context.Context, id uuid.UUID) error {

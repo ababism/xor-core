@@ -10,6 +10,7 @@ import (
 	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
+	"xor-go/services/finances/internal/repository/payments"
 )
 
 type Config struct {
@@ -17,6 +18,7 @@ type Config struct {
 	Http             *xhttp.Config     `mapstructure:"http"`
 	Logger           *xlogger.Config   `mapstructure:"logger"`
 	Postgres         *postgres.Config  `mapstructure:"postgres"`
+	PaymentsClient   *payments.Config  `mapstructure:"payments_client"`
 	GracefulShutdown *xshutdown.Config `mapstructure:"graceful_shutdown"`
 	Tracer           *xtracer.Config   `mapstructure:"tracer"`
 	//Metrics          *metrics.Config              `mapstructure:"metrics"`

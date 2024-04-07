@@ -17,10 +17,14 @@ var _ adapters.PaymentService = &paymentService{}
 
 type paymentService struct {
 	r adapters.PaymentRepository
+	c adapters.PaymentsClient
 }
 
-func NewPaymentService(paymentRepository adapters.PaymentRepository) adapters.PaymentService {
-	return &paymentService{r: paymentRepository}
+func NewPaymentService(
+	paymentRepository adapters.PaymentRepository,
+	paymentsClient adapters.PaymentsClient,
+) adapters.PaymentService {
+	return &paymentService{r: paymentRepository, c: paymentsClient}
 }
 
 func getPaymentTracerSpan(ctx context.Context, name string) (trace.Tracer, context.Context, trace.Span) {

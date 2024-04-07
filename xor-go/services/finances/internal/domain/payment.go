@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	STATUS_COMPLETED = "completed"
+	STATUS_FAILED    = "failed"
+)
+
 type PaymentData struct {
 }
 
