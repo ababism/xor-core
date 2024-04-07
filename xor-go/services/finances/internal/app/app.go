@@ -29,7 +29,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// INFRASTRUCTURE ----------------------------------------------------------------------
 
-	err := log.Init(cfg)
+	err := log.Init(cfg.Logger, cfg.App)
 	if err != nil {
 		return nil, errors.Wrap(err, "Init Logger")
 	}

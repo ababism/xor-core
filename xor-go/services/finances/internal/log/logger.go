@@ -2,17 +2,17 @@ package log
 
 import (
 	"go.uber.org/zap"
+	"xor-go/pkg/xapp"
 	"xor-go/pkg/xlogger"
-	"xor-go/services/finances/internal/config"
 )
 
 // TODO убрать *
 
 var Logger *zap.Logger
 
-func Init(cfg *config.Config) error {
+func Init(cfgLogger *xlogger.Config, cfgApp *xapp.Config) error {
 	var err error
-	Logger, err = xlogger.Init(cfg.Logger, cfg.App)
+	Logger, err = xlogger.Init(cfgLogger, cfgApp)
 	if err != nil {
 		return err
 	}

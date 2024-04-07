@@ -28,15 +28,15 @@ type CardInfo struct {
 
 // CreatePayout defines model for CreatePayout.
 type CreatePayout struct {
-	CardInfo    CardInfo `json:"card_info"`
-	Currency    *string  `json:"currency,omitempty"`
-	Email       *string  `json:"email,omitempty"`
-	FullName    string   `json:"full_name"`
-	IsTest      *bool    `json:"is_test,omitempty"`
-	Money       string   `json:"money"`
-	PaymentName string   `json:"payment_name"`
-	PaymentUuid string   `json:"payment_uuid"`
-	Phone       *string  `json:"phone,omitempty"`
+	CardInfo    CardInfo           `json:"card_info"`
+	Currency    *string            `json:"currency,omitempty"`
+	Email       *string            `json:"email,omitempty"`
+	FullName    string             `json:"full_name"`
+	IsTest      *bool              `json:"is_test,omitempty"`
+	Money       float32            `json:"money"`
+	PaymentName string             `json:"payment_name"`
+	PaymentUuid openapi_types.UUID `json:"payment_uuid"`
+	Phone       *string            `json:"phone,omitempty"`
 }
 
 // CreatePayoutResponse defines model for CreatePayoutResponse.

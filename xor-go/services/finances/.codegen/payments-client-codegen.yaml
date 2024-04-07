@@ -232,10 +232,11 @@ components:
       properties:
         payment_uuid:
           type: string
+          format: uuid
         payment_name:
           type: string
         money:
-          type: string
+          type: number
         currency:
           type: string
         full_name:
