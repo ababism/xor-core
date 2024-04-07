@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"io"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/log"
@@ -33,28 +34,34 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(c *gin.Context, login string) {
-	_, newCtx, span := getAccountTracerSpan(c, ".Get")
+func (h *Handler) Get(ctx *gin.Context, login string) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
 	defer span.End()
 
 	domain, err := h.bankAccountService.Get(newCtx, login)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
 	response := DomainToGet(*domain)
 
-	c.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params GetListParams) {
-	_, newCtx, span := getAccountTracerSpan(c, ".GetList")
+func (h *Handler) GetList(ctx *gin.Context) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".GetList")
 	defer span.End()
 
-	domains, err := h.bankAccountService.List(newCtx, FilterToDomain(params.Filter))
+	var body *BankAccountFilter
+	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domains, err := h.bankAccountService.List(newCtx, FilterToDomain(body))
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -63,36 +70,48 @@ func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 		list[i] = DomainToGet(item)
 	}
 
-	c.JSON(http.StatusOK, list)
+	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params CreateParams) {
-	_, newCtx, span := getAccountTracerSpan(c, ".Create")
+func (h *Handler) Create(ctx *gin.Context) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	domain := CreateToDomain(params.Model)
+	var body BankAccountCreate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domain := CreateToDomain(body)
 	log.Logger.Info(fmt.Sprintf("%v", domain))
 	err := h.bankAccountService.Create(newCtx, &domain)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(c *gin.Context, params UpdateParams) {
-	_, newCtx, span := getAccountTracerSpan(c, ".Update")
+func (h *Handler) Update(ctx *gin.Context) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".Update")
 	defer span.End()
 
-	domain := UpdateToDomain(params.Model)
-	err := h.bankAccountService.Update(newCtx, &domain)
-	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+	var body BankAccountUpdate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	domain := UpdateToDomain(body)
+	err := h.bankAccountService.Update(newCtx, &domain)
+	if err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
 func (h *Handler) Change(c *gin.Context, login string, params ChangeParams) {

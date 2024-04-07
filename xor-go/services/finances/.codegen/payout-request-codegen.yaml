@@ -27,11 +27,11 @@ paths:
     get:
       operationId: getList
       summary: List payout requests
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PayoutRequestFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequestFilter'
       responses:
         '200':
           description: Successful operation
@@ -44,12 +44,11 @@ paths:
     post:
       operationId: create
       summary: Create a payout request
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PayoutRequestCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequestCreate'
       responses:
         '200':
           description: Successful operation

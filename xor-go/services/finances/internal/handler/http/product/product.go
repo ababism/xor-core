@@ -6,6 +6,7 @@ import (
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"io"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
@@ -47,13 +48,19 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params GetListParams) {
-	_, newCtx, span := getProductTracerSpan(c, ".GetList")
+func (h *Handler) GetList(ctx *gin.Context) {
+	_, newCtx, span := getProductTracerSpan(ctx, ".GetList")
 	defer span.End()
 
-	domains, err := h.productService.List(newCtx, FilterToDomain(params.Filter))
+	var body *ProductFilter
+	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domains, err := h.productService.List(newCtx, FilterToDomain(body))
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -62,35 +69,47 @@ func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 		list[i] = DomainToGet(item)
 	}
 
-	c.JSON(http.StatusOK, list)
+	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params CreateParams) {
-	_, newCtx, span := getProductTracerSpan(c, ".Create")
+func (h *Handler) Create(ctx *gin.Context) {
+	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	domain := CreateToDomain(params.Model)
+	var body ProductCreate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domain := CreateToDomain(body)
 	err := h.productService.Create(newCtx, &domain)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(c *gin.Context, params UpdateParams) {
-	_, newCtx, span := getProductTracerSpan(c, ".Update")
+func (h *Handler) Update(ctx *gin.Context) {
+	_, newCtx, span := getProductTracerSpan(ctx, ".Update")
 	defer span.End()
 
-	domain := UpdateToDomain(params.Model)
-	err := h.productService.Update(newCtx, &domain)
-	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+	var body ProductUpdate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	domain := UpdateToDomain(body)
+	err := h.productService.Update(newCtx, &domain)
+	if err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
 func (h *Handler) Disable(c *gin.Context, id openapitypes.UUID) {

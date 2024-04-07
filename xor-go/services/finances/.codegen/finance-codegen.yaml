@@ -11,11 +11,11 @@ paths:
         - Bank Account
       operationId: getListBankAccounts
       summary: List bank accounts
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/BankAccountFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountFilter'
       responses:
         '200':
           description: Successful operation
@@ -30,12 +30,11 @@ paths:
         - Bank Account
       operationId: createBankAccount
       summary: Create a bank account
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/BankAccountCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountCreate'
       responses:
         '201':
           description: Successful operation
@@ -75,11 +74,11 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/BankAccountUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountUpdate'
       responses:
         '200':
           description: Successful operation
@@ -137,11 +136,11 @@ paths:
         - Discount
       operationId: getListDiscounts
       summary: List discounts
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/DiscountFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountFilter'
       responses:
         '200':
           description: Successful operation
@@ -156,12 +155,11 @@ paths:
         - Discount
       operationId: createDiscount
       summary: Create a discount
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/DiscountCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountCreate'
       responses:
         '200':
           description: Successful operation
@@ -170,12 +168,11 @@ paths:
         - Discount
       operationId: updateDiscount
       summary: Update a discount
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/DiscountUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountUpdate'
       responses:
         '200':
           description: Successful operation
@@ -225,11 +222,11 @@ paths:
         - Payment
       operationId: getListPayments
       summary: List payments
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PaymentFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentFilter'
       responses:
         '200':
           description: Successful operation
@@ -244,12 +241,11 @@ paths:
         - Payment
       operationId: createPayment
       summary: Create a payment
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PaymentCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
       responses:
         '200':
           description: Successful operation
@@ -281,11 +277,11 @@ paths:
         - Payout Request
       operationId: getListPayoutRequests
       summary: List payout requests
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PayoutRequestFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequestFilter'
       responses:
         '200':
           description: Successful operation
@@ -300,12 +296,11 @@ paths:
         - Payout Request
       operationId: createPayoutRequest
       summary: Create a payout request
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PayoutRequestCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequestCreate'
       responses:
         '200':
           description: Successful operation
@@ -351,11 +346,11 @@ paths:
         - Product
       operationId: getListProducts
       summary: List products
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/ProductFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductFilter'
       responses:
         '200':
           description: Successful operation
@@ -370,12 +365,11 @@ paths:
         - Product
       operationId: createProduct
       summary: Create a product
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/ProductCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
       responses:
         '200':
           description: Successful operation
@@ -384,12 +378,11 @@ paths:
         - Product
       operationId: updateProduct
       summary: Update a product
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/ProductUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
       responses:
         '200':
           description: Successful operation
@@ -435,11 +428,11 @@ paths:
         - Purchase request
       operationId: getListPurchaseRequests
       summary: List purchase requests
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PurchaseRequestFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseRequestFilter'
       responses:
         '200':
           description: Successful operation
@@ -454,12 +447,11 @@ paths:
         - Purchase request
       operationId: createPurchaseRequest
       summary: Create a purchase request
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PurchaseRequestCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseRequestCreate'
       responses:
         '200':
           description: Successful operation

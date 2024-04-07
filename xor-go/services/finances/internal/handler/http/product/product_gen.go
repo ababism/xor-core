@@ -44,32 +44,26 @@ type ProductUpdate struct {
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 
-// GetListParams defines parameters for GetList.
-type GetListParams struct {
-	Filter *ProductFilter `form:"filter,omitempty" json:"filter,omitempty"`
-}
+// GetListJSONRequestBody defines body for GetList for application/json ContentType.
+type GetListJSONRequestBody = ProductFilter
 
-// CreateParams defines parameters for Create.
-type CreateParams struct {
-	Model ProductCreate `form:"model" json:"model"`
-}
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = ProductCreate
 
-// UpdateParams defines parameters for Update.
-type UpdateParams struct {
-	Model ProductUpdate `form:"model" json:"model"`
-}
+// UpdateJSONRequestBody defines body for Update for application/json ContentType.
+type UpdateJSONRequestBody = ProductUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List products
 	// (GET /products)
-	GetList(c *gin.Context, params GetListParams)
+	GetList(c *gin.Context)
 	// Create a product
 	// (POST /products)
-	Create(c *gin.Context, params CreateParams)
+	Create(c *gin.Context)
 	// Update a product
 	// (PUT /products)
-	Update(c *gin.Context, params UpdateParams)
+	Update(c *gin.Context)
 	// Get product by ID
 	// (GET /products/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -90,19 +84,6 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetListParams
-
-	// ------------- Optional query parameter "filter" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -110,32 +91,12 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c, params)
+	siw.Handler.GetList(c)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params CreateParams
-
-	// ------------- Required query parameter "model" -------------
-
-	if paramValue := c.Query("model"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -143,32 +104,12 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c, params)
+	siw.Handler.Create(c)
 }
 
 // Update operation middleware
 func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params UpdateParams
-
-	// ------------- Required query parameter "model" -------------
-
-	if paramValue := c.Query("model"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -176,7 +117,7 @@ func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Update(c, params)
+	siw.Handler.Update(c)
 }
 
 // Get operation middleware

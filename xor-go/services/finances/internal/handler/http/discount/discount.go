@@ -6,6 +6,7 @@ import (
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"io"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
@@ -32,28 +33,34 @@ func getDiscountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getDiscountTracerSpan(c, ".Get")
+func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".Get")
 	defer span.End()
 
-	domain, err := h.discountService.Get(newCtx, uuid)
+	model, err := h.discountService.Get(newCtx, uuid)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	response := DomainToGet(*domain)
+	response := DomainToGet(*model)
 
-	c.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params GetListParams) {
-	_, newCtx, span := getDiscountTracerSpan(c, ".GetList")
+func (h *Handler) GetList(ctx *gin.Context) {
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".GetList")
 	defer span.End()
 
-	domains, err := h.discountService.List(newCtx, FilterToDomain(params.Filter))
+	var body *DiscountFilter
+	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domains, err := h.discountService.List(newCtx, FilterToDomain(body))
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -62,46 +69,58 @@ func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 		list[i] = DomainToGet(item)
 	}
 
-	c.JSON(http.StatusOK, list)
+	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params CreateParams) {
-	_, newCtx, span := getDiscountTracerSpan(c, ".Create")
+func (h *Handler) Create(ctx *gin.Context) {
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	domain := CreateToDomain(params.Model)
-	err := h.discountService.Create(newCtx, &domain)
-	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+	var body DiscountCreate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
-}
-
-func (h *Handler) Update(c *gin.Context, params UpdateParams) {
-	_, newCtx, span := getDiscountTracerSpan(c, ".Update")
-	defer span.End()
-
-	domain := UpdateToDomain(params.Model)
-	err := h.discountService.Update(newCtx, &domain)
+	model := CreateToDomain(body)
+	err := h.discountService.Create(newCtx, &model)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) End(c *gin.Context, id openapitypes.UUID) {
-	_, newCtx, span := getDiscountTracerSpan(c, ".End")
+func (h *Handler) Update(ctx *gin.Context) {
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".Update")
+	defer span.End()
+
+	var body DiscountUpdate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	model := UpdateToDomain(body)
+	err := h.discountService.Update(newCtx, &model)
+	if err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, http.NoBody)
+}
+
+func (h *Handler) End(ctx *gin.Context, id openapitypes.UUID) {
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".End")
 	defer span.End()
 
 	err := h.discountService.EndDiscount(newCtx, id)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, http.NoBody)
 }
