@@ -135,6 +135,12 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			return domain.PublicationRequest{}, err
 		}
 
+		if courseTemplate.TeacherID != currentPR.AssigneeID {
+			log.Error("err teacher made publication request on someone else's course")
+			return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				"course owner and request assignee do not match", "course owner and request assignee do not match", nil)
+		}
+
 		courseTxSession := txSession.SessionCourses(ctx, collections.CourseCollectionName)
 
 		_, err = courseTxSession.Create(ctx, courseTemplate)
@@ -167,7 +173,8 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 
 		for _, l := range lessonTemplates {
 			errLV := l.Validate()
-			if errLV != nil {
+			// TODO check again
+			if errLV != nil || l.TeacherID != courseTemplate.TeacherID {
 				errTx := txSession.AbortTransaction(ctx)
 				if errTx != nil {
 					log.Error("err aborting publication session transaction")

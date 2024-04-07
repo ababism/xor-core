@@ -20,6 +20,7 @@ type CourseService interface {
 	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
 	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) (*domain.Course, error)
 	DeleteCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
+	//GetCourses(ctx context.Context, actor domain.Actor, courseID uuid.UUID, offset, limit int) ([]*domain.Course, error) // hide fields if role == user
 
 	// ReadCourse  — user gets published course (with visibility applied based on roles)
 	ReadCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error)
@@ -50,7 +51,7 @@ type UserService interface {
 	// BuyCourse student buy course
 	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error)
 	// BuyLesson student buy lesson
-	BuyLesson(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, domain.LessonAccess, error)
+	BuyLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.PaymentRedirect, domain.LessonAccess, error)
 
 	// RegisterStudentProfile student registers his profile
 	RegisterStudentProfile(ctx context.Context, actor domain.Actor, profile domain.Student) error

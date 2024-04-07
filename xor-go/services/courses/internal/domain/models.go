@@ -91,7 +91,7 @@ type Theme struct {
 // Lesson represents a lesson entity
 type Lesson struct {
 	ID         uuid.UUID
-	ThemeID    uuid.UUID
+	CourseID   uuid.UUID
 	TeacherID  uuid.UUID
 	Product    Product
 	Visibility Visibility

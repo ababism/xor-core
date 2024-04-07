@@ -28,6 +28,8 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 		return nil, err
 	}
 
+	course.TeacherID = actor.ID
+
 	newCourse, err := c.courseEdit.Create(ctx, course)
 	if err != nil {
 		return nil, err
@@ -70,6 +72,17 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	err := course.Validate()
 	if err != nil {
 		return nil, err
+	}
+
+	ok, errAccess := c.teacher.IsCourseAccessible(ctx, actor.ID, courseID)
+	if errAccess != nil {
+		return nil, apperror.New(http.StatusForbidden, "user does not own this course",
+			fmt.Sprintf("user does %s not own this course %s", actor.ID, courseID), nil)
+	}
+
+	if !actor.HasRole(domain.AdminRole) && !ok {
+		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
+			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
 	err = c.courseEdit.Update(ctx, courseID, course)
