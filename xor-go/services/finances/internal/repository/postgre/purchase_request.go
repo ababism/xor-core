@@ -25,6 +25,7 @@ const (
 	createPurchaseRequestQuery = `
 		INSERT INTO purchase_requests (sender, receiver, webhook_url, received_at)
 		VALUES ($1, $2, $3, $4)
+		RETURNING id
 	`
 	createPurchaseProductsQuery = `
 		INSERT INTO purchase_requests_products (request_uuid, product_uuid)
@@ -72,21 +73,28 @@ func (r *purchaseRequestRepository) List(ctx context.Context, filter *domain.Pur
 	return xcommon.ConvertSliceP(purchaseRequests, repo_models.ToPurchaseRequestDomain), nil
 }
 
-func (r *purchaseRequestRepository) Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) error {
+func (r *purchaseRequestRepository) Create(
+	ctx context.Context,
+	purchase *domain.PurchaseRequestCreate,
+) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNamePurchaseRequest)
 	_, span := tr.Start(ctx, spanDefaultPurchaseRequest+".Create")
 	defer span.End()
 
 	purchasePostgres := repo_models.CreateToPurchaseRequestPostgres(purchase)
-	_, err := r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createPurchaseRequestQuery,
 		purchasePostgres.Sender,
 		purchasePostgres.Receiver,
 		purchasePostgres.WebhookURL,
 		purchasePostgres.CreatedAt,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, nil
 }
 
 func (r *purchaseRequestRepository) Delete(ctx context.Context, id uuid.UUID) error {

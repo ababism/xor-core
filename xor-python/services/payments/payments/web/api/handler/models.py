@@ -34,7 +34,7 @@ class CreatePurchasePayload(BaseModel):
     """Create Purchase Request Payload model."""
     payment_uuid: str
     payment_name: str
-    money: str
+    money: float
     currency: str = "RUB"
     full_name: str
     phone: str
@@ -57,7 +57,7 @@ class CreatePayoutRequestPayload(BaseModel):
     money: str
     currency: str = "RUB"
     full_name: str
-    phone: str
-    email: str
+    phone: str = ""
+    email: str = ""
     card_info: CardInfo
     is_test: bool = False

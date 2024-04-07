@@ -9,6 +9,7 @@ import (
 const (
 	ServiceNameBankAccount     = "bank-account-service"
 	ServiceNamePayment         = "payment-service"
+	ServiceNamePayments        = "payments-client"
 	ServiceNameProduct         = "product-service"
 	ServiceNameDiscount        = "discount-service"
 	ServiceNamePayoutRequest   = "payout-request-service"

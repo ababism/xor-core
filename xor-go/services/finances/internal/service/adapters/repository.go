@@ -39,13 +39,19 @@ type DiscountRepository interface {
 type PayoutRequestRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.PayoutRequestGet, error)
 	List(ctx context.Context, filter *domain.PayoutRequestFilter) ([]domain.PayoutRequestGet, error)
-	Create(ctx context.Context, payout *domain.PayoutRequestCreate) error
+	Create(ctx context.Context, payout *domain.PayoutRequestCreate) (*uuid.UUID, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type PurchaseRequestRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.PurchaseRequestGet, error)
 	List(ctx context.Context, filter *domain.PurchaseRequestFilter) ([]domain.PurchaseRequestGet, error)
-	Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) error
+	Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) (*uuid.UUID, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type PaymentsClient interface {
+	GetStatus(ctx context.Context, id uuid.UUID) (*domain.PaymentsGetStatus, error)
+	CreatePurchase(ctx context.Context, purchase *domain.PaymentsCreatePurchase) (*domain.CreatePurchaseResponse, error)
+	CreatePayout(ctx context.Context, purchase *domain.PaymentsCreatePayout) (*domain.CreatePayoutResponse, error)
 }

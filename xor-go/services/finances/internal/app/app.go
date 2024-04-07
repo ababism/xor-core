@@ -13,6 +13,7 @@ import (
 	"xor-go/services/finances/internal/config"
 	"xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/log"
+	"xor-go/services/finances/internal/repository/payments"
 	"xor-go/services/finances/internal/repository/postgre"
 	"xor-go/services/finances/internal/service"
 )
@@ -28,7 +29,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// INFRASTRUCTURE ----------------------------------------------------------------------
 
-	err := log.Init(cfg)
+	err := log.Init(cfg.Logger, cfg.App)
 	if err != nil {
 		return nil, errors.Wrap(err, "Init Logger")
 	}
@@ -90,15 +91,31 @@ func NewApp(cfg *config.Config) (*App, error) {
 	payoutRequest := postgre.NewPayoutRequestRepository(postgresDb)
 	purchaseRequest := postgre.NewPurchaseRequestRepository(postgresDb)
 
+	paymentsClientServer, err := payments.NewClientWithResponses(cfg.PaymentsClient.Uri)
+	if err != nil {
+		log.Logger.Fatal("cannot initialize generated Payments Client:", zap.Error(err))
+		return nil, err
+	}
+	paymentsClient := payments.NewPaymentsClient(paymentsClientServer)
+
 	// SERVICE LAYER ----------------------------------------------------------------------
 
 	// Name layer
 	bankAccountService := service.NewBankAccountService(bankAccountRepo)
 	discountService := service.NewDiscountService(discountRepo)
-	paymentService := service.NewPaymentService(paymentRepo)
 	productService := service.NewProductService(productRepo)
-	payoutRequestService := service.NewPayoutRequestService(payoutRequest)
-	purchaseRequestService := service.NewPurchaseRequestService(purchaseRequest)
+	paymentService := service.NewPaymentService(paymentRepo, paymentsClient)
+	payoutRequestService := service.NewPayoutRequestService(
+		payoutRequest,
+		paymentRepo,
+		paymentsClient,
+	)
+	purchaseRequestService := service.NewPurchaseRequestService(
+		purchaseRequest,
+		paymentsClient,
+		productService,
+		paymentRepo,
+	)
 
 	log.Logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 
@@ -115,7 +132,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	)
 
 	// инициализируем адрес сервера
-	address := fmt.Sprintf(":%d", cfg.Http.Port)
+	address := fmt.Sprintf(":%s", cfg.Http.Port)
 
 	return &App{
 		cfg:            cfg,

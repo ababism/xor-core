@@ -1,0 +1,10 @@
+# payments-client-codegen.yaml for payments client
+
+output: internal/repository/payments/payments_gen.go
+package: payments
+generate:
+  - types
+  - client
+
+# To RUN from root:
+# oapi-codegen --config .codegen/payments-client-codegen-config.yaml .codegen/payments-client-codegen.yaml
