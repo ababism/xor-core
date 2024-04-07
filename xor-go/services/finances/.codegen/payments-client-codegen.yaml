@@ -1,0 +1,295 @@
+openapi: 3.0.0
+info:
+  title: Payments Client API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082/api/v1/payments
+paths:
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get payment status by UUID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetStatusPayload'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetStatusResult'
+        '400':
+          description: Incorrect payment UUID
+        '404':
+          description: Payment not found by UUID
+#    post:
+#      operationId: acceptWebhook
+#      summary: Accept webhook
+#      parameters:
+#        - in: query
+#          name: filter
+#          schema:
+#            $ref: '#/components/schemas/PaymentFilter'
+#      responses:
+#        '200':
+#          description: Successful operation
+#          content:
+#            application/json:
+#              schema:
+#                type: array
+#                items:
+#                  $ref: '#/components/schemas/PaymentGet'
+  /purchase:
+    post:
+      operationId: createPurchaseRequest
+      summary: Create purchase
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePurchase'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePurchaseResponse'
+        '400':
+          description: Incorrect purchase data
+  /payout:
+    post:
+      operationId: createPayoutRequest
+      summary: Create payout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePayout'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePayoutResponse'
+        '400':
+          description: Incorrect purchase data
+components:
+  schemas:
+    GetStatusPayload:
+      type: object
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+      required:
+        - payment_id
+    GetStatusResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+      required:
+        - payment_id
+    CreatePurchaseProduct:
+      type: object
+      properties:
+        description:
+          type: string
+        quantity:
+          type: integer
+        money:
+          type: number
+        currency:
+          type: string
+        payment_mode:
+          type: string
+      required:
+        - description
+        - quantity
+        - money
+    CreatePurchase:
+      type: object
+      properties:
+        payment_uuid:
+          type: string
+        payment_name:
+          type: string
+        money:
+          type: number
+        currency:
+          type: string
+        full_name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreatePurchaseProduct'
+      required:
+        - payment_uuid
+        - payment_name
+        - money
+        - full_name
+        - phone
+        - email
+        - products
+    CreatePurchaseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        paid:
+          type: boolean
+        amount:
+          type: object
+          properties:
+            value:
+              type: string
+            currency:
+              type: string
+        confirmation:
+          type: object
+          properties:
+            type:
+              type: string
+            return_url:
+              type: string
+            confirmation_url:
+              type: string
+        created_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+        metadata:
+          type: object
+        payment_method:
+          type: object
+          properties:
+            type:
+              type: string
+            id:
+              type: string
+              format: uuid
+            saved:
+              type: boolean
+        recipient:
+          type: object
+          properties:
+            account_id:
+              type: string
+            gateway_id:
+              type: string
+        refundable:
+          type: boolean
+        test:
+          type: boolean
+      required:
+        - id
+        - status
+        - paid
+        - amount
+        - confirmation
+        - created_at
+        - description
+        - payment_method
+        - recipient
+        - refundable
+        - test
+    CardInfo:
+      type: object
+      properties:
+        first6:
+          type: string
+        last4:
+          type: string
+        card_type:
+          type: string
+        issuer_country:
+          type: string
+        issuer_name:
+          type: string
+      required:
+        - first6
+        - last4
+        - issuer_name
+    CreatePayout:
+      type: object
+      properties:
+        payment_uuid:
+          type: string
+        payment_name:
+          type: string
+        money:
+          type: string
+        currency:
+          type: string
+        full_name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        card_info:
+          $ref: '#/components/schemas/CardInfo'
+        is_test:
+          type: boolean
+      required:
+        - payment_uuid
+        - payment_name
+        - money
+        - full_name
+        - card_info
+    CreatePayoutResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: object
+          properties:
+            value:
+              type: string
+            currency:
+              type: string
+        status:
+          type: string
+        payout_destination:
+          type: object
+          properties:
+            type:
+              type: string
+            card:
+              $ref: '#/components/schemas/CardInfo'
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+        test:
+          type: boolean
+      required:
+        - id
+        - amount
+        - status
+        - payout_destination
+        - description
+        - created_at
+        - test

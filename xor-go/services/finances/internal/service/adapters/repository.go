@@ -49,3 +49,9 @@ type PurchaseRequestRepository interface {
 	Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) error
 	Delete(ctx context.Context, id uuid.UUID) error
 }
+
+type PaymentsClient interface {
+	GetStatus(ctx context.Context, id uuid.UUID) (*domain.PaymentsGetStatus, error)
+	CreatePurchase(ctx context.Context, purchase *domain.PaymentsCreatePurchase) error
+	CreatePayout(ctx context.Context, purchase *domain.PaymentsCreatePayout) error
+}
