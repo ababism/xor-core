@@ -1,59 +1,395 @@
-
 openapi: 3.0.0
 info:
-  title: Course Management API
-  description: API for managing courses, lessons, and user profiles
+  title: Courses Service API
+  description: API specification for managing courses, lessons, publication requests, and user data.
   version: 1.0.0
 servers:
-  - url: https://api.example.com/v1
+  - url: http://localhost:8080/api/v1/courses
 paths:
-  /teachers:
+  /courses/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
-      summary: Get all teachers
+      summary: Read published Course
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
       responses:
         '200':
-          description: A list of teachers
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /courses/edit:
+    post:
+      summary: Create Course
+      description: Create a new course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    get:
+      summary: Get Courses
+      tags:
+        - Course
+      description: Retrieve a list of courses.
+      responses:
+        '200':
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Teacher'
-    post:
-      summary: Create a new teacher
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Teacher'
-      responses:
-        '201':
-          description: Teacher created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Teacher'
-  /teachers/{teacherID}:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /courses/edit/{courseID}:
     parameters:
-      - name: teacherID
+      - name: courseID
         in: path
+        description: ID of the course to retrieve
         required: true
-        description: ID of the teacher
         schema:
           type: string
           format: uuid
     get:
-      summary: Get a teacher by ID
+      summary: Get Course by ID
+      tags:
+        - Course
+      description: Retrieve a course by its ID.
       responses:
         '200':
-          description: Retrieved teacher
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Teacher'
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
     put:
-      summary: Update a teacher
+      summary: Update Course
+      tags:
+        - Course
+      description: Update an existing course.
+      parameters:
+        - name: courseID
+          in: path
+          description: ID of the course to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      summary: Delete Course
+      tags:
+        - Lesson
+      description: Delete a course.
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+        - name: courseID
+          in: path
+          description: ID of the course to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Course deleted successfully
+  /lessons/{lessonID}:
+    get:
+      summary: Retrieve published Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of published lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+  /lessons/edit/:
+    post:
+      summary: Create Lesson
+      tags:
+        - Lesson
+      description: Create a new lesson.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /lessons/edit/{lessonID}:
+    get:
+      summary: Retrieve Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+    put:
+      summary: Update Lesson
+      tags:
+        - Lesson
+      description: Update details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to update.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+    delete:
+      summary: Delete Lesson
+      tags:
+        - Lesson
+      description: Delete a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to delete.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '204':
+          description: Lesson deleted successfully
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+  /courses/{courseID}/buy:
+    post:
+      summary: Buy Course
+      tags:
+        - Course
+        - User
+      description: Buy a course.
+      parameters:
+        - in: path
+          name: courseID
+          required: true
+          description: ID of the course to buy.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Payment redirect URL generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRedirect'
+  /lessons/{lessonID}/buy:
+    post:
+      summary: Buy Lesson
+      tags:
+        - Lesson
+        - User
+      description: Buy a lesson within a course.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Payment redirect URL generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentRedirect:
+                    $ref: '#/components/schemas/PaymentRedirect'
+                  lessonAccess:
+                    $ref: '#/components/schemas/LessonAccess'
+  /students/register:
+    post:
+      summary: Register Student Profile
+      tags:
+        - User
+      description: Register a student profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student profile registered successfully
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /teachers/register:
+    post:
+      summary: Register Teacher Profile
+      tags:
+        - User
+      description: Register a teacher profile by admin or moderator.
       requestBody:
         required: true
         content:
@@ -62,19 +398,69 @@ paths:
               $ref: '#/components/schemas/Teacher'
       responses:
         '200':
-          description: Teacher updated successfully
+          description: Teacher profile registered successfully
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /user/access/lessons/{lessonID}:
+    get:
+      summary: Get actor's lesson access
+      tags:
+        - User
+      description: Get lesson access for a user.
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to get access to.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lesson access retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Teacher'
-    delete:
-      summary: Delete a teacher
+                $ref: '#/components/schemas/LessonAccess'
+  /user/access/lessons:
+    put:
+      summary: Change student's access to lesson
+      tags:
+        - User
+      description: Change lesson access for a user by admin or moderator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonAccess'
       responses:
-        '204':
-          description: Teacher deleted successfully
-  /buy-course:
+        '200':
+          description: Lesson access changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonAccess'
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /user/access/confirm:
     post:
-      summary: Purchase a course
+      summary: Confirm user access to products
+      tags:
+        - User
+      description: Confirm access from the Finances system webhook.
       requestBody:
         required: true
         content:
@@ -82,146 +468,276 @@ paths:
             schema:
               type: object
               properties:
-                course_id:
+                buyerID:
                   type: string
                   format: uuid
-                user_id:
-                  type: string
-                  format: uuid
-              required:
-                - course_id
-                - user_id
+                  description: ID of the buyer.
+                products:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Product'
       responses:
         '200':
-          description: Course purchased successfully
-  /courses:
-    get:
-      summary: Get all courses
+          description: Access confirmed successfully
+  /publication-requests:
+    post:
+      summary: Request Course Publication
+      tags:
+        - Moderation
+      description: Teacher requests publication of his course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationRequest'
       responses:
         '200':
-          description: List of courses
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Course'
-  /courses/{course_id}:
-    get:
-      summary: Get course details
+          description: Publication request submitted successfully
       parameters:
-        - name: course_id
-          in: path
-          description: ID of the course to retrieve
+        - in: header
+          name: actor
           required: true
           schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Course details retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Course'
-  /courses/{course_id}/lessons:
-    get:
-      summary: Get lessons for a course
+            $ref: '#/components/schemas/Actor'
+  /publication-requests/{requestID}:
+    put:
+      summary: Update Publication Request
+      tags:
+        - Moderation
+      description: Moderator reviews publication request.
       parameters:
-        - name: course_id
-          in: path
-          description: ID of the course
+        - in: path
+          name: requestID
           required: true
+          description: ID of the publication request to update.
           schema:
             type: string
             format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
       responses:
         '200':
-          description: List of lessons for the course
+          description: Publication request updated successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Lesson'
-  /courses/{course_id}/lessons/{lesson_id}:
-    get:
-      summary: Get lesson details
-      parameters:
-        - name: course_id
-          in: path
-          description: ID of the course
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: lesson_id
-          in: path
-          description: ID of the lesson
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Lesson details retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lesson'
+                $ref: '#/components/schemas/PublicationRequest'
 components:
   schemas:
     Course:
       type: object
       properties:
-        id:
+        ID:
           type: string
           format: uuid
-        product_id:
+        FeedbackID:
           type: string
           format: uuid
-        feedback_id:
+        TeacherID:
           type: string
           format: uuid
-        name:
+        Name:
           type: string
-        discipline:
+        Discipline:
           type: string
-        landing:
+        Landing:
+          type: string
+          format: binary
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Sections:
           type: array
-        visibility:
-          type: string
-          enum:
-            - Hidden
-            - Visible
-    Lesson:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        transcript:
-          type: string
-        video_uri:
-          type: string
-        visibility:
-          type: string
-          enum:
-            - Hidden
-            - Visible
-    Teacher:
+          items:
+            $ref: '#/components/schemas/Section'
+      required:
+        - Name
+        - Discipline
+        - Landing
+        - Visibility
+    Section:
       type: object
       properties:
         ID:
           type: string
           format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        Heading:
+          type: string
+        Description:
+          type: string
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Themes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+      required:
+        - Heading
+        - Description
+        - Visibility
+    Theme:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        Heading:
+          type: string
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+      required:
+        - Heading
+        - Visibility
+    Lesson:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        CourseID:
+          type: string
+          format: uuid
+        TeacherID:
+          type: string
+          format: uuid
+        Product:
+          $ref: '#/components/schemas/Product'
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Transcript:
+          type: string
+        VideoURI:
+          type: string
+      required:
+        - Transcript
+        - Visibility
+
+    Product:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the product.
+        Owner:
+          type: string
+          format: uuid
+          description: ID of the owner of the product.
+        Price:
+          type: number
+          format: float
+          description: Price of the product.
+        Item:
+          type: string
+          format: uuid
+          description: ID of the item associated with the product.
+    PaymentRedirect:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Payment redirect URL.
+    LessonAccess:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the lesson access.
+        LessonID:
+          type: string
+          format: uuid
+          description: ID of the lesson.
+        StudentID:
+          type: string
+          format: uuid
+          description: ID of the student.
+        AccessStatus:
+          type: string
+          enum: [ Inaccessible, Pending, Accessible ]
+          description: Access status of the lesson.
+    Student:
+      type: object
+      properties:
         AccountID:
           type: string
           format: uuid
-        BankAccountUUID:
+          description: ID of the student's account.
+    Teacher:
+      type: object
+      properties:
+        AccountID:
           type: string
           format: uuid
+          description: ID of the teacher's account.
+    PublicationRequest:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the publication request.
+        CourseID:
+          type: string
+          format: uuid
+          description: ID of the course associated with the request.
+        AssigneeID:
+          type: string
+          format: uuid
+          description: ID of the assignee (teacher or moderator).
+        RequestStatus:
+          type: string
+          enum: [ Unwatched, Approved, Rejected ]
+          description: Status of the publication request.
+        Comment:
+          type: string
+          description: Optional comment provided by the assignee.
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the request was last updated.
+    Actor:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the actor.
+        Roles:
+          type: array
+          items:
+            type: string
+          description: Roles of the actor.
       required:
         - ID
-        - AccountID
-        - BankAccountUUID
+        - Roles
+    OptionalActor:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the actor.
+        Roles:
+          type: array
+          items:
+            type: string
+          description: Roles of the actor.
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header
+      scheme: '#/components/schemas/Actor'

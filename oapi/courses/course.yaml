@@ -1,148 +1,199 @@
-
 openapi: 3.0.0
 info:
-  title: Course Management API
-  description: API for managing courses, lessons, and user profiles
+  title: Course Courses API
+  description: API specification for managing courses.
   version: 1.0.0
 servers:
-  - url: https://api.example.com/v1
+  - url: http://localhost:8080/api/v1/courses
 paths:
-  /buy-course:
+  /courses/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read published Course
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+  /courses/edit:
     post:
-      summary: Purchase a course
+      summary: Create Course
+      description: Create a new course.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                course_id:
-                  type: string
-                  format: uuid
-                user_id:
-                  type: string
-                  format: uuid
-              required:
-                - course_id
-                - user_id
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
       responses:
         '200':
-          description: Course purchased successfully
-  /courses:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
     get:
-      summary: Get all courses
+      summary: Get Courses
+      tags:
+        - Course
+      description: Retrieve a list of courses.
       responses:
         '200':
-          description: List of courses
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Course'
-  /courses/{course_id}:
+      security:
+        - actorAuth: [ ]
+  /courses/edit/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
-      summary: Get course details
-      parameters:
-        - name: course_id
-          in: path
-          description: ID of the course to retrieve
-          required: true
-          schema:
-            type: string
-            format: uuid
+      summary: Get Course by ID
+      tags:
+        - Course
+      description: Retrieve a course by its ID.
       responses:
         '200':
-          description: Course details retrieved successfully
+          description: Successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Course'
-  /courses/{course_id}/lessons:
-    get:
-      summary: Get lessons for a course
+      security:
+        - actorAuth: [ ]
+    put:
+      summary: Update Course
+      tags:
+        - Course
+      description: Update an existing course.
       parameters:
-        - name: course_id
+        - name: courseID
           in: path
-          description: ID of the course
+          description: ID of the course to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      summary: Delete Course
+      tags:
+        - Lesson
+      description: Delete a course.
+      parameters:
+        - name: courseID
+          in: path
+          description: ID of the course to delete
           required: true
           schema:
             type: string
             format: uuid
       responses:
-        '200':
-          description: List of lessons for the course
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Lesson'
-  /courses/{course_id}/lessons/{lesson_id}:
-    get:
-      summary: Get lesson details
-      parameters:
-        - name: course_id
-          in: path
-          description: ID of the course
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: lesson_id
-          in: path
-          description: ID of the lesson
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Lesson details retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Lesson'
+        '204':
+          description: Course deleted successfully
 components:
   schemas:
     Course:
       type: object
       properties:
-        id:
+        ID:
           type: string
           format: uuid
-        product_id:
+        FeedbackID:
           type: string
           format: uuid
-        feedback_id:
+        TeacherID:
           type: string
           format: uuid
-        name:
+        Name:
           type: string
-        discipline:
+        Discipline:
           type: string
-        landing:
-          type: byte
-        visibility:
+        Landing:
           type: string
-          enum:
-            - Hidden
-            - Visible
-            - Unlocked
-    Lesson:
+          format: binary
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+        Sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+    Section:
       type: object
       properties:
-        id:
+        ID:
           type: string
           format: uuid
-        transcript:
+        FeedbackID:
           type: string
-        video_uri:
+          format: uuid
+        Heading:
           type: string
-        visibility:
+        Description:
           type: string
-          enum:
-            - Hidden
-            - Visible
-            - Unlocked
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+        Themes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+    Theme:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        Heading:
+          type: string
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header

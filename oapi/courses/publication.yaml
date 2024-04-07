@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: Publication Request Service API
+  description: API specification for course publication and moderation
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1/courses
+paths:
+  /publication-requests:
+    post:
+      summary: Request Course Publication
+      tags:
+        - Moderation
+      description: Teacher requests publication of his course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationRequest'
+      responses:
+        '200':
+          description: Publication request submitted successfully
+  /publication-requests/{requestID}:
+    put:
+      summary: Update Publication Request
+      tags:
+        - Moderation
+      description: Moderator reviews publication request.
+      parameters:
+        - in: path
+          name: requestID
+          required: true
+          description: ID of the publication request to update.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Publication request updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationRequest'
+components:
+  schemas:
+    PublicationRequest:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the publication request.
+        CourseID:
+          type: string
+          format: uuid
+          description: ID of the course associated with the request.
+        AssigneeID:
+          type: string
+          format: uuid
+          description: ID of the assignee (teacher or moderator).
+        RequestStatus:
+          type: string
+          enum: [Unwatched, Approved, Rejected]
+          description: Status of the publication request.
+        Comment:
+          type: string
+          description: Optional comment provided by the assignee.
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the request was last updated.
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header
+      name: actor

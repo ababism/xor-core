@@ -6,10 +6,15 @@ package generated
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
+)
+
+const (
+	ActorAuthScopes = "actorAuth.Scopes"
 )
 
 // Defines values for CourseVisibility.
@@ -20,20 +25,55 @@ const (
 
 // Defines values for LessonVisibility.
 const (
-	LessonVisibilityHidden   LessonVisibility = "Hidden"
-	LessonVisibilityUnlocked LessonVisibility = "Unlocked"
-	LessonVisibilityVisible  LessonVisibility = "Visible"
+	LessonVisibilityHidden  LessonVisibility = "Hidden"
+	LessonVisibilityVisible LessonVisibility = "Visible"
 )
+
+// Defines values for LessonAccessAccessStatus.
+const (
+	Accessible   LessonAccessAccessStatus = "Accessible"
+	Inaccessible LessonAccessAccessStatus = "Inaccessible"
+	Pending      LessonAccessAccessStatus = "Pending"
+)
+
+// Defines values for PublicationRequestRequestStatus.
+const (
+	Approved  PublicationRequestRequestStatus = "Approved"
+	Rejected  PublicationRequestRequestStatus = "Rejected"
+	Unwatched PublicationRequestRequestStatus = "Unwatched"
+)
+
+// Defines values for SectionVisibility.
+const (
+	SectionVisibilityHidden  SectionVisibility = "Hidden"
+	SectionVisibilityVisible SectionVisibility = "Visible"
+)
+
+// Defines values for ThemeVisibility.
+const (
+	ThemeVisibilityHidden  ThemeVisibility = "Hidden"
+	ThemeVisibilityVisible ThemeVisibility = "Visible"
+)
+
+// Actor defines model for Actor.
+type Actor struct {
+	// ID Unique identifier for the actor.
+	ID openapi_types.UUID `json:"ID"`
+
+	// Roles Roles of the actor.
+	Roles []string `json:"Roles"`
+}
 
 // Course defines model for Course.
 type Course struct {
-	Discipline *string             `json:"discipline,omitempty"`
-	FeedbackId *openapi_types.UUID `json:"feedback_id,omitempty"`
-	Id         *openapi_types.UUID `json:"id,omitempty"`
-	Landing    *[]interface{}      `json:"landing,omitempty"`
-	Name       *string             `json:"name,omitempty"`
-	ProductId  *openapi_types.UUID `json:"product_id,omitempty"`
-	Visibility *CourseVisibility   `json:"visibility,omitempty"`
+	Discipline string              `json:"Discipline"`
+	FeedbackID *openapi_types.UUID `json:"FeedbackID,omitempty"`
+	ID         *openapi_types.UUID `json:"ID,omitempty"`
+	Landing    openapi_types.File  `json:"Landing"`
+	Name       string              `json:"Name"`
+	Sections   *[]Section          `json:"Sections,omitempty"`
+	TeacherID  *openapi_types.UUID `json:"TeacherID,omitempty"`
+	Visibility CourseVisibility    `json:"Visibility"`
 }
 
 // CourseVisibility defines model for Course.Visibility.
@@ -41,69 +81,312 @@ type CourseVisibility string
 
 // Lesson defines model for Lesson.
 type Lesson struct {
-	Id         *openapi_types.UUID `json:"id,omitempty"`
-	Transcript *string             `json:"transcript,omitempty"`
-	VideoUri   *string             `json:"video_uri,omitempty"`
-	Visibility *LessonVisibility   `json:"visibility,omitempty"`
+	CourseID   *openapi_types.UUID `json:"CourseID,omitempty"`
+	ID         *openapi_types.UUID `json:"ID,omitempty"`
+	Product    *Product            `json:"Product,omitempty"`
+	TeacherID  *openapi_types.UUID `json:"TeacherID,omitempty"`
+	Transcript string              `json:"Transcript"`
+	VideoURI   *string             `json:"VideoURI,omitempty"`
+	Visibility LessonVisibility    `json:"Visibility"`
 }
 
 // LessonVisibility defines model for Lesson.Visibility.
 type LessonVisibility string
 
+// LessonAccess defines model for LessonAccess.
+type LessonAccess struct {
+	// AccessStatus Access status of the lesson.
+	AccessStatus *LessonAccessAccessStatus `json:"AccessStatus,omitempty"`
+
+	// ID Unique identifier for the lesson access.
+	ID *openapi_types.UUID `json:"ID,omitempty"`
+
+	// LessonID ID of the lesson.
+	LessonID *openapi_types.UUID `json:"LessonID,omitempty"`
+
+	// StudentID ID of the student.
+	StudentID *openapi_types.UUID `json:"StudentID,omitempty"`
+}
+
+// LessonAccessAccessStatus Access status of the lesson.
+type LessonAccessAccessStatus string
+
+// OptionalActor defines model for OptionalActor.
+type OptionalActor struct {
+	// ID Unique identifier for the actor.
+	ID *openapi_types.UUID `json:"ID,omitempty"`
+
+	// Roles Roles of the actor.
+	Roles *[]string `json:"Roles,omitempty"`
+}
+
+// PaymentRedirect defines model for PaymentRedirect.
+type PaymentRedirect struct {
+	// Response Payment redirect URL.
+	Response *string `json:"response,omitempty"`
+}
+
+// Product defines model for Product.
+type Product struct {
+	// ID Unique identifier for the product.
+	ID *openapi_types.UUID `json:"ID,omitempty"`
+
+	// Item ID of the item associated with the product.
+	Item *openapi_types.UUID `json:"Item,omitempty"`
+
+	// Owner ID of the owner of the product.
+	Owner *openapi_types.UUID `json:"Owner,omitempty"`
+
+	// Price Price of the product.
+	Price *float32 `json:"Price,omitempty"`
+}
+
+// PublicationRequest defines model for PublicationRequest.
+type PublicationRequest struct {
+	// AssigneeID ID of the assignee (teacher or moderator).
+	AssigneeID *openapi_types.UUID `json:"AssigneeID,omitempty"`
+
+	// Comment Optional comment provided by the assignee.
+	Comment *string `json:"Comment,omitempty"`
+
+	// CourseID ID of the course associated with the request.
+	CourseID *openapi_types.UUID `json:"CourseID,omitempty"`
+
+	// ID Unique identifier for the publication request.
+	ID *openapi_types.UUID `json:"ID,omitempty"`
+
+	// RequestStatus Status of the publication request.
+	RequestStatus *PublicationRequestRequestStatus `json:"RequestStatus,omitempty"`
+
+	// UpdatedAt Date and time when the request was last updated.
+	UpdatedAt *time.Time `json:"UpdatedAt,omitempty"`
+}
+
+// PublicationRequestRequestStatus Status of the publication request.
+type PublicationRequestRequestStatus string
+
+// Section defines model for Section.
+type Section struct {
+	Description string              `json:"Description"`
+	FeedbackID  *openapi_types.UUID `json:"FeedbackID,omitempty"`
+	Heading     string              `json:"Heading"`
+	ID          *openapi_types.UUID `json:"ID,omitempty"`
+	Themes      *[]Theme            `json:"Themes,omitempty"`
+	Visibility  SectionVisibility   `json:"Visibility"`
+}
+
+// SectionVisibility defines model for Section.Visibility.
+type SectionVisibility string
+
+// Student defines model for Student.
+type Student struct {
+	// AccountID ID of the student's account.
+	AccountID *openapi_types.UUID `json:"AccountID,omitempty"`
+}
+
 // Teacher defines model for Teacher.
 type Teacher struct {
-	AccountID       openapi_types.UUID `json:"AccountID"`
-	BankAccountUUID openapi_types.UUID `json:"BankAccountUUID"`
-	ID              openapi_types.UUID `json:"ID"`
+	// AccountID ID of the teacher's account.
+	AccountID *openapi_types.UUID `json:"AccountID,omitempty"`
 }
 
-// PostBuyCourseJSONBody defines parameters for PostBuyCourse.
-type PostBuyCourseJSONBody struct {
-	CourseId openapi_types.UUID `json:"course_id"`
-	UserId   openapi_types.UUID `json:"user_id"`
+// Theme defines model for Theme.
+type Theme struct {
+	FeedbackID *openapi_types.UUID `json:"FeedbackID,omitempty"`
+	Heading    string              `json:"Heading"`
+	ID         *openapi_types.UUID `json:"ID,omitempty"`
+	Visibility ThemeVisibility     `json:"Visibility"`
 }
 
-// PostBuyCourseJSONRequestBody defines body for PostBuyCourse for application/json ContentType.
-type PostBuyCourseJSONRequestBody PostBuyCourseJSONBody
+// ThemeVisibility defines model for Theme.Visibility.
+type ThemeVisibility string
 
-// PostTeachersJSONRequestBody defines body for PostTeachers for application/json ContentType.
-type PostTeachersJSONRequestBody = Teacher
+// GetCoursesEditParams defines parameters for GetCoursesEdit.
+type GetCoursesEditParams struct {
+	Actor Actor `json:"actor"`
+}
 
-// PutTeachersTeacherIDJSONRequestBody defines body for PutTeachersTeacherID for application/json ContentType.
-type PutTeachersTeacherIDJSONRequestBody = Teacher
+// PostCoursesEditParams defines parameters for PostCoursesEdit.
+type PostCoursesEditParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// DeleteCoursesEditCourseIDParams defines parameters for DeleteCoursesEditCourseID.
+type DeleteCoursesEditCourseIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// GetCoursesEditCourseIDParams defines parameters for GetCoursesEditCourseID.
+type GetCoursesEditCourseIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PutCoursesEditCourseIDParams defines parameters for PutCoursesEditCourseID.
+type PutCoursesEditCourseIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// GetCoursesCourseIDParams defines parameters for GetCoursesCourseID.
+type GetCoursesCourseIDParams struct {
+	Actor *OptionalActor `json:"actor,omitempty"`
+}
+
+// PostLessonsEditParams defines parameters for PostLessonsEdit.
+type PostLessonsEditParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// DeleteLessonsEditLessonIDParams defines parameters for DeleteLessonsEditLessonID.
+type DeleteLessonsEditLessonIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// GetLessonsEditLessonIDParams defines parameters for GetLessonsEditLessonID.
+type GetLessonsEditLessonIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PutLessonsEditLessonIDParams defines parameters for PutLessonsEditLessonID.
+type PutLessonsEditLessonIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// GetLessonsLessonIDParams defines parameters for GetLessonsLessonID.
+type GetLessonsLessonIDParams struct {
+	Actor *OptionalActor `json:"actor,omitempty"`
+}
+
+// PostLessonsLessonIDBuyParams defines parameters for PostLessonsLessonIDBuy.
+type PostLessonsLessonIDBuyParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PostPublicationRequestsParams defines parameters for PostPublicationRequests.
+type PostPublicationRequestsParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PutPublicationRequestsRequestIDParams defines parameters for PutPublicationRequestsRequestID.
+type PutPublicationRequestsRequestIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PostStudentsRegisterParams defines parameters for PostStudentsRegister.
+type PostStudentsRegisterParams struct {
+	Actor *OptionalActor `json:"actor,omitempty"`
+}
+
+// PostTeachersRegisterParams defines parameters for PostTeachersRegister.
+type PostTeachersRegisterParams struct {
+	Actor *OptionalActor `json:"actor,omitempty"`
+}
+
+// PostUserAccessConfirmJSONBody defines parameters for PostUserAccessConfirm.
+type PostUserAccessConfirmJSONBody struct {
+	// BuyerID ID of the buyer.
+	BuyerID  *openapi_types.UUID `json:"buyerID,omitempty"`
+	Products *[]Product          `json:"products,omitempty"`
+}
+
+// PutUserAccessLessonsParams defines parameters for PutUserAccessLessons.
+type PutUserAccessLessonsParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// GetUserAccessLessonsLessonIDParams defines parameters for GetUserAccessLessonsLessonID.
+type GetUserAccessLessonsLessonIDParams struct {
+	Actor Actor `json:"actor"`
+}
+
+// PostCoursesEditJSONRequestBody defines body for PostCoursesEdit for application/json ContentType.
+type PostCoursesEditJSONRequestBody = Course
+
+// PutCoursesEditCourseIDJSONRequestBody defines body for PutCoursesEditCourseID for application/json ContentType.
+type PutCoursesEditCourseIDJSONRequestBody = Course
+
+// PostLessonsEditJSONRequestBody defines body for PostLessonsEdit for application/json ContentType.
+type PostLessonsEditJSONRequestBody = Lesson
+
+// PutLessonsEditLessonIDJSONRequestBody defines body for PutLessonsEditLessonID for application/json ContentType.
+type PutLessonsEditLessonIDJSONRequestBody = Lesson
+
+// PostPublicationRequestsJSONRequestBody defines body for PostPublicationRequests for application/json ContentType.
+type PostPublicationRequestsJSONRequestBody = PublicationRequest
+
+// PostStudentsRegisterJSONRequestBody defines body for PostStudentsRegister for application/json ContentType.
+type PostStudentsRegisterJSONRequestBody = Student
+
+// PostTeachersRegisterJSONRequestBody defines body for PostTeachersRegister for application/json ContentType.
+type PostTeachersRegisterJSONRequestBody = Teacher
+
+// PostUserAccessConfirmJSONRequestBody defines body for PostUserAccessConfirm for application/json ContentType.
+type PostUserAccessConfirmJSONRequestBody PostUserAccessConfirmJSONBody
+
+// PutUserAccessLessonsJSONRequestBody defines body for PutUserAccessLessons for application/json ContentType.
+type PutUserAccessLessonsJSONRequestBody = LessonAccess
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Purchase a course
-	// (POST /buy-course)
-	PostBuyCourse(c *gin.Context)
-	// Get all courses
-	// (GET /courses)
-	GetCourses(c *gin.Context)
-	// Get course details
-	// (GET /courses/{course_id})
-	GetCoursesCourseId(c *gin.Context, courseId openapi_types.UUID)
-	// Get lessons for a course
-	// (GET /courses/{course_id}/lessons)
-	GetCoursesCourseIdLessons(c *gin.Context, courseId openapi_types.UUID)
-	// Get lesson details
-	// (GET /courses/{course_id}/lessons/{lesson_id})
-	GetCoursesCourseIdLessonsLessonId(c *gin.Context, courseId openapi_types.UUID, lessonId openapi_types.UUID)
-	// Get all teachers
-	// (GET /teachers)
-	GetTeachers(c *gin.Context)
-	// Create a new teacher
-	// (POST /teachers)
-	PostTeachers(c *gin.Context)
-	// Delete a teacher
-	// (DELETE /teachers/{teacherID})
-	DeleteTeachersTeacherID(c *gin.Context, teacherID openapi_types.UUID)
-	// Get a teacher by ID
-	// (GET /teachers/{teacherID})
-	GetTeachersTeacherID(c *gin.Context, teacherID openapi_types.UUID)
-	// Update a teacher
-	// (PUT /teachers/{teacherID})
-	PutTeachersTeacherID(c *gin.Context, teacherID openapi_types.UUID)
+	// Get Courses
+	// (GET /courses/edit)
+	GetCoursesEdit(c *gin.Context, params GetCoursesEditParams)
+	// Create Course
+	// (POST /courses/edit)
+	PostCoursesEdit(c *gin.Context, params PostCoursesEditParams)
+	// Delete Course
+	// (DELETE /courses/edit/{courseID})
+	DeleteCoursesEditCourseID(c *gin.Context, courseID openapi_types.UUID, params DeleteCoursesEditCourseIDParams)
+	// Get Course by ID
+	// (GET /courses/edit/{courseID})
+	GetCoursesEditCourseID(c *gin.Context, courseID openapi_types.UUID, params GetCoursesEditCourseIDParams)
+	// Update Course
+	// (PUT /courses/edit/{courseID})
+	PutCoursesEditCourseID(c *gin.Context, courseID openapi_types.UUID, params PutCoursesEditCourseIDParams)
+	// Read published Course
+	// (GET /courses/{courseID})
+	GetCoursesCourseID(c *gin.Context, courseID openapi_types.UUID, params GetCoursesCourseIDParams)
+	// Buy Course
+	// (POST /courses/{courseID}/buy)
+	PostCoursesCourseIDBuy(c *gin.Context, courseID openapi_types.UUID)
+	// Create Lesson
+	// (POST /lessons/edit/)
+	PostLessonsEdit(c *gin.Context, params PostLessonsEditParams)
+	// Delete Lesson
+	// (DELETE /lessons/edit/{lessonID})
+	DeleteLessonsEditLessonID(c *gin.Context, lessonID openapi_types.UUID, params DeleteLessonsEditLessonIDParams)
+	// Retrieve Lesson
+	// (GET /lessons/edit/{lessonID})
+	GetLessonsEditLessonID(c *gin.Context, lessonID openapi_types.UUID, params GetLessonsEditLessonIDParams)
+	// Update Lesson
+	// (PUT /lessons/edit/{lessonID})
+	PutLessonsEditLessonID(c *gin.Context, lessonID openapi_types.UUID, params PutLessonsEditLessonIDParams)
+	// Retrieve published Lesson
+	// (GET /lessons/{lessonID})
+	GetLessonsLessonID(c *gin.Context, lessonID openapi_types.UUID, params GetLessonsLessonIDParams)
+	// Buy Lesson
+	// (POST /lessons/{lessonID}/buy)
+	PostLessonsLessonIDBuy(c *gin.Context, lessonID openapi_types.UUID, params PostLessonsLessonIDBuyParams)
+	// Request Course Publication
+	// (POST /publication-requests)
+	PostPublicationRequests(c *gin.Context, params PostPublicationRequestsParams)
+	// Update Publication Request
+	// (PUT /publication-requests/{requestID})
+	PutPublicationRequestsRequestID(c *gin.Context, requestID openapi_types.UUID, params PutPublicationRequestsRequestIDParams)
+	// Register Student Profile
+	// (POST /students/register)
+	PostStudentsRegister(c *gin.Context, params PostStudentsRegisterParams)
+	// Register Teacher Profile
+	// (POST /teachers/register)
+	PostTeachersRegister(c *gin.Context, params PostTeachersRegisterParams)
+	// Confirm user access to products
+	// (POST /user/access/confirm)
+	PostUserAccessConfirm(c *gin.Context)
+	// Change student's access to lesson
+	// (PUT /user/access/lessons)
+	PutUserAccessLessons(c *gin.Context, params PutUserAccessLessonsParams)
+	// Get actor's lesson access
+	// (GET /user/access/lessons/{lessonID})
+	GetUserAccessLessonsLessonID(c *gin.Context, lessonID openapi_types.UUID, params GetUserAccessLessonsLessonIDParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -115,43 +398,37 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// PostBuyCourse operation middleware
-func (siw *ServerInterfaceWrapper) PostBuyCourse(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.PostBuyCourse(c)
-}
-
-// GetCourses operation middleware
-func (siw *ServerInterfaceWrapper) GetCourses(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetCourses(c)
-}
-
-// GetCoursesCourseId operation middleware
-func (siw *ServerInterfaceWrapper) GetCoursesCourseId(c *gin.Context) {
+// GetCoursesEdit operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesEdit(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "course_id" -------------
-	var courseId openapi_types.UUID
+	c.Set(ActorAuthScopes, []string{})
 
-	err = runtime.BindStyledParameter("simple", false, "course_id", c.Param("course_id"), &courseId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter course_id: %w", err), http.StatusBadRequest)
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesEditParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
@@ -162,20 +439,40 @@ func (siw *ServerInterfaceWrapper) GetCoursesCourseId(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetCoursesCourseId(c, courseId)
+	siw.Handler.GetCoursesEdit(c, params)
 }
 
-// GetCoursesCourseIdLessons operation middleware
-func (siw *ServerInterfaceWrapper) GetCoursesCourseIdLessons(c *gin.Context) {
+// PostCoursesEdit operation middleware
+func (siw *ServerInterfaceWrapper) PostCoursesEdit(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "course_id" -------------
-	var courseId openapi_types.UUID
+	c.Set(ActorAuthScopes, []string{})
 
-	err = runtime.BindStyledParameter("simple", false, "course_id", c.Param("course_id"), &courseId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter course_id: %w", err), http.StatusBadRequest)
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostCoursesEditParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
@@ -186,29 +483,47 @@ func (siw *ServerInterfaceWrapper) GetCoursesCourseIdLessons(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetCoursesCourseIdLessons(c, courseId)
+	siw.Handler.PostCoursesEdit(c, params)
 }
 
-// GetCoursesCourseIdLessonsLessonId operation middleware
-func (siw *ServerInterfaceWrapper) GetCoursesCourseIdLessonsLessonId(c *gin.Context) {
+// DeleteCoursesEditCourseID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCoursesEditCourseID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "course_id" -------------
-	var courseId openapi_types.UUID
+	// ------------- Path parameter "courseID" -------------
+	var courseID openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "course_id", c.Param("course_id"), &courseId)
+	err = runtime.BindStyledParameter("simple", false, "courseID", c.Param("courseID"), &courseID)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter course_id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter courseID: %w", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Path parameter "lesson_id" -------------
-	var lessonId openapi_types.UUID
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteCoursesEditCourseIDParams
 
-	err = runtime.BindStyledParameter("simple", false, "lesson_id", c.Param("lesson_id"), &lessonId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lesson_id: %w", err), http.StatusBadRequest)
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
@@ -219,46 +534,49 @@ func (siw *ServerInterfaceWrapper) GetCoursesCourseIdLessonsLessonId(c *gin.Cont
 		}
 	}
 
-	siw.Handler.GetCoursesCourseIdLessonsLessonId(c, courseId, lessonId)
+	siw.Handler.DeleteCoursesEditCourseID(c, courseID, params)
 }
 
-// GetTeachers operation middleware
-func (siw *ServerInterfaceWrapper) GetTeachers(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetTeachers(c)
-}
-
-// PostTeachers operation middleware
-func (siw *ServerInterfaceWrapper) PostTeachers(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.PostTeachers(c)
-}
-
-// DeleteTeachersTeacherID operation middleware
-func (siw *ServerInterfaceWrapper) DeleteTeachersTeacherID(c *gin.Context) {
+// GetCoursesEditCourseID operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesEditCourseID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "teacherID" -------------
-	var teacherID openapi_types.UUID
+	// ------------- Path parameter "courseID" -------------
+	var courseID openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "teacherID", c.Param("teacherID"), &teacherID)
+	err = runtime.BindStyledParameter("simple", false, "courseID", c.Param("courseID"), &courseID)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter teacherID: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter courseID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesEditCourseIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
@@ -269,20 +587,49 @@ func (siw *ServerInterfaceWrapper) DeleteTeachersTeacherID(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteTeachersTeacherID(c, teacherID)
+	siw.Handler.GetCoursesEditCourseID(c, courseID, params)
 }
 
-// GetTeachersTeacherID operation middleware
-func (siw *ServerInterfaceWrapper) GetTeachersTeacherID(c *gin.Context) {
+// PutCoursesEditCourseID operation middleware
+func (siw *ServerInterfaceWrapper) PutCoursesEditCourseID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "teacherID" -------------
-	var teacherID openapi_types.UUID
+	// ------------- Path parameter "courseID" -------------
+	var courseID openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "teacherID", c.Param("teacherID"), &teacherID)
+	err = runtime.BindStyledParameter("simple", false, "courseID", c.Param("courseID"), &courseID)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter teacherID: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter courseID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PutCoursesEditCourseIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
 		return
 	}
 
@@ -293,20 +640,70 @@ func (siw *ServerInterfaceWrapper) GetTeachersTeacherID(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetTeachersTeacherID(c, teacherID)
+	siw.Handler.PutCoursesEditCourseID(c, courseID, params)
 }
 
-// PutTeachersTeacherID operation middleware
-func (siw *ServerInterfaceWrapper) PutTeachersTeacherID(c *gin.Context) {
+// GetCoursesCourseID operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesCourseID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "teacherID" -------------
-	var teacherID openapi_types.UUID
+	// ------------- Path parameter "courseID" -------------
+	var courseID openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "teacherID", c.Param("teacherID"), &teacherID)
+	err = runtime.BindStyledParameter("simple", false, "courseID", c.Param("courseID"), &courseID)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter teacherID: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter courseID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesCourseIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCoursesCourseID(c, courseID, params)
+}
+
+// PostCoursesCourseIDBuy operation middleware
+func (siw *ServerInterfaceWrapper) PostCoursesCourseIDBuy(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "courseID" -------------
+	var courseID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "courseID", c.Param("courseID"), &courseID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter courseID: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -317,7 +714,588 @@ func (siw *ServerInterfaceWrapper) PutTeachersTeacherID(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutTeachersTeacherID(c, teacherID)
+	siw.Handler.PostCoursesCourseIDBuy(c, courseID)
+}
+
+// PostLessonsEdit operation middleware
+func (siw *ServerInterfaceWrapper) PostLessonsEdit(c *gin.Context) {
+
+	var err error
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostLessonsEditParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostLessonsEdit(c, params)
+}
+
+// DeleteLessonsEditLessonID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteLessonsEditLessonID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteLessonsEditLessonIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteLessonsEditLessonID(c, lessonID, params)
+}
+
+// GetLessonsEditLessonID operation middleware
+func (siw *ServerInterfaceWrapper) GetLessonsEditLessonID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetLessonsEditLessonIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetLessonsEditLessonID(c, lessonID, params)
+}
+
+// PutLessonsEditLessonID operation middleware
+func (siw *ServerInterfaceWrapper) PutLessonsEditLessonID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PutLessonsEditLessonIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PutLessonsEditLessonID(c, lessonID, params)
+}
+
+// GetLessonsLessonID operation middleware
+func (siw *ServerInterfaceWrapper) GetLessonsLessonID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetLessonsLessonIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetLessonsLessonID(c, lessonID, params)
+}
+
+// PostLessonsLessonIDBuy operation middleware
+func (siw *ServerInterfaceWrapper) PostLessonsLessonIDBuy(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostLessonsLessonIDBuyParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostLessonsLessonIDBuy(c, lessonID, params)
+}
+
+// PostPublicationRequests operation middleware
+func (siw *ServerInterfaceWrapper) PostPublicationRequests(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostPublicationRequestsParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostPublicationRequests(c, params)
+}
+
+// PutPublicationRequestsRequestID operation middleware
+func (siw *ServerInterfaceWrapper) PutPublicationRequestsRequestID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "requestID" -------------
+	var requestID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "requestID", c.Param("requestID"), &requestID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter requestID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PutPublicationRequestsRequestIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PutPublicationRequestsRequestID(c, requestID, params)
+}
+
+// PostStudentsRegister operation middleware
+func (siw *ServerInterfaceWrapper) PostStudentsRegister(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostStudentsRegisterParams
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostStudentsRegister(c, params)
+}
+
+// PostTeachersRegister operation middleware
+func (siw *ServerInterfaceWrapper) PostTeachersRegister(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostTeachersRegisterParams
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostTeachersRegister(c, params)
+}
+
+// PostUserAccessConfirm operation middleware
+func (siw *ServerInterfaceWrapper) PostUserAccessConfirm(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostUserAccessConfirm(c)
+}
+
+// PutUserAccessLessons operation middleware
+func (siw *ServerInterfaceWrapper) PutUserAccessLessons(c *gin.Context) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PutUserAccessLessonsParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PutUserAccessLessons(c, params)
+}
+
+// GetUserAccessLessonsLessonID operation middleware
+func (siw *ServerInterfaceWrapper) GetUserAccessLessonsLessonID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "lessonID" -------------
+	var lessonID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "lessonID", c.Param("lessonID"), &lessonID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lessonID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserAccessLessonsLessonIDParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetUserAccessLessonsLessonID(c, lessonID, params)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -347,14 +1325,24 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.POST(options.BaseURL+"/buy-course", wrapper.PostBuyCourse)
-	router.GET(options.BaseURL+"/courses", wrapper.GetCourses)
-	router.GET(options.BaseURL+"/courses/:course_id", wrapper.GetCoursesCourseId)
-	router.GET(options.BaseURL+"/courses/:course_id/lessons", wrapper.GetCoursesCourseIdLessons)
-	router.GET(options.BaseURL+"/courses/:course_id/lessons/:lesson_id", wrapper.GetCoursesCourseIdLessonsLessonId)
-	router.GET(options.BaseURL+"/teachers", wrapper.GetTeachers)
-	router.POST(options.BaseURL+"/teachers", wrapper.PostTeachers)
-	router.DELETE(options.BaseURL+"/teachers/:teacherID", wrapper.DeleteTeachersTeacherID)
-	router.GET(options.BaseURL+"/teachers/:teacherID", wrapper.GetTeachersTeacherID)
-	router.PUT(options.BaseURL+"/teachers/:teacherID", wrapper.PutTeachersTeacherID)
+	router.GET(options.BaseURL+"/courses/edit", wrapper.GetCoursesEdit)
+	router.POST(options.BaseURL+"/courses/edit", wrapper.PostCoursesEdit)
+	router.DELETE(options.BaseURL+"/courses/edit/:courseID", wrapper.DeleteCoursesEditCourseID)
+	router.GET(options.BaseURL+"/courses/edit/:courseID", wrapper.GetCoursesEditCourseID)
+	router.PUT(options.BaseURL+"/courses/edit/:courseID", wrapper.PutCoursesEditCourseID)
+	router.GET(options.BaseURL+"/courses/:courseID", wrapper.GetCoursesCourseID)
+	router.POST(options.BaseURL+"/courses/:courseID/buy", wrapper.PostCoursesCourseIDBuy)
+	router.POST(options.BaseURL+"/lessons/edit/", wrapper.PostLessonsEdit)
+	router.DELETE(options.BaseURL+"/lessons/edit/:lessonID", wrapper.DeleteLessonsEditLessonID)
+	router.GET(options.BaseURL+"/lessons/edit/:lessonID", wrapper.GetLessonsEditLessonID)
+	router.PUT(options.BaseURL+"/lessons/edit/:lessonID", wrapper.PutLessonsEditLessonID)
+	router.GET(options.BaseURL+"/lessons/:lessonID", wrapper.GetLessonsLessonID)
+	router.POST(options.BaseURL+"/lessons/:lessonID/buy", wrapper.PostLessonsLessonIDBuy)
+	router.POST(options.BaseURL+"/publication-requests", wrapper.PostPublicationRequests)
+	router.PUT(options.BaseURL+"/publication-requests/:requestID", wrapper.PutPublicationRequestsRequestID)
+	router.POST(options.BaseURL+"/students/register", wrapper.PostStudentsRegister)
+	router.POST(options.BaseURL+"/teachers/register", wrapper.PostTeachersRegister)
+	router.POST(options.BaseURL+"/user/access/confirm", wrapper.PostUserAccessConfirm)
+	router.PUT(options.BaseURL+"/user/access/lessons", wrapper.PutUserAccessLessons)
+	router.GET(options.BaseURL+"/user/access/lessons/:lessonID", wrapper.GetUserAccessLessonsLessonID)
 }

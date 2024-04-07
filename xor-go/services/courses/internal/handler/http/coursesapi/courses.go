@@ -15,58 +15,108 @@ type CoursesHandler struct {
 	coursesService adapters.CoursesService
 }
 
+func (h CoursesHandler) GetCoursesEdit(c *gin.Context, params generated.GetCoursesEditParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostCoursesEdit(c *gin.Context, params generated.PostCoursesEditParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) DeleteCoursesEditCourseID(c *gin.Context, courseID openapitypes.UUID, params generated.DeleteCoursesEditCourseIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) GetCoursesEditCourseID(c *gin.Context, courseID openapitypes.UUID, params generated.GetCoursesEditCourseIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PutCoursesEditCourseID(c *gin.Context, courseID openapitypes.UUID, params generated.PutCoursesEditCourseIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) GetCoursesCourseID(c *gin.Context, courseID openapitypes.UUID, params generated.GetCoursesCourseIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostCoursesCourseIDBuy(c *gin.Context, courseID openapitypes.UUID) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostLessonsEdit(c *gin.Context, params generated.PostLessonsEditParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) DeleteLessonsEditLessonID(c *gin.Context, lessonID openapitypes.UUID, params generated.DeleteLessonsEditLessonIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) GetLessonsEditLessonID(c *gin.Context, lessonID openapitypes.UUID, params generated.GetLessonsEditLessonIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PutLessonsEditLessonID(c *gin.Context, lessonID openapitypes.UUID, params generated.PutLessonsEditLessonIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) GetLessonsLessonID(c *gin.Context, lessonID openapitypes.UUID, params generated.GetLessonsLessonIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostLessonsLessonIDBuy(c *gin.Context, lessonID openapitypes.UUID, params generated.PostLessonsLessonIDBuyParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostPublicationRequests(c *gin.Context, params generated.PostPublicationRequestsParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PutPublicationRequestsRequestID(c *gin.Context, requestID openapitypes.UUID, params generated.PutPublicationRequestsRequestIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostStudentsRegister(c *gin.Context, params generated.PostStudentsRegisterParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostTeachersRegister(c *gin.Context, params generated.PostTeachersRegisterParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PostUserAccessConfirm(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) PutUserAccessLessons(c *gin.Context, params generated.PutUserAccessLessonsParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (h CoursesHandler) GetUserAccessLessonsLessonID(c *gin.Context, lessonID openapitypes.UUID, params generated.GetUserAccessLessonsLessonIDParams) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
 	return &CoursesHandler{logger: logger, coursesService: coursesService}
-}
-
-func (h *CoursesHandler) PostBuyCourse(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetCourses(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetCoursesCourseId(c *gin.Context, courseId openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetCoursesCourseIdLessons(c *gin.Context, courseId openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetCoursesCourseIdLessonsLessonId(c *gin.Context, courseId openapitypes.UUID, lessonId openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetTeachers(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) PostTeachers(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) DeleteTeachersTeacherID(c *gin.Context, teacherID openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) GetTeachersTeacherID(c *gin.Context, teacherID openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h *CoursesHandler) PutTeachersTeacherID(c *gin.Context, teacherID openapitypes.UUID) {
-	//TODO implement me
-	panic("implement me")
 }
 
 //func (h *CoursesHandler) GetTripByID(ginCtx *gin.Context, tripId openapitypes.UUID, params generated.GetTripByIDParams) {
