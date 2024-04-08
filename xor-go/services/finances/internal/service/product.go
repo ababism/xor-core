@@ -42,6 +42,18 @@ func (s *productService) Get(ctx context.Context, id uuid.UUID) (*domain.Product
 	return product, nil
 }
 
+func (s *productService) GetPrice(ctx context.Context, productUUIDs []uuid.UUID) (*float32, error) {
+	_, newCtx, span := getProductTracerSpan(ctx, ".GetPrice")
+	defer span.End()
+
+	price, err := s.r.GetPrice(newCtx, productUUIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return price, nil
+}
+
 func (s *productService) List(ctx context.Context, filter *domain.ProductFilter) ([]domain.ProductGet, error) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".List")
 	defer span.End()

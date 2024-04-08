@@ -48,6 +48,19 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (h *Handler) GetPrice(c *gin.Context, uuids []openapitypes.UUID) {
+	_, newCtx, span := getProductTracerSpan(c, ".GetPrice")
+	defer span.End()
+
+	price, err := h.productService.GetPrice(newCtx, uuids)
+	if err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, price)
+}
+
 func (h *Handler) GetList(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".GetList")
 	defer span.End()

@@ -2,6 +2,7 @@ package postgre
 
 import (
 	"context"
+	"fmt"
 	"xor-go/services/finances/internal/domain"
 	"xor-go/services/finances/internal/repository/postgre/repo_models"
 	"xor-go/services/finances/internal/service/adapters"
@@ -28,7 +29,7 @@ const (
 	`
 	createPurchaseProductsQuery = `
 		INSERT INTO purchase_requests_products (request_uuid, product_uuid)
-		VALUES ($1, $2)
+		VALUES
 	`
 	deletePurchaseRequestQuery = `
 		DELETE FROM purchase_requests WHERE uuid = $1
@@ -54,7 +55,13 @@ func (r *purchaseRequestRepository) Get(ctx context.Context, id uuid.UUID) (*dom
 	if err != nil {
 		return nil, err
 	}
-	return xcommon.EnsureSingle(purchaseRequests)
+
+	purchase, err := xcommon.EnsureSingle(purchaseRequests)
+	if err != nil {
+		return nil, err
+	}
+
+	return purchase, nil
 }
 
 func (r *purchaseRequestRepository) List(
@@ -78,12 +85,13 @@ func (r *purchaseRequestRepository) List(
 func (r *purchaseRequestRepository) Create(
 	ctx context.Context,
 	purchase *domain.PurchaseRequestCreate,
+	amount float32,
 ) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNamePurchaseRequest)
 	_, span := tr.Start(ctx, spanDefaultPurchaseRequest+".Create")
 	defer span.End()
 
-	purchasePostgres := repo_models.CreateToPurchaseRequestPostgres(purchase)
+	purchasePostgres := repo_models.CreateToPurchaseRequestPostgres(purchase, amount)
 	row := r.db.QueryRow(
 		createPurchaseRequestQuery,
 		purchasePostgres.Sender,
@@ -96,6 +104,24 @@ func (r *purchaseRequestRepository) Create(
 	if err != nil {
 		return nil, err
 	}
+
+	rows := ""
+	for i, productId := range purchase.Products {
+		rows += fmt.Sprintf("('%s', '%s')", id, productId)
+		if i != len(purchase.Products)-1 {
+			rows += ", "
+		}
+	}
+
+	query := createPurchaseProductsQuery + rows
+	_, err = r.db.ExecContext(
+		ctx,
+		query,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &id, nil
 }
 

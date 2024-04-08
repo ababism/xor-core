@@ -17,8 +17,8 @@ import (
 type PurchaseRequestCreate struct {
 	CreatedAt  time.Time            `json:"CreatedAt"`
 	Products   []openapi_types.UUID `json:"Products"`
-	Receiver   openapi_types.UUID   `json:"Receiver"`
-	Sender     openapi_types.UUID   `json:"Sender"`
+	Receiver   *openapi_types.UUID  `json:"Receiver,omitempty"`
+	Sender     *openapi_types.UUID  `json:"Sender,omitempty"`
 	WebhookURL string               `json:"WebhookURL"`
 }
 
@@ -35,8 +35,8 @@ type PurchaseRequestFilter struct {
 type PurchaseRequestGet struct {
 	CreatedAt  time.Time            `json:"CreatedAt"`
 	Products   []openapi_types.UUID `json:"Products"`
-	Receiver   openapi_types.UUID   `json:"Receiver"`
-	Sender     openapi_types.UUID   `json:"Sender"`
+	Receiver   *openapi_types.UUID  `json:"Receiver,omitempty"`
+	Sender     *openapi_types.UUID  `json:"Sender,omitempty"`
 	UUID       openapi_types.UUID   `json:"UUID"`
 	WebhookURL string               `json:"WebhookURL"`
 }

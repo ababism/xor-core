@@ -79,6 +79,22 @@ paths:
       responses:
         '200':
           description: Successful operation
+  /products/price/{uuids}:
+    get:
+      operationId: getPrice
+      summary: Get products price with discounts
+      parameters:
+        - in: path
+          name: uuids
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+      responses:
+        '200':
+          description: Successful operation
 components:
   schemas:
     ProductGet:
@@ -114,7 +130,7 @@ components:
         Price:
           type: number
         IsAvailable:
-            type: boolean
+          type: boolean
       required:
         - Name
         - Price

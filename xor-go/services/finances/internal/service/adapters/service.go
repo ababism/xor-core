@@ -32,6 +32,7 @@ type PaymentService interface {
 
 type ProductService interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.ProductGet, error)
+	GetPrice(ctx context.Context, productUUIDs []uuid.UUID) (*float32, error)
 	List(ctx context.Context, filter *domain.ProductFilter) ([]domain.ProductGet, error)
 	Create(ctx context.Context, product *domain.ProductCreate) error
 	Update(ctx context.Context, product *domain.ProductUpdate) error
