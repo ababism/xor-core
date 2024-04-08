@@ -45,8 +45,9 @@ type PayoutRequestRepository interface {
 
 type PurchaseRequestRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.PurchaseRequestGet, error)
+	GetPrice(ctx context.Context, id uuid.UUID) (*float32, error)
 	List(ctx context.Context, filter *domain.PurchaseRequestFilter) ([]domain.PurchaseRequestGet, error)
-	Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) (*uuid.UUID, error)
+	Create(ctx context.Context, purchase *domain.PurchaseRequestCreate, amount float32) (*uuid.UUID, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 

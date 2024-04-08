@@ -115,6 +115,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		paymentsClient,
 		productService,
 		paymentRepo,
+		discountRepo,
 	)
 
 	log.Logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))

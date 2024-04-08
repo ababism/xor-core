@@ -25,6 +25,7 @@ type purchaseRequestService struct {
 	rPurchase adapters.PurchaseRequestRepository
 	rProduct  adapters.ProductRepository
 	rPayment  adapters.PaymentRepository
+	rDiscount adapters.DiscountRepository
 	cPayment  adapters.PaymentsClient
 }
 
@@ -33,11 +34,13 @@ func NewPurchaseRequestService(
 	paymentsClient adapters.PaymentsClient,
 	productRepo adapters.ProductRepository,
 	paymentRepo adapters.PaymentRepository,
+	discountRepo adapters.DiscountRepository,
 ) adapters.PurchaseRequestService {
 	return &purchaseRequestService{
 		rPurchase: purchaseRequestRepository,
 		rProduct:  productRepo,
 		rPayment:  paymentRepo,
+		rDiscount: discountRepo,
 		cPayment:  paymentsClient,
 	}
 }
@@ -52,12 +55,24 @@ func (s *purchaseRequestService) Get(ctx context.Context, id uuid.UUID) (*domain
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Get")
 	defer span.End()
 
-	purchaseRequest, err := s.rPurchase.Get(newCtx, id)
+	request, err := s.rPurchase.Get(newCtx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return purchaseRequest, nil
+	return request, nil
+}
+
+func (s *purchaseRequestService) GetPrice(ctx context.Context, id uuid.UUID) (*float32, error) {
+	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".GetPrice")
+	defer span.End()
+
+	request, err := s.rPurchase.GetPrice(newCtx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return request, nil
 }
 
 func (s *purchaseRequestService) List(
@@ -79,13 +94,12 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	id, err := s.rPurchase.Create(newCtx, purchase)
+	id, err := s.rPurchase.Create(newCtx, purchase, 0)
 	if err != nil {
 		return err
 	}
 
 	products := make([]domain.ProductGet, 0)
-	var sum float32 = 0.0
 	productsNames := ""
 	for _, productId := range purchase.Products {
 		product, err := s.rProduct.Get(ctx, productId)
@@ -96,9 +110,10 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 			return nil
 		}
 		products = append(products, *product)
-		sum += product.Price
 		productsNames += " " + product.Name
 	}
+
+	err := s.rPurchase.Create(newCtx, purchase, 0)
 
 	createPurchase, err := s.cPayment.CreatePurchase(ctx, &domain.PaymentsCreatePurchase{
 		PaymentUUID: *id,

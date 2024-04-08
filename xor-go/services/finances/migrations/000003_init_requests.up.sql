@@ -13,6 +13,7 @@ CREATE TABLE purchase_requests
     uuid        UUID      NOT NULL DEFAULT gen_random_uuid(),
     sender      UUID,
     receiver    UUID,
+    amount      FLOAT(10) NOT NULL,
     webhook_url TEXT      NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (uuid)
