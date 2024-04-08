@@ -1,7 +1,7 @@
 apiVersion: "1.0.0"
 
 app:
-  name: "template"
+  name: "courses"
   env: "local"
 
 logger:
@@ -49,6 +49,10 @@ kafka_reader:
   id_group: "TODO_id_group_here"
   min_bytes: 1
   max_bytes: 2048
+
+kafka_writer:
+  broker: "kafka:9092"
+  topic: "inbound"
 
 scraper:
   scrape_interval: "5s"
