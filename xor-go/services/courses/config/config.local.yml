@@ -44,10 +44,10 @@ migrations_mongo:
 
 kafka_reader:
   brokers:
-    - "TODO_broker"
-  topic: "TODO_topic_here"
-  id_group: "TODO_id_group_here"
-  min_bytes: 1
+    - "kafka:9092"
+  topic: "outbound"
+  id_group: "courses-service"
+  min_bytes: 32
   max_bytes: 2048
 
 kafka_writer:
@@ -55,10 +55,7 @@ kafka_writer:
   topic: "inbound"
 
 scraper:
-  scrape_interval: "5s"
-
-long_poll:
-  long_poll_timeout: "10s"
+  scrape_interval: "10s"
 
 tracer:
   enable: false

@@ -3,10 +3,10 @@ package config
 import (
 	"github.com/spf13/viper"
 	"log"
-	"xor-go/pkg/http_server"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/xapp"
 	"xor-go/pkg/xconfig"
+	"xor-go/pkg/xhttp"
 	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
@@ -19,7 +19,7 @@ import (
 
 type Config struct {
 	App              *xapp.Config                 `mapstructure:"app"`
-	Http             *http_server.Config          `mapstructure:"http"`
+	Http             *xhttp.Config                `mapstructure:"http"`
 	FinancesClient   *financesclient.ClientConfig `mapstructure:"finances_client"`
 	Logger           *xlogger.Config              `mapstructure:"logger"`
 	Mongo            *mongo.Config                `mapstructure:"mongo"`

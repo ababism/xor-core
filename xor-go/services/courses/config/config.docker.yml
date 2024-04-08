@@ -3,6 +3,7 @@ apiVersion: "1.0.0"
 app:
   name: "courses"
   env: "local"
+  version: "1.0"
 
 logger:
   env: "dev" # "prod"
@@ -47,7 +48,7 @@ kafka_reader:
   brokers:
     - "kafka:9092"
   topic: "outbound"
-  id_group: "template-service"
+  id_group: "courses-service"
   min_bytes: 32
   max_bytes: 2048
 
@@ -57,9 +58,6 @@ kafka_writer:
 
 scraper:
   scrape_interval: 10s
-
-long_poll:
-  long_poll_timeout: 10s
 
 tracer:
   enable: true

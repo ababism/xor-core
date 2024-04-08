@@ -7,8 +7,8 @@ import (
 	requestid "github.com/sumit-tembe/gin-requestid"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"time"
-	httpServer "xor-go/pkg/http_server"
-	"xor-go/pkg/metrics"
+	//"xor-go/pkg/metrics"
+	httpServer "xor-go/pkg/xhttp"
 	"xor-go/pkg/xshutdown"
 	"xor-go/services/courses/internal/handler/generated"
 	myHttp "xor-go/services/courses/internal/handler/http"
@@ -29,9 +29,9 @@ func (a *App) Start(ctx context.Context) {
 func (a *App) startHTTPServer(ctx context.Context) {
 	// Создаем общий роутинг http сервера
 	router := httpServer.NewRouter()
-
-	// Добавляем системные роуты
-	router.WithHandleGET("/metrics", metrics.HandleFunc())
+	//
+	//// Добавляем системные роуты
+	//router.WithHandleGET("/metrics", metrics.HandleFunc())
 
 	tracerMw := generated.MiddlewareFunc(otelgin.Middleware(a.cfg.App.Name, otelgin.WithTracerProvider(a.tracerProvider)))
 	GinZapMw := generated.MiddlewareFunc(ginzap.Ginzap(a.logger, time.RFC3339, true))
@@ -43,11 +43,11 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	}
 
 	// Добавляем роуты api
-	myHttp.InitHandler(router.GetRouter(), a.logger, middlewares, a.service)
+	myHttp.InitHandler(router.Router(), a.logger, middlewares, a.service)
 
 	// Создаем сервер
-	srv := httpServer.New(a.cfg.Http)
-	srv.RegisterRoutes(&router)
+	srv := httpServer.NewServer(a.cfg.Http, router)
+	//srv.RegisterRoutes(&router)
 
 	// Стартуем
 	a.logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Name, a.cfg.Http.Host, a.cfg.Http.Port))
