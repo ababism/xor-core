@@ -318,6 +318,11 @@ paths:
         - User
       description: Buy a course.
       parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
         - in: path
           name: courseID
           required: true
@@ -532,12 +537,27 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         FeedbackID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         TeacherID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         Name:
@@ -546,7 +566,6 @@ components:
           type: string
         Landing:
           type: string
-          format: binary
         Visibility:
           type: string
           enum: [ Hidden, Visible ]
@@ -563,9 +582,19 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         FeedbackID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         Heading:
@@ -587,9 +616,19 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         FeedbackID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         Heading:
@@ -597,6 +636,17 @@ components:
         Visibility:
           type: string
           enum: [ Hidden, Visible ]
+        LessonIDs:
+          type: array
+          items:
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              name: uuid
+              path: github.com/google/uuid
+            x-go-type-skip-optional-pointer: true
+            type: string
+            format: uuid
+          description: Lessons in theme.
       required:
         - Heading
         - Visibility
@@ -604,12 +654,27 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         CourseID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         TeacherID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
         Product:
@@ -629,10 +694,20 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: Unique identifier for the product.
         Owner:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the owner of the product.
@@ -641,9 +716,18 @@ components:
           format: float
           description: Price of the product.
         Item:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the item associated with the product.
+      required:
+        - Price
+        - Owner
+        - Item
     PaymentRedirect:
       type: object
       properties:
@@ -654,14 +738,29 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: Unique identifier for the lesson access.
         LessonID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the lesson.
         StudentID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the student.
@@ -673,6 +772,11 @@ components:
       type: object
       properties:
         AccountID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the student's account.
@@ -680,6 +784,11 @@ components:
       type: object
       properties:
         AccountID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the teacher's account.
@@ -687,14 +796,29 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: Unique identifier for the publication request.
         CourseID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the course associated with the request.
         AssigneeID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: ID of the assignee (teacher or moderator).
@@ -713,6 +837,11 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: Unique identifier for the actor.
@@ -728,6 +857,11 @@ components:
       type: object
       properties:
         ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
           description: Unique identifier for the actor.
