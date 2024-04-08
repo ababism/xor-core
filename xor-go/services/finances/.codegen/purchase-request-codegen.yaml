@@ -45,6 +45,7 @@ paths:
       operationId: create
       summary: Create a purchase request
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -76,7 +77,7 @@ components:
         - Receiver
         - Products
         - WebhookURL
-        - ReceivedAt
+        - CreatedAt
       properties:
         UUID:
           type: string
@@ -94,7 +95,7 @@ components:
             format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
     PurchaseRequestCreate:
@@ -104,7 +105,7 @@ components:
         - Receiver
         - Products
         - WebhookURL
-        - ReceivedAt
+        - CreatedAt
       properties:
         Sender:
           type: string
@@ -119,7 +120,7 @@ components:
             format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
     PurchaseRequestFilter:
@@ -136,6 +137,6 @@ components:
           format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time

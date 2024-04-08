@@ -45,6 +45,7 @@ paths:
       operationId: create
       summary: Create a product
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -56,6 +57,7 @@ paths:
       operationId: update
       summary: Update a product
       requestBody:
+        required: true
         content:
           application/json:
             schema:

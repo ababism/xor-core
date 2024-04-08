@@ -45,6 +45,7 @@ paths:
       operationId: create
       summary: Create a payout request
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -84,7 +85,7 @@ components:
           type: number
         Data:
           $ref: '#/components/schemas/PayoutRequestData'
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
       required:
@@ -92,7 +93,7 @@ components:
         - Receiver
         - Amount
         - Data
-        - ReceivedAt
+        - CreatedAt
     PayoutRequestCreate:
       type: object
       properties:
@@ -103,14 +104,14 @@ components:
           type: number
         Data:
           $ref: '#/components/schemas/PayoutRequestData'
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
       required:
         - Receiver
         - Amount
         - Data
-        - ReceivedAt
+        - CreatedAt
     PayoutRequestFilter:
       type: object
       properties:
@@ -122,6 +123,6 @@ components:
           format: uuid
         Amount:
           type: number
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time

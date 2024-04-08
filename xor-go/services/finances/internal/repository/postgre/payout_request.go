@@ -121,8 +121,8 @@ func mapGetPayoutRequestRequestParams(params *domain.PayoutRequestFilter) map[st
 	if params.Amount != nil {
 		paramsMap["amount"] = *params.Amount
 	}
-	if params.ReceivedAt != nil {
-		paramsMap["created_at"] = *params.ReceivedAt
+	if params.CreatedAt != nil {
+		paramsMap["created_at"] = *params.CreatedAt
 	}
 	return paramsMap
 }

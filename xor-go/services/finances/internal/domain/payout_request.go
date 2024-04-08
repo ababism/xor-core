@@ -9,23 +9,23 @@ type PayoutRequestData struct {
 }
 
 type PayoutRequestGet struct {
-	UUID       uuid.UUID
-	Receiver   uuid.UUID
-	Amount     float32
-	Data       PayoutRequestData
-	ReceivedAt time.Time
+	UUID      uuid.UUID
+	Receiver  uuid.UUID
+	Amount    float32
+	Data      PayoutRequestData
+	CreatedAt time.Time
 }
 
 type PayoutRequestCreate struct {
-	Receiver   uuid.UUID
-	Amount     float32
-	Data       PayoutRequestData
-	ReceivedAt time.Time
+	Receiver  uuid.UUID
+	Amount    float32
+	Data      PayoutRequestData
+	CreatedAt time.Time
 }
 
 type PayoutRequestFilter struct {
-	UUID       *uuid.UUID
-	Receiver   *uuid.UUID
-	Amount     *float32
-	ReceivedAt *time.Time
+	UUID      *uuid.UUID
+	Receiver  *uuid.UUID
+	Amount    *float32
+	CreatedAt *time.Time
 }

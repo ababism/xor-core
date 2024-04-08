@@ -49,6 +49,7 @@ paths:
       operationId: create
       summary: Create a payment
       requestBody:
+        required: true
         content:
           application/json:
             schema:

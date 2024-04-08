@@ -48,6 +48,7 @@ paths:
       operationId: create
       summary: Create a bank account
       requestBody:
+        required: true
         content:
           application/json:
             schema:
