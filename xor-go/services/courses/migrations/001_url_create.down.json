@@ -1,9 +1,18 @@
 [
   {
-    "dropIndexes": "driver",
-    "index": "trip_unique"
+    "dropIndexes": "lesson_access",
+    "index": "lesson_student_index"
   },
   {
-    "dropCollections": "driver"
+    "dropCollections": "courses"
+  },
+  {
+    "dropCollections": "lessons"
+  },
+  {
+    "dropCollections": "publication_requests"
+  },
+  {
+    "drop": "lesson_access"
   }
 ]
