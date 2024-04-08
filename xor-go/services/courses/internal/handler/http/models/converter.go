@@ -40,11 +40,11 @@ func ToSectionSliceResponse(sections []domain.Section) *[]generated.Section {
 func ToSectionResponse(section domain.Section) generated.Section {
 	return generated.Section{
 		Description: section.Description,
-		FeedbackID:  section.FeedbackID,
-		Heading:     section.Heading,
-		ID:          section.ID,
-		Themes:      ToThemeResponseSlice(section.Themes),
-		Visibility:  ToVisibilitySection(section.Visibility),
+		//FeedbackID:  section.FeedbackID,
+		Heading:    section.Heading,
+		ID:         section.ID,
+		Themes:     ToThemeResponseSlice(section.Themes),
+		Visibility: ToVisibilitySection(section.Visibility),
 	}
 }
 
@@ -62,7 +62,7 @@ func ToThemeResponseSlice(themes []domain.Theme) *[]generated.Theme {
 
 func ToThemeResponse(theme domain.Theme) generated.Theme {
 	return generated.Theme{
-		FeedbackID: theme.FeedbackID,
+		//FeedbackID: theme.FeedbackID,
 		Heading:    theme.Heading,
 		ID:         theme.ID,
 		LessonIDs:  &theme.LessonIDs,

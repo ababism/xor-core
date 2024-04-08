@@ -29,6 +29,7 @@ func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesServic
 // GetCoursesEdit LIST COURSES
 func (h CoursesHandler) GetCoursesEdit(ginCtx *gin.Context, params generated.GetCoursesEditParams) {
 	//	 TODO
+	panic("implement me")
 }
 
 // GetCoursesCourseID READ Published

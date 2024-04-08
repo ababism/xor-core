@@ -597,14 +597,14 @@ components:
           x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
-        FeedbackID:
-          x-go-type: uuid.UUID
-          x-go-type-import:
-            name: uuid
-            path: github.com/google/uuid
-          x-go-type-skip-optional-pointer: true
-          type: string
-          format: uuid
+#        FeedbackID:
+#          x-go-type: uuid.UUID
+#          x-go-type-import:
+#            name: uuid
+#            path: github.com/google/uuid
+#          x-go-type-skip-optional-pointer: true
+#          type: string
+#          format: uuid
         Heading:
           type: string
         Description:
@@ -631,14 +631,14 @@ components:
           x-go-type-skip-optional-pointer: true
           type: string
           format: uuid
-        FeedbackID:
-          x-go-type: uuid.UUID
-          x-go-type-import:
-            name: uuid
-            path: github.com/google/uuid
-          x-go-type-skip-optional-pointer: true
-          type: string
-          format: uuid
+#        FeedbackID:
+#          x-go-type: uuid.UUID
+#          x-go-type-import:
+#            name: uuid
+#            path: github.com/google/uuid
+#          x-go-type-skip-optional-pointer: true
+#          type: string
+#          format: uuid
         Heading:
           type: string
         Visibility:

@@ -61,7 +61,6 @@ func (c *Course) ApplyVisibility() {
 func (s *Section) ApplyVisibility() {
 	if s.Visibility == Hidden {
 		s.Description = ""
-		s.FeedbackID = uuid.Nil
 		s.Themes = nil
 	} else {
 		for i := range s.Themes {
@@ -72,7 +71,7 @@ func (s *Section) ApplyVisibility() {
 
 func (t *Theme) ApplyVisibility() {
 	if t.Visibility == Hidden {
-		t.FeedbackID = uuid.Nil
+
 		t.LessonIDs = nil
 	}
 }

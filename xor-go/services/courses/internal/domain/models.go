@@ -70,8 +70,8 @@ type Course struct {
 }
 
 type Section struct {
-	ID          uuid.UUID
-	FeedbackID  uuid.UUID
+	ID uuid.UUID
+	//FeedbackID  uuid.UUID
 	Heading     string
 	Description string
 	Visibility  Visibility
@@ -80,8 +80,8 @@ type Section struct {
 }
 
 type Theme struct {
-	ID         uuid.UUID
-	FeedbackID uuid.UUID
+	ID uuid.UUID
+	//FeedbackID uuid.UUID
 	Heading    string
 	Visibility Visibility
 	LessonIDs  []uuid.UUID

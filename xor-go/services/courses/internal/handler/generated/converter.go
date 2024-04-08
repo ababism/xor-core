@@ -46,11 +46,11 @@ func ToSectionSliceToDomain(sections []Section) []domain.Section {
 func (s Section) ToDomain() domain.Section {
 	return domain.Section{
 		Description: s.Description,
-		FeedbackID:  s.FeedbackID,
-		Heading:     s.Heading,
-		ID:          s.ID,
-		Themes:      ToThemeSliceToDomain(*s.Themes),
-		Visibility:  s.Visibility.ToDomain(),
+		//FeedbackID:  s.FeedbackID,
+		Heading:    s.Heading,
+		ID:         s.ID,
+		Themes:     ToThemeSliceToDomain(*s.Themes),
+		Visibility: s.Visibility.ToDomain(),
 	}
 }
 func ToThemeSliceToDomain(themes []Theme) []domain.Theme {
@@ -67,7 +67,7 @@ func ToThemeSliceToDomain(themes []Theme) []domain.Theme {
 
 func (t Theme) ToDomain() domain.Theme {
 	return domain.Theme{
-		FeedbackID: t.FeedbackID,
+		//FeedbackID: t.FeedbackID,
 		Heading:    t.Heading,
 		ID:         t.ID,
 		LessonIDs:  *t.LessonIDs,

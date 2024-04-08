@@ -172,7 +172,6 @@ type PublicationRequestRequestStatus string
 // Section defines model for Section.
 type Section struct {
 	Description string            `json:"Description"`
-	FeedbackID  uuid.UUID         `json:"FeedbackID,omitempty"`
 	Heading     string            `json:"Heading"`
 	ID          uuid.UUID         `json:"ID,omitempty"`
 	Themes      *[]Theme          `json:"Themes,omitempty"`
@@ -196,9 +195,8 @@ type Teacher struct {
 
 // Theme defines model for Theme.
 type Theme struct {
-	FeedbackID uuid.UUID `json:"FeedbackID,omitempty"`
-	Heading    string    `json:"Heading"`
-	ID         uuid.UUID `json:"ID,omitempty"`
+	Heading string    `json:"Heading"`
+	ID      uuid.UUID `json:"ID,omitempty"`
 
 	// LessonIDs Lessons in theme.
 	LessonIDs  *[]uuid.UUID    `json:"LessonIDs,omitempty"`
