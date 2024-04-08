@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	uuid "github.com/google/uuid"
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
@@ -58,7 +59,7 @@ const (
 // Actor defines model for Actor.
 type Actor struct {
 	// ID Unique identifier for the actor.
-	ID openapi_types.UUID `json:"ID"`
+	ID uuid.UUID `json:"ID"`
 
 	// Roles Roles of the actor.
 	Roles []string `json:"Roles"`
@@ -66,14 +67,14 @@ type Actor struct {
 
 // Course defines model for Course.
 type Course struct {
-	Discipline string              `json:"Discipline"`
-	FeedbackID *openapi_types.UUID `json:"FeedbackID,omitempty"`
-	ID         *openapi_types.UUID `json:"ID,omitempty"`
-	Landing    openapi_types.File  `json:"Landing"`
-	Name       string              `json:"Name"`
-	Sections   *[]Section          `json:"Sections,omitempty"`
-	TeacherID  *openapi_types.UUID `json:"TeacherID,omitempty"`
-	Visibility CourseVisibility    `json:"Visibility"`
+	Discipline string           `json:"Discipline"`
+	FeedbackID uuid.UUID        `json:"FeedbackID,omitempty"`
+	ID         uuid.UUID        `json:"ID,omitempty"`
+	Landing    string           `json:"Landing"`
+	Name       string           `json:"Name"`
+	Sections   *[]Section       `json:"Sections,omitempty"`
+	TeacherID  uuid.UUID        `json:"TeacherID,omitempty"`
+	Visibility CourseVisibility `json:"Visibility"`
 }
 
 // CourseVisibility defines model for Course.Visibility.
@@ -81,13 +82,13 @@ type CourseVisibility string
 
 // Lesson defines model for Lesson.
 type Lesson struct {
-	CourseID   *openapi_types.UUID `json:"CourseID,omitempty"`
-	ID         *openapi_types.UUID `json:"ID,omitempty"`
-	Product    *Product            `json:"Product,omitempty"`
-	TeacherID  *openapi_types.UUID `json:"TeacherID,omitempty"`
-	Transcript string              `json:"Transcript"`
-	VideoURI   *string             `json:"VideoURI,omitempty"`
-	Visibility LessonVisibility    `json:"Visibility"`
+	CourseID   uuid.UUID        `json:"CourseID,omitempty"`
+	ID         uuid.UUID        `json:"ID,omitempty"`
+	Product    *Product         `json:"Product,omitempty"`
+	TeacherID  uuid.UUID        `json:"TeacherID,omitempty"`
+	Transcript string           `json:"Transcript"`
+	VideoURI   *string          `json:"VideoURI,omitempty"`
+	Visibility LessonVisibility `json:"Visibility"`
 }
 
 // LessonVisibility defines model for Lesson.Visibility.
@@ -99,13 +100,13 @@ type LessonAccess struct {
 	AccessStatus *LessonAccessAccessStatus `json:"AccessStatus,omitempty"`
 
 	// ID Unique identifier for the lesson access.
-	ID *openapi_types.UUID `json:"ID,omitempty"`
+	ID uuid.UUID `json:"ID,omitempty"`
 
 	// LessonID ID of the lesson.
-	LessonID *openapi_types.UUID `json:"LessonID,omitempty"`
+	LessonID uuid.UUID `json:"LessonID,omitempty"`
 
 	// StudentID ID of the student.
-	StudentID *openapi_types.UUID `json:"StudentID,omitempty"`
+	StudentID uuid.UUID `json:"StudentID,omitempty"`
 }
 
 // LessonAccessAccessStatus Access status of the lesson.
@@ -114,7 +115,7 @@ type LessonAccessAccessStatus string
 // OptionalActor defines model for OptionalActor.
 type OptionalActor struct {
 	// ID Unique identifier for the actor.
-	ID *openapi_types.UUID `json:"ID,omitempty"`
+	ID uuid.UUID `json:"ID,omitempty"`
 
 	// Roles Roles of the actor.
 	Roles *[]string `json:"Roles,omitempty"`
@@ -129,31 +130,31 @@ type PaymentRedirect struct {
 // Product defines model for Product.
 type Product struct {
 	// ID Unique identifier for the product.
-	ID *openapi_types.UUID `json:"ID,omitempty"`
+	ID uuid.UUID `json:"ID,omitempty"`
 
 	// Item ID of the item associated with the product.
-	Item *openapi_types.UUID `json:"Item,omitempty"`
+	Item uuid.UUID `json:"Item"`
 
 	// Owner ID of the owner of the product.
-	Owner *openapi_types.UUID `json:"Owner,omitempty"`
+	Owner uuid.UUID `json:"Owner"`
 
 	// Price Price of the product.
-	Price *float32 `json:"Price,omitempty"`
+	Price float32 `json:"Price"`
 }
 
 // PublicationRequest defines model for PublicationRequest.
 type PublicationRequest struct {
 	// AssigneeID ID of the assignee (teacher or moderator).
-	AssigneeID *openapi_types.UUID `json:"AssigneeID,omitempty"`
+	AssigneeID uuid.UUID `json:"AssigneeID,omitempty"`
 
 	// Comment Optional comment provided by the assignee.
 	Comment *string `json:"Comment,omitempty"`
 
 	// CourseID ID of the course associated with the request.
-	CourseID *openapi_types.UUID `json:"CourseID,omitempty"`
+	CourseID uuid.UUID `json:"CourseID,omitempty"`
 
 	// ID Unique identifier for the publication request.
-	ID *openapi_types.UUID `json:"ID,omitempty"`
+	ID uuid.UUID `json:"ID,omitempty"`
 
 	// RequestStatus Status of the publication request.
 	RequestStatus *PublicationRequestRequestStatus `json:"RequestStatus,omitempty"`
@@ -167,12 +168,12 @@ type PublicationRequestRequestStatus string
 
 // Section defines model for Section.
 type Section struct {
-	Description string              `json:"Description"`
-	FeedbackID  *openapi_types.UUID `json:"FeedbackID,omitempty"`
-	Heading     string              `json:"Heading"`
-	ID          *openapi_types.UUID `json:"ID,omitempty"`
-	Themes      *[]Theme            `json:"Themes,omitempty"`
-	Visibility  SectionVisibility   `json:"Visibility"`
+	Description string            `json:"Description"`
+	FeedbackID  uuid.UUID         `json:"FeedbackID,omitempty"`
+	Heading     string            `json:"Heading"`
+	ID          uuid.UUID         `json:"ID,omitempty"`
+	Themes      *[]Theme          `json:"Themes,omitempty"`
+	Visibility  SectionVisibility `json:"Visibility"`
 }
 
 // SectionVisibility defines model for Section.Visibility.
@@ -181,21 +182,24 @@ type SectionVisibility string
 // Student defines model for Student.
 type Student struct {
 	// AccountID ID of the student's account.
-	AccountID *openapi_types.UUID `json:"AccountID,omitempty"`
+	AccountID uuid.UUID `json:"AccountID,omitempty"`
 }
 
 // Teacher defines model for Teacher.
 type Teacher struct {
 	// AccountID ID of the teacher's account.
-	AccountID *openapi_types.UUID `json:"AccountID,omitempty"`
+	AccountID uuid.UUID `json:"AccountID,omitempty"`
 }
 
 // Theme defines model for Theme.
 type Theme struct {
-	FeedbackID *openapi_types.UUID `json:"FeedbackID,omitempty"`
-	Heading    string              `json:"Heading"`
-	ID         *openapi_types.UUID `json:"ID,omitempty"`
-	Visibility ThemeVisibility     `json:"Visibility"`
+	FeedbackID uuid.UUID `json:"FeedbackID,omitempty"`
+	Heading    string    `json:"Heading"`
+	ID         uuid.UUID `json:"ID,omitempty"`
+
+	// LessonIDs Lessons in theme.
+	LessonIDs  *[]uuid.UUID    `json:"LessonIDs,omitempty"`
+	Visibility ThemeVisibility `json:"Visibility"`
 }
 
 // ThemeVisibility defines model for Theme.Visibility.
@@ -229,6 +233,11 @@ type PutCoursesEditCourseIDParams struct {
 // GetCoursesCourseIDParams defines parameters for GetCoursesCourseID.
 type GetCoursesCourseIDParams struct {
 	Actor *OptionalActor `json:"actor,omitempty"`
+}
+
+// PostCoursesCourseIDBuyParams defines parameters for PostCoursesCourseIDBuy.
+type PostCoursesCourseIDBuyParams struct {
+	Actor Actor `json:"actor"`
 }
 
 // PostLessonsEditParams defines parameters for PostLessonsEdit.
@@ -347,7 +356,7 @@ type ServerInterface interface {
 	GetCoursesCourseID(c *gin.Context, courseID openapi_types.UUID, params GetCoursesCourseIDParams)
 	// Buy Course
 	// (POST /courses/{courseID}/buy)
-	PostCoursesCourseIDBuy(c *gin.Context, courseID openapi_types.UUID)
+	PostCoursesCourseIDBuy(c *gin.Context, courseID openapi_types.UUID, params PostCoursesCourseIDBuyParams)
 	// Create Lesson
 	// (POST /lessons/edit/)
 	PostLessonsEdit(c *gin.Context, params PostLessonsEditParams)
@@ -707,6 +716,33 @@ func (siw *ServerInterfaceWrapper) PostCoursesCourseIDBuy(c *gin.Context) {
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PostCoursesCourseIDBuyParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -714,7 +750,7 @@ func (siw *ServerInterfaceWrapper) PostCoursesCourseIDBuy(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostCoursesCourseIDBuy(c, courseID)
+	siw.Handler.PostCoursesCourseIDBuy(c, courseID, params)
 }
 
 // PostLessonsEdit operation middleware

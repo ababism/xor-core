@@ -14,7 +14,7 @@ type Course struct {
 	FeedbackID uuid.UUID         `bson:"feedback_id"`
 	Name       string            `bson:"name"`
 	Discipline string            `bson:"discipline"`
-	Landing    []byte            `bson:"landing"`
+	Landing    string            `bson:"landing"`
 	Visibility domain.Visibility `bson:"visibility"`
 	Sections   []Section         `bson:"sections"`
 }
@@ -53,7 +53,7 @@ type Lesson struct {
 type Product struct {
 	ID    uuid.UUID `bson:"_id"`
 	Owner uuid.UUID `bson:"owner"`
-	Price float64   `bson:"price"`
+	Price float32   `bson:"price"`
 	Item  uuid.UUID `bson:"item"`
 }
 

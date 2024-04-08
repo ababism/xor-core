@@ -5,8 +5,8 @@ import (
 	"xor-go/pkg/xstringset"
 )
 
-func NewActor(ID uuid.UUID, roles []string) *Actor {
-	a := &Actor{ID: ID,
+func NewActor(ID uuid.UUID, roles []string) Actor {
+	a := Actor{ID: ID,
 		roles: xstringset.New()}
 	a.initRoles(roles)
 	return a
@@ -49,7 +49,7 @@ func (c *Actor) initRoles(roles []string) {
 func (c *Course) ApplyVisibility() {
 	if c.Visibility == Hidden {
 		c.FeedbackID = uuid.Nil
-		c.Landing = nil
+		c.Landing = ""
 		c.Sections = nil
 	} else {
 		for i := range c.Sections {

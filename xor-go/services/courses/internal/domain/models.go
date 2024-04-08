@@ -63,7 +63,7 @@ type Course struct {
 	TeacherID  uuid.UUID
 	Name       string
 	Discipline string
-	Landing    []byte
+	Landing    string
 	Visibility Visibility
 	Sections   []Section
 	//ProductID  uuid.UUID
@@ -102,7 +102,7 @@ type Lesson struct {
 type Product struct {
 	ID    uuid.UUID
 	Owner uuid.UUID
-	Price float64
+	Price float32
 	Item  uuid.UUID
 }
 
@@ -123,5 +123,5 @@ type LessonAccess struct {
 	UpdatedAt    time.Time
 }
 type PaymentRedirect struct {
-	response []byte
+	Response string
 }
