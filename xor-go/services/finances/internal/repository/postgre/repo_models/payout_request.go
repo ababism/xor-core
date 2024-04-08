@@ -54,10 +54,10 @@ func ToPayoutRequestDataDomain(model PayoutRequestData) domain.PayoutRequestData
 
 func ToPayoutRequestDomain(model *PayoutRequest) *domain.PayoutRequestGet {
 	return &domain.PayoutRequestGet{
-		UUID:       model.UUID,
-		Receiver:   model.Receiver,
-		Amount:     model.Amount,
-		ReceivedAt: model.CreatedAt,
-		Data:       ToPayoutRequestDataDomain(model.Data),
+		UUID:      model.UUID,
+		Receiver:  model.Receiver,
+		Amount:    model.Amount,
+		CreatedAt: model.CreatedAt,
+		Data:      ToPayoutRequestDataDomain(model.Data),
 	}
 }

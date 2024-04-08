@@ -10,7 +10,7 @@ func CreateToDomain(create PurchaseRequestCreate) domain.PurchaseRequestCreate {
 		Receiver:   create.Receiver,
 		Products:   create.Products,
 		WebhookURL: create.WebhookURL,
-		CreatedAt:  create.ReceivedAt,
+		CreatedAt:  create.CreatedAt,
 	}
 }
 
@@ -21,7 +21,7 @@ func DomainToGet(get domain.PurchaseRequestGet) PurchaseRequestGet {
 		Products:   get.Products,
 		Receiver:   get.Receiver,
 		WebhookURL: get.WebhookURL,
-		ReceivedAt: get.CreatedAt,
+		CreatedAt:  get.CreatedAt,
 	}
 }
 
@@ -34,6 +34,6 @@ func FilterToDomain(filter *PurchaseRequestFilter) *domain.PurchaseRequestFilter
 		Sender:     filter.Sender,
 		Receiver:   filter.Receiver,
 		WebhookURL: filter.WebhookURL,
-		CreatedAt:  filter.ReceivedAt,
+		CreatedAt:  filter.CreatedAt,
 	}
 }

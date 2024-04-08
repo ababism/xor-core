@@ -789,7 +789,7 @@ components:
           type: number
         Data:
           $ref: '#/components/schemas/PayoutRequestData'
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
       required:
@@ -797,7 +797,7 @@ components:
         - Receiver
         - Amount
         - Data
-        - ReceivedAt
+        - CreatedAt
     PayoutRequestCreate:
       type: object
       properties:
@@ -808,14 +808,14 @@ components:
           type: number
         Data:
           $ref: '#/components/schemas/PayoutRequestData'
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
       required:
         - Receiver
         - Amount
         - Data
-        - ReceivedAt
+        - CreatedAt
     PayoutRequestFilter:
       type: object
       properties:
@@ -827,7 +827,7 @@ components:
           format: uuid
         Amount:
           type: number
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
     ProductGet:
@@ -899,7 +899,7 @@ components:
         - Sender
         - Receiver
         - WebhookURL
-        - ReceivedAt
+        - CreatedAt
       properties:
         UUID:
           type: string
@@ -912,7 +912,7 @@ components:
           format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
     PurchaseRequestCreate:
@@ -921,7 +921,7 @@ components:
         - Sender
         - Receiver
         - WebhookURL
-        - ReceivedAt
+        - CreatedAt
       properties:
         Sender:
           type: string
@@ -931,7 +931,7 @@ components:
           format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time
     PurchaseRequestFilter:
@@ -948,6 +948,6 @@ components:
           format: uuid
         WebhookURL:
           type: string
-        ReceivedAt:
+        CreatedAt:
           type: string
           format: date-time

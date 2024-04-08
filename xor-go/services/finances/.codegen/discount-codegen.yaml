@@ -28,6 +28,7 @@ paths:
       operationId: getList
       summary: List discounts
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -56,6 +57,7 @@ paths:
       operationId: update
       summary: Update a discount
       requestBody:
+        required: true
         content:
           application/json:
             schema:
