@@ -1,57 +1,46 @@
 [
   {
-    "create": "driver",
+    "create": "courses",
     "validator": {
       "$jsonSchema": {
         "bsonType": "object",
-        "required": [
-          "trip_id",
-          "from",
-          "to",
-          "status"
-        ],
+        "required": ["feedback_id", "teacher_id", "name", "discipline", "landing", "visibility", "sections"],
         "properties": {
-          "trip_id": {
-            "bsonType": "string",
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-          },
-          "driver_id": {
-            "bsonType": ["string", "null"]
-          },
-          "from": {
-            "bsonType": "object",
-            "required": ["lat", "lng"],
-            "properties": {
-              "lat": { "bsonType": "number" },
-              "lng": { "bsonType": "number" }
+          "feedback_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "teacher_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "name": { "bsonType": "string" },
+          "discipline": { "bsonType": "string" },
+          "landing": { "bsonType": "string" },
+          "visibility": { "bsonType": "int" },
+          "sections": {
+            "bsonType": "array",
+            "items": {
+              "bsonType": "object",
+              "required": ["heading", "description", "visibility", "themes"],
+              "properties": {
+                "heading": { "bsonType": "string" },
+                "description": { "bsonType": "string" },
+                "visibility": { "bsonType": "int" },
+                "themes": {
+                  "bsonType": "array",
+                  "items": {
+                    "bsonType": "object",
+                    "required": ["heading", "visibility", "lesson_ids"],
+                    "properties": {
+                      "heading": { "bsonType": "string" },
+                      "visibility": { "bsonType": "int" },
+                      "lesson_ids": {
+                        "bsonType": "array",
+                        "items": {
+                          "bsonType": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-          },
-          "to": {
-            "bsonType": "object",
-            "required": ["lat", "lng"],
-            "properties": {
-              "lat": { "bsonType": "number" },
-              "lng": { "bsonType": "number" }
-            }
-          },
-          "price": {
-            "bsonType": ["object", "null"],
-            "properties": {
-              "amount": { "bsonType": "number" },
-              "currency": { "bsonType": "string" }
-            },
-            "required": ["amount", "currency"]
-          },
-          "status": {
-            "bsonType": "string",
-            "enum": [
-              "DRIVER_SEARCH",
-              "DRIVER_FOUND",
-              "ON_POSITION",
-              "STARTED",
-              "ENDED",
-              "CANCELED"
-            ]
           }
         }
       }
@@ -59,14 +48,71 @@
     "validationLevel": "strict"
   },
   {
-    "createIndexes": "driver",
+    "create": "lessons",
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["course_id", "teacher_id", "product", "visibility", "transcript", "video_uri"],
+        "properties": {
+          "course_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "teacher_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "product": {
+            "bsonType": "object",
+            "required": ["owner", "price", "item"],
+            "properties": {
+              "owner": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+              "price": { "bsonType": "float" },
+              "item": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" }
+            }
+          },
+          "visibility": { "bsonType": "int" },
+          "transcript": { "bsonType": "string" },
+          "video_uri": { "bsonType": "string" }
+        }
+      }
+    },
+    "validationLevel": "strict"
+  },
+  {
+    "create": "publication_requests",
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["course_id", "assignee_id", "request_status", "updated_at"],
+        "properties": {
+          "course_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "assignee_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "request_status": { "bsonType": "int" },
+          "comment": { "bsonType": ["string", "null"] },
+          "updated_at": { "bsonType": "date" }
+        }
+      }
+    },
+    "validationLevel": "strict"
+  },
+  {
+    "create": "lesson_access",
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["lesson_id", "student_id", "access_status", "updated_at"],
+        "properties": {
+          "lesson_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "student_id": { "bsonType": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" },
+          "access_status": { "bsonType": "int" },
+          "updated_at": { "bsonType": "date" }
+        }
+      }
+    },
+    "validationLevel": "strict",
+    "createIndexes": "lesson_access",
     "indexes": [
       {
         "key": {
-          "trip_id": 1
+          "lesson_id": 1,
+          "student_id": 1
         },
-        "name": "trip_unique",
-        "unique": true
+        "name": "lesson_student_index"
       }
     ]
   }
