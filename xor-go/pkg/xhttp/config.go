@@ -12,10 +12,10 @@ const (
 )
 
 type Config struct {
-	Host         string        `yaml:"host" env:"HOST"`
-	Port         string        `yaml:"port" env:"PORT"`
-	ReadTimeout  time.Duration `yaml:"read_timeout" env:"READ_TIMEOUT"`
-	WriteTimeout time.Duration `yaml:"write_timeout" env:"WRITE_TIMEOUT"`
+	Host         string        `mapstructure:"host" yaml:"host" env:"HOST"`
+	Port         string        `mapstructure:"port" yaml:"port" env:"PORT"`
+	ReadTimeout  time.Duration `mapstructure:"read_timeout" yaml:"read_timeout" env:"READ_TIMEOUT"`
+	WriteTimeout time.Duration `mapstructure:"write_timeout" yaml:"write_timeout" env:"WRITE_TIMEOUT"`
 }
 
 func NewDefaultConfig() *Config {
