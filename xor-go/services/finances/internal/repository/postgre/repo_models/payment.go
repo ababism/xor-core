@@ -1,12 +1,28 @@
 package repo_models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"github.com/google/uuid"
 	"time"
 	"xor-go/services/finances/internal/domain"
 )
 
 type PaymentData struct {
+}
+
+func (a *PaymentData) Value() (driver.Value, error) {
+	return json.Marshal(a)
+}
+
+func (a *PaymentData) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &a)
 }
 
 type Payment struct {

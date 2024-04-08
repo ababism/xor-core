@@ -30,11 +30,12 @@ CREATE TABLE payments
 
 CREATE TABLE products
 (
-    uuid       UUID         NOT NULL DEFAULT gen_random_uuid(),
-    name       VARCHAR(255) NOT NULL,
-    price      FLOAT(10)    NOT NULL,
-    created_at TIMESTAMP    NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP    NOT NULL DEFAULT NOW(),
+    uuid         UUID         NOT NULL DEFAULT gen_random_uuid(),
+    name         VARCHAR(255) NOT NULL,
+    price        FLOAT(10)    NOT NULL,
+    is_available BOOLEAN      NOT NULL,
+    created_at   TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at   TIMESTAMP    NOT NULL DEFAULT NOW(),
     PRIMARY KEY (uuid)
 );
 

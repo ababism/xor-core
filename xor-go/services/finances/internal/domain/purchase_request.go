@@ -11,7 +11,7 @@ type PurchaseRequestGet struct {
 	Receiver   uuid.UUID
 	Products   []uuid.UUID
 	WebhookURL string
-	ReceivedAt time.Time
+	CreatedAt  time.Time
 }
 
 type PurchaseRequestCreate struct {
@@ -19,7 +19,7 @@ type PurchaseRequestCreate struct {
 	Receiver   uuid.UUID
 	Products   []uuid.UUID
 	WebhookURL string
-	ReceivedAt time.Time
+	CreatedAt  time.Time
 }
 
 type PurchaseRequestFilter struct {
@@ -27,5 +27,5 @@ type PurchaseRequestFilter struct {
 	Sender     *uuid.UUID
 	Receiver   *uuid.UUID
 	WebhookURL *string
-	ReceivedAt *time.Time
+	CreatedAt  *time.Time
 }

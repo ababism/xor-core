@@ -39,7 +39,7 @@ type BankAccountGet struct {
 	CreatedAt    time.Time            `json:"CreatedAt"`
 	Data         BankAccountData      `json:"Data"`
 	Funds        float32              `json:"Funds"`
-	LastDealAt   time.Time            `json:"LastDealAt"`
+	LastDealAt   *time.Time           `json:"LastDealAt,omitempty"`
 	LastUpdateAt time.Time            `json:"LastUpdateAt"`
 	Login        string               `json:"Login"`
 	Payments     []openapi_types.UUID `json:"Payments"`
@@ -52,7 +52,7 @@ type BankAccountUpdate struct {
 	AccountUUID openapi_types.UUID   `json:"AccountUUID"`
 	Data        BankAccountData      `json:"Data"`
 	Funds       float32              `json:"Funds"`
-	LastDealAt  time.Time            `json:"LastDealAt"`
+	LastDealAt  *time.Time           `json:"LastDealAt,omitempty"`
 	Login       string               `json:"Login"`
 	Payments    []openapi_types.UUID `json:"Payments"`
 	Status      string               `json:"Status"`

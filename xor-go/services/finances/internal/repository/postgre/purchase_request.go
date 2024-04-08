@@ -18,14 +18,13 @@ const (
 
 const (
 	basePurchaseRequestGetQuery = `
-		SELECT uuid, sender, receiver, webhook_url, received_at
+		SELECT uuid, sender, receiver, webhook_url, created_at
 		FROM purchase_requests
-		WHERE uuid = $1
 	`
 	createPurchaseRequestQuery = `
-		INSERT INTO purchase_requests (sender, receiver, webhook_url, received_at)
+		INSERT INTO purchase_requests (sender, receiver, webhook_url, created_at)
 		VALUES ($1, $2, $3, $4)
-		RETURNING id
+		RETURNING uuid
 	`
 	createPurchaseProductsQuery = `
 		INSERT INTO purchase_requests_products (request_uuid, product_uuid)
@@ -58,7 +57,10 @@ func (r *purchaseRequestRepository) Get(ctx context.Context, id uuid.UUID) (*dom
 	return xcommon.EnsureSingle(purchaseRequests)
 }
 
-func (r *purchaseRequestRepository) List(ctx context.Context, filter *domain.PurchaseRequestFilter) ([]domain.PurchaseRequestGet, error) {
+func (r *purchaseRequestRepository) List(
+	ctx context.Context,
+	filter *domain.PurchaseRequestFilter,
+) ([]domain.PurchaseRequestGet, error) {
 	tr := global.Tracer(adapters.ServiceNamePurchaseRequest)
 	_, span := tr.Start(ctx, spanDefaultPurchaseRequest+".List")
 	defer span.End()
@@ -123,8 +125,8 @@ func mapGetPurchaseRequestRequestParams(params *domain.PurchaseRequestFilter) ma
 	if params.WebhookURL != nil {
 		paramsMap["webhook_url"] = *params.WebhookURL
 	}
-	if params.ReceivedAt != nil {
-		paramsMap["received_at"] = *params.ReceivedAt
+	if params.CreatedAt != nil {
+		paramsMap["created_at"] = *params.CreatedAt
 	}
 	return paramsMap
 }

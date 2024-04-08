@@ -137,7 +137,6 @@ components:
         - Data
         - Status
         - Funds
-        - LastDealAt
         - CreatedAt
         - LastUpdateAt
         - Payments
@@ -193,7 +192,6 @@ components:
         - Funds
         - Data
         - Status
-        - LastDealAt
         - Payments
     BankAccountFilter:
       type: object

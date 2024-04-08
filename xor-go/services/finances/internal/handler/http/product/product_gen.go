@@ -15,15 +15,17 @@ import (
 
 // ProductCreate defines model for ProductCreate.
 type ProductCreate struct {
-	Name  string  `json:"Name"`
-	Price float32 `json:"Price"`
+	IsAvailable bool    `json:"IsAvailable"`
+	Name        string  `json:"Name"`
+	Price       float32 `json:"Price"`
 }
 
 // ProductFilter defines model for ProductFilter.
 type ProductFilter struct {
-	Name  *string             `json:"Name,omitempty"`
-	Price *float32            `json:"Price,omitempty"`
-	UUID  *openapi_types.UUID `json:"UUID,omitempty"`
+	IsAvailable *bool               `json:"IsAvailable,omitempty"`
+	Name        *string             `json:"Name,omitempty"`
+	Price       *float32            `json:"Price,omitempty"`
+	UUID        *openapi_types.UUID `json:"UUID,omitempty"`
 }
 
 // ProductGet defines model for ProductGet.

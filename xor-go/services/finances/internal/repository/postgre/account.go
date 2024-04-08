@@ -2,6 +2,7 @@ package postgre
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
@@ -67,7 +68,10 @@ func (r *bankAccountRepository) Present(ctx context.Context, filter *domain.Bank
 	return present, nil
 }
 
-func (r *bankAccountRepository) Get(ctx context.Context, filter *domain.BankAccountFilter) (*domain.BankAccountGet, error) {
+func (r *bankAccountRepository) Get(
+	ctx context.Context,
+	filter *domain.BankAccountFilter,
+) (*domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".Get")
 	defer span.End()
@@ -79,7 +83,10 @@ func (r *bankAccountRepository) Get(ctx context.Context, filter *domain.BankAcco
 	return xcommon.EnsureSingle(accounts)
 }
 
-func (r *bankAccountRepository) List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
+func (r *bankAccountRepository) List(
+	ctx context.Context,
+	filter *domain.BankAccountFilter,
+) ([]domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".List")
 	defer span.End()
@@ -103,13 +110,18 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 	defer span.End()
 
 	accountPostgres := repo_models.CreateToBankAccountPostgres(account)
-	_, err := r.db.ExecContext(
+	data, err := json.Marshal(accountPostgres.Data)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.ExecContext(
 		ctx,
 		createBankAccountQuery,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
 		accountPostgres.Funds,
-		accountPostgres.Data,
+		string(data),
 		accountPostgres.Status,
 	)
 	return err

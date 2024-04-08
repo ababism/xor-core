@@ -111,9 +111,12 @@ components:
           type: string
         Price:
           type: number
+        IsAvailable:
+            type: boolean
       required:
         - Name
         - Price
+        - IsAvailable
     ProductUpdate:
       type: object
       properties:
@@ -141,3 +144,5 @@ components:
           type: string
         Price:
           type: number
+        IsAvailable:
+          type: boolean

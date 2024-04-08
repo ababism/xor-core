@@ -1,12 +1,28 @@
 package repo_models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"github.com/google/uuid"
 	"time"
 	"xor-go/services/finances/internal/domain"
 )
 
 type BankAccountData struct {
+}
+
+func (a *BankAccountData) Value() (driver.Value, error) {
+	return json.Marshal(a)
+}
+
+func (a *BankAccountData) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &a)
 }
 
 type BankAccount struct {
@@ -16,7 +32,7 @@ type BankAccount struct {
 	Funds         float32         `db:"funds"`
 	Data          BankAccountData `db:"data"`
 	Status        string          `db:"status"`
-	LastDealAt    time.Time       `db:"last_deal_at"`
+	LastDealAt    *time.Time      `db:"last_deal_at"`
 	CreatedAt     time.Time       `db:"created_at"`
 	LastUpdatedAt time.Time       `db:"updated_at"`
 }

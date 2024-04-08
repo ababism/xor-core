@@ -20,11 +20,10 @@ const (
 	baseProductGetQuery = `
 		SELECT uuid, name, price, is_available, created_at, updated_at
 		FROM products
-		WHERE uuid = $1
 	`
 	createProductQuery = `
-		INSERT INTO products (uuid, name, price)
-		VALUES ($1, $2, $3)
+		INSERT INTO products (uuid, name, price, is_available)
+		VALUES ($1, $2, $3, $4)
 	`
 	updateProductQuery = `
 		UPDATE products
@@ -91,6 +90,7 @@ func (r *productRepository) Create(ctx context.Context, product *domain.ProductC
 		productPostgres.UUID,
 		productPostgres.Name,
 		productPostgres.Price,
+		productPostgres.IsAvailable,
 	)
 	return err
 }

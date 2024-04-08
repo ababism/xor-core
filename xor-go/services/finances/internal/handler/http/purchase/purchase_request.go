@@ -53,7 +53,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	defer span.End()
 
 	var body *PurchaseRequestFilter
-	if err := ctx.BindJSON(&body); err != nil {
+	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
@@ -77,7 +77,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 	defer span.End()
 
 	var body PurchaseRequestCreate
-	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
+	if err := ctx.BindJSON(&body); err != nil {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
