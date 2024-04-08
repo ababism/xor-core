@@ -75,12 +75,12 @@ func (t Theme) ToDomain() domain.Theme {
 	}
 }
 
-func (l Lesson) ToDomain() domain.Lesson {
+func (l Lesson) ToDomain() *domain.Lesson {
 	pr := domain.Product{}
 	if l.Product != nil {
 		pr = *l.Product.ToDomain()
 	}
-	return domain.Lesson{
+	return &domain.Lesson{
 		CourseID:   l.CourseID,
 		ID:         l.ID,
 		Product:    pr,

@@ -768,6 +768,10 @@ components:
           type: string
           enum: [ Inaccessible, Pending, Accessible ]
           description: Access status of the lesson.
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the request was last updated.
     Student:
       type: object
       properties:

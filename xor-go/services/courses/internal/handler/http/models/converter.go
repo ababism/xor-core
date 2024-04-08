@@ -9,6 +9,7 @@ import (
 const (
 	UnknownVisibility = "unknown"
 	UnknownRequestStatus
+	UnknownAccessStatus
 )
 
 func ToCourseResponse(course domain.Course) generated.Course {
@@ -118,6 +119,30 @@ func ToRequestTime(t time.Time) *time.Time {
 		resT = &t
 	}
 	return resT
+}
+func ToAccessStatus(accessStatus domain.AccessStatus) generated.LessonAccessAccessStatus {
+
+	switch accessStatus {
+	case domain.Accessible:
+		return generated.Accessible
+	case domain.Inaccessible:
+		return generated.Inaccessible
+	case domain.Pending:
+		return generated.Pending
+	default:
+		return UnknownAccessStatus
+	}
+}
+
+func ToLessonAccessResponse(lessonAccess domain.LessonAccess) generated.LessonAccess {
+	status := ToAccessStatus(lessonAccess.AccessStatus)
+	return generated.LessonAccess{
+		ID:           lessonAccess.ID,
+		LessonID:     lessonAccess.LessonID,
+		StudentID:    lessonAccess.StudentID,
+		AccessStatus: &status,
+		UpdatedAt:    ToRequestTime(lessonAccess.UpdatedAt),
+	}
 }
 
 func ToRequestStatus(status domain.RequestsStatus) generated.PublicationRequestRequestStatus {

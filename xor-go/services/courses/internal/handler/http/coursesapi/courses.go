@@ -22,38 +22,69 @@ type CoursesHandler struct {
 	coursesService adapters.CoursesService
 }
 
-//func (h *CoursesHandler) Get(ginCtx *gin.Context, uuid openapitypes.UUID) {
-//	_, newCtx, span := getPaymentTracerSpan(c, ".Get")
-//	defer span.End()
-//
-//	domain, err := h.coursesService.Get(newCtx, uuid)
-//	if err != nil {
-//		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
-//		return
-//	}
-//
-//	response := DomainToGet(*domain)
-//
-//	c.JSON(http.StatusOK, response)
-//}
+func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
+	return &CoursesHandler{logger: logger, coursesService: coursesService}
+}
 
+// GetCoursesEdit LIST COURSES
 func (h CoursesHandler) GetCoursesEdit(ginCtx *gin.Context, params generated.GetCoursesEditParams) {
 	//	 TODO
 }
 
+// GetCoursesCourseID READ Published
+func (h CoursesHandler) GetCoursesCourseID(ginCtx *gin.Context, courseID uuid.UUID, params generated.GetCoursesCourseIDParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesCourseID")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	course, err := h.coursesService.ReadCourse(ctx, params.Actor.ToDomain(), courseID)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+	if course == nil {
+		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseResponse(*course)
+
+	ginCtx.JSON(http.StatusOK, resp)
+}
+
+// PostCoursesEdit CREATE course
 func (h CoursesHandler) PostCoursesEdit(ginCtx *gin.Context, params generated.PostCoursesEditParams) {
-	//TODO implement me
-	panic("implement me")
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.PostCoursesEdit")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	var coursePayload generated.Course
+	h.bindRequestBody(ginCtx, &coursePayload)
+
+	course, err := h.coursesService.CreateCourse(ctx, params.Actor.ToDomain(), coursePayload.ToDomain())
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if course == nil {
+		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseResponse(*course)
+
+	ginCtx.JSON(http.StatusOK, resp)
 }
 
-func (h CoursesHandler) DeleteCoursesEditCourseID(ginCtx *gin.Context, courseID uuid.UUID, params generated.DeleteCoursesEditCourseIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
+// GetCoursesEditCourseID UPDATE course
 func (h CoursesHandler) GetCoursesEditCourseID(ginCtx *gin.Context, courseID openapitypes.UUID, params generated.GetCoursesEditCourseIDParams) {
 	tr := global.Tracer(domain.ServiceName)
-	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEdit")
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEditCourseID")
 	defer span.End()
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
@@ -72,10 +103,9 @@ func (h CoursesHandler) GetCoursesEditCourseID(ginCtx *gin.Context, courseID ope
 
 	ginCtx.JSON(http.StatusOK, resp)
 }
-
 func (h CoursesHandler) PutCoursesEditCourseID(ginCtx *gin.Context, courseID uuid.UUID, params generated.PutCoursesEditCourseIDParams) {
 	tr := global.Tracer(domain.ServiceName)
-	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEdit")
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.PutCoursesEditCourseID")
 	defer span.End()
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
@@ -99,100 +129,44 @@ func (h CoursesHandler) PutCoursesEditCourseID(ginCtx *gin.Context, courseID uui
 	ginCtx.JSON(http.StatusOK, resp)
 }
 
-func (h CoursesHandler) GetCoursesCourseID(ginCtx *gin.Context, courseID uuid.UUID, params generated.GetCoursesCourseIDParams) {
+func (h CoursesHandler) DeleteCoursesEditCourseID(ginCtx *gin.Context, courseID uuid.UUID, params generated.DeleteCoursesEditCourseIDParams) {
 	tr := global.Tracer(domain.ServiceName)
-	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEdit")
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.DeleteCoursesEditCourseID")
 	defer span.End()
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	course, err := h.coursesService.GetCourse(ctx, params.Actor.ToDomain(), courseID)
+	err := h.coursesService.DeleteCourse(ctx, params.Actor.ToDomain(), courseID)
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
 	}
-	if course == nil {
-		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
-		h.logger.Error("nil course", zap.Error(err))
+
+	ginCtx.JSON(http.StatusNoContent, http.NoBody)
+}
+
+// PostCoursesCourseIDBuy Buy lessons from course
+func (h CoursesHandler) PostCoursesCourseIDBuy(ginCtx *gin.Context, courseID openapitypes.UUID, params generated.PostCoursesCourseIDBuyParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.PostCoursesCourseIDBuy")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	redirect, err := h.coursesService.BuyCourse(ctx, params.Actor.ToDomain(), courseID)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if redirect.Response == "" {
+		err := apperror.New(http.StatusInternalServerError, "nil redirect without error", "GetCourse returned nil redirect without error", nil)
+		h.logger.Error("nil redirect", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}
-	resp := models.ToCourseResponse(*course)
+	resp := models.ToPaymentRedirectResponse(redirect)
 
 	ginCtx.JSON(http.StatusOK, resp)
-}
-
-func (h CoursesHandler) PostCoursesCourseIDBuy(c *gin.Context, courseID openapitypes.UUID, params generated.PostCoursesCourseIDBuyParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostLessonsEdit(ginCtx *gin.Context, params generated.PostLessonsEditParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) DeleteLessonsEditLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.DeleteLessonsEditLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) GetLessonsEditLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.GetLessonsEditLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PutLessonsEditLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.PutLessonsEditLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) GetLessonsLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.GetLessonsLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostLessonsLessonIDBuy(ginCtx *gin.Context, lessonID uuid.UUID, params generated.PostLessonsLessonIDBuyParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostPublicationRequests(ginCtx *gin.Context, params generated.PostPublicationRequestsParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PutPublicationRequestsRequestID(ginCtx *gin.Context, requestID uuid.UUID, params generated.PutPublicationRequestsRequestIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostStudentsRegister(ginCtx *gin.Context, params generated.PostStudentsRegisterParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostTeachersRegister(ginCtx *gin.Context, params generated.PostTeachersRegisterParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PostUserAccessConfirm(ginCtx *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) PutUserAccessLessons(ginCtx *gin.Context, params generated.PutUserAccessLessonsParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (h CoursesHandler) GetUserAccessLessonsLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.GetUserAccessLessonsLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
-	return &CoursesHandler{logger: logger, coursesService: coursesService}
 }
 
 //func (h *CoursesHandler) GetTripByID(ginCtx *gin.Context, tripId uuid.UUID, params generated.GetTripByIDParams) {

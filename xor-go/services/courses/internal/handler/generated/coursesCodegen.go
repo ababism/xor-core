@@ -107,6 +107,9 @@ type LessonAccess struct {
 
 	// StudentID ID of the student.
 	StudentID uuid.UUID `json:"StudentID,omitempty"`
+
+	// UpdatedAt Date and time when the request was last updated.
+	UpdatedAt *time.Time `json:"UpdatedAt,omitempty"`
 }
 
 // LessonAccessAccessStatus Access status of the lesson.
