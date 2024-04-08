@@ -8,7 +8,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"net/http"
 	"time"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 )
 
@@ -20,7 +20,7 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	defer span.End()
 
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return domain.PaymentRedirect{}, apperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
 			fmt.Sprintf("%s or %s roles can't buy course", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -44,7 +44,7 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	}
 	redirect, err := c.financesClient.CreatePurchase(ctx, productsToBuy)
 	if err != nil {
-		return domain.PaymentRedirect{}, apperror.New(http.StatusForbidden, "no available lessons to buy in course",
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
 	}
 
@@ -59,7 +59,7 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	defer span.End()
 
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return domain.PaymentRedirect{}, domain.LessonAccess{}, apperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
+		return domain.PaymentRedirect{}, domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
 			fmt.Sprintf("%s or %s roles can't buy course", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -68,7 +68,7 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
 	if access.AccessStatus != domain.Inaccessible {
-		return domain.PaymentRedirect{}, access, apperror.New(http.StatusForbidden, "lesson already purchased or pending",
+		return domain.PaymentRedirect{}, access, xapperror.New(http.StatusForbidden, "lesson already purchased or pending",
 			"lesson already purchased", nil)
 
 	}
@@ -95,7 +95,7 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 	defer span.End()
 
 	if !actor.HasRole(domain.UnregisteredRole) {
-		return apperror.New(http.StatusForbidden, "user can't be registered",
+		return xapperror.New(http.StatusForbidden, "user can't be registered",
 			fmt.Sprintf("user can't be registere user do not have %s role", domain.UnregisteredRole), nil)
 	}
 
@@ -120,7 +120,7 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	defer span.End()
 
 	if !actor.HasRole(domain.AdminRole) {
-		return apperror.New(http.StatusForbidden, "user can't register teachers",
+		return xapperror.New(http.StatusForbidden, "user can't register teachers",
 			fmt.Sprintf("user can't register teachers no %s role", domain.AdminRole), nil)
 	}
 
@@ -145,7 +145,7 @@ func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor dom
 	defer span.End()
 
 	if !actor.HasRole(domain.AdminRole) {
-		return domain.LessonAccess{}, apperror.New(http.StatusForbidden, "user can't give access to lessons",
+		return domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "user can't give access to lessons",
 			fmt.Sprintf("user can't give acces to lessons no %s role", domain.AdminRole), nil)
 	}
 

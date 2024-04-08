@@ -5,9 +5,9 @@ import (
 	"log"
 	"xor-go/pkg/http_server"
 	"xor-go/pkg/metrics"
-	"xor-go/pkg/mylogger"
 	"xor-go/pkg/xapp"
 	"xor-go/pkg/xconfig"
+	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
@@ -21,7 +21,7 @@ type Config struct {
 	App              *xapp.Config                 `mapstructure:"app"`
 	Http             *http_server.Config          `mapstructure:"http"`
 	FinancesClient   *financesclient.ClientConfig `mapstructure:"finances_client"`
-	Logger           *mylogger.Config             `mapstructure:"logger"`
+	Logger           *xlogger.Config              `mapstructure:"logger"`
 	Mongo            *mongo.Config                `mapstructure:"mongo"`
 	MigrationsMongo  *mongo.ConfigMigrations      `mapstructure:"migrations_mongo"`
 	Metrics          *metrics.Config              `mapstructure:"metrics"`

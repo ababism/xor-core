@@ -6,9 +6,9 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
-	"xor-go/pkg/apperror"
 	"xor-go/pkg/metrics"
-	"xor-go/pkg/mylogger"
+	"xor-go/pkg/xapperror"
+	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/courses/internal/config"
@@ -36,7 +36,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// INFRASTRUCTURE ----------------------------------------------------------------------
 
 	// Инициализируем logger
-	logger, err := mylogger.InitLogger(cfg.Logger, cfg.App.Name)
+	logger, err := xlogger.Init(cfg.Logger, cfg.App)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	ctx := zapctx.WithLogger(startCtx, logger)
 
 	// Инициализируем обработку ошибок
-	err = apperror.InitAppError(cfg.App)
+	err = xapperror.InitAppError(cfg.App)
 	if err != nil {
 		logger.Fatal("while initializing App Error handling package", zap.Error(err))
 	}

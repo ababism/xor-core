@@ -7,7 +7,7 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
 	"net/http"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 )
 
@@ -48,7 +48,7 @@ func (c CoursesService) CreateLesson(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to create lesson",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -73,7 +73,7 @@ func (c CoursesService) GetLesson(initialCtx context.Context, actor domain.Actor
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have rights to see unpublished lesson",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to see unpublished lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -93,7 +93,7 @@ func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to update lesson",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -118,7 +118,7 @@ func (c CoursesService) DeleteLesson(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return apperror.New(http.StatusForbidden, "user does not have teacher rights to delete lesson",
+		return xapperror.New(http.StatusForbidden, "user does not have teacher rights to delete lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 

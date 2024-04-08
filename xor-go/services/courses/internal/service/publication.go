@@ -8,7 +8,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"net/http"
 	"time"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/repository/mongo/collections"
 )
@@ -21,7 +21,7 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return domain.PublicationRequest{}, apperror.New(http.StatusForbidden, "user does not have teacher rights to publish course",
+		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have teacher rights to publish course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 	// teacher opt scenario
@@ -31,7 +31,7 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 			return domain.PublicationRequest{}, err
 		}
 		if !ok {
-			return domain.PublicationRequest{}, apperror.New(http.StatusForbidden, "teacher can't publish someone else's course",
+			return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "teacher can't publish someone else's course",
 				fmt.Sprintf("teacher do not own course %s", request.CourseID.String()), nil)
 		}
 	}
@@ -53,7 +53,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
-		return domain.PublicationRequest{}, apperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
+		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.ModeratorRole, domain.AdminRole), nil)
 	}
 
@@ -63,12 +63,12 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 	}
 	if currentPR == nil {
 		log.Error("nil publication request from repository with no errors")
-		return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 			"nil publication request", "nil publication request from repository with no errors", nil)
 	}
 
 	if currentPR.RequestStatus != domain.Unwatched {
-		return *currentPR, apperror.New(http.StatusForbidden, "publication request already checked",
+		return *currentPR, xapperror.New(http.StatusForbidden, "publication request already checked",
 			"publication request already is not unwatched", nil)
 	}
 
@@ -91,7 +91,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 		}
 		if txSessionP == nil {
 			log.Error("nil publication session from repository with no errors")
-			return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+			return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 				"internal transaction error", "nil publication session from repository with no error", nil)
 		}
 		txSession := *txSessionP
@@ -105,7 +105,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, err
@@ -118,7 +118,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, err
@@ -129,7 +129,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, err
@@ -137,7 +137,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 
 		if courseTemplate.TeacherID != currentPR.AssigneeID {
 			log.Error("err teacher made publication request on someone else's course")
-			return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+			return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 				"course owner and request assignee do not match", "course owner and request assignee do not match", nil)
 		}
 
@@ -148,7 +148,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, err
@@ -161,7 +161,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, err
@@ -178,7 +178,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 				errTx := txSession.AbortTransaction(ctx)
 				if errTx != nil {
 					log.Error("err aborting publication session transaction")
-					return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+					return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 						"internal transaction error", "err aborting publication session transaction", errTx)
 				}
 				return domain.PublicationRequest{}, errLV
@@ -189,7 +189,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 				errTx := txSession.AbortTransaction(ctx)
 				if errTx != nil {
 					log.Error("err aborting publication session transaction")
-					return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+					return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 						"internal transaction error", "err aborting publication session transaction", errTx)
 				}
 				return domain.PublicationRequest{}, errPV
@@ -202,7 +202,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 				errTx := txSession.AbortTransaction(ctx)
 				if errTx != nil {
 					log.Error("err aborting publication session transaction")
-					return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+					return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 						"internal transaction error", "err aborting publication session transaction", errTx)
 				}
 				return domain.PublicationRequest{}, errLC
@@ -215,7 +215,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			errTx := txSession.AbortTransaction(ctx)
 			if errTx != nil {
 				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 					"internal transaction error", "err aborting publication session transaction", errTx)
 			}
 			return domain.PublicationRequest{}, errRegister
@@ -225,7 +225,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 		errTx := txSession.CommitTransaction(ctx)
 		if errTx != nil {
 			log.Debug("err commit publication session transaction")
-			return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+			return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 				"internal transaction error", "err commit publication session transaction", errTx)
 		}
 
@@ -242,10 +242,10 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 		return incomingPR, nil
 
 	case domain.Unwatched:
-		return domain.PublicationRequest{}, apperror.New(http.StatusForbidden,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden,
 			"cannot unwatch request", "no option to unwatch publication request", nil)
 	default:
-		return domain.PublicationRequest{}, apperror.New(http.StatusBadRequest,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusBadRequest,
 			"unsupported request status",
 			fmt.Sprintf("unsupported request status can be only %d %d %d",
 				domain.Unwatched, domain.Approved, domain.Rejected), nil)
@@ -260,7 +260,7 @@ func (c CoursesService) UpdatePublicationRequestWithoutTx(initialCtx context.Con
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
-		return domain.PublicationRequest{}, apperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
+		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.ModeratorRole, domain.AdminRole), nil)
 	}
 
@@ -270,12 +270,12 @@ func (c CoursesService) UpdatePublicationRequestWithoutTx(initialCtx context.Con
 	}
 	if currentPR == nil {
 		log.Error("got nil publication request from repository with no errors")
-		return domain.PublicationRequest{}, apperror.New(http.StatusInternalServerError,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
 			"nil publication request", "got nil publication request from repository with no errors", nil)
 	}
 
 	if currentPR.RequestStatus != domain.Unwatched {
-		return *currentPR, apperror.New(http.StatusForbidden, "publication request already checked",
+		return *currentPR, xapperror.New(http.StatusForbidden, "publication request already checked",
 			"publication request already is not unwatched", nil)
 	}
 
@@ -324,10 +324,10 @@ func (c CoursesService) UpdatePublicationRequestWithoutTx(initialCtx context.Con
 		return incomingPR, nil
 
 	case domain.Unwatched:
-		return domain.PublicationRequest{}, apperror.New(http.StatusForbidden,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden,
 			"cannot unwatch request", "no option to unwatch publication request", nil)
 	default:
-		return domain.PublicationRequest{}, apperror.New(http.StatusBadRequest,
+		return domain.PublicationRequest{}, xapperror.New(http.StatusBadRequest,
 			"unsupported request status",
 			fmt.Sprintf("unsupported request status can be only %d %d %d",
 				domain.Unwatched, domain.Approved, domain.Rejected), nil)

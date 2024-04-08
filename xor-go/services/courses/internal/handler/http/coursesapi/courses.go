@@ -8,7 +8,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 	"net/http"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/handler/generated"
 	"xor-go/services/courses/internal/handler/http/models"
@@ -46,7 +46,7 @@ func (h CoursesHandler) GetCoursesCourseID(ginCtx *gin.Context, courseID uuid.UU
 		return
 	}
 	if course == nil {
-		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		err := xapperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
 		h.logger.Error("nil course", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}
@@ -73,7 +73,7 @@ func (h CoursesHandler) PostCoursesEdit(ginCtx *gin.Context, params generated.Po
 	}
 
 	if course == nil {
-		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		err := xapperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
 		h.logger.Error("nil course", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}
@@ -96,7 +96,7 @@ func (h CoursesHandler) GetCoursesEditCourseID(ginCtx *gin.Context, courseID ope
 		return
 	}
 	if course == nil {
-		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		err := xapperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
 		h.logger.Error("nil course", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}
@@ -121,7 +121,7 @@ func (h CoursesHandler) PutCoursesEditCourseID(ginCtx *gin.Context, courseID uui
 	}
 
 	if course == nil {
-		err := apperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
+		err := xapperror.New(http.StatusInternalServerError, "nil course without error", "GetCourse returned nil course without error", nil)
 		h.logger.Error("nil course", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}
@@ -161,7 +161,7 @@ func (h CoursesHandler) PostCoursesCourseIDBuy(ginCtx *gin.Context, courseID ope
 	}
 
 	if redirect.Response == "" {
-		err := apperror.New(http.StatusInternalServerError, "nil redirect without error", "GetCourse returned nil redirect without error", nil)
+		err := xapperror.New(http.StatusInternalServerError, "nil redirect without error", "GetCourse returned nil redirect without error", nil)
 		h.logger.Error("nil redirect", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
 	}

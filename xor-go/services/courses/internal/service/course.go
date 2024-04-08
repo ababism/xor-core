@@ -7,7 +7,7 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
 	"net/http"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 )
 
@@ -19,7 +19,7 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to create course",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -46,7 +46,7 @@ func (c CoursesService) GetCourse(initialCtx context.Context, actor domain.Actor
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have rights to read unpublished course",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to read unpublished course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 	course, err := c.courseEdit.Get(ctx, courseID)
@@ -65,7 +65,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -76,12 +76,12 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 
 	ok, errAccess := c.teacher.IsCourseAccessible(ctx, actor.ID, courseID)
 	if errAccess != nil {
-		return nil, apperror.New(http.StatusForbidden, "user does not own this course",
+		return nil, xapperror.New(http.StatusForbidden, "user does not own this course",
 			fmt.Sprintf("user does %s not own this course %s", actor.ID, courseID), nil)
 	}
 
 	if !actor.HasRole(domain.AdminRole) && !ok {
-		return nil, apperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
+		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
@@ -101,7 +101,7 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	defer span.End()
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
-		return apperror.New(http.StatusForbidden, "user does not have teacher rights to delete course",
+		return xapperror.New(http.StatusForbidden, "user does not have teacher rights to delete course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 

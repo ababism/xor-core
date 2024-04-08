@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"
 	"net/http"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/repository/mongo/migrate"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -78,31 +78,31 @@ func handleMongoError(err error, log *zap.Logger) error {
 	switch tErr := err.(type) {
 	case mongo.CommandError:
 		log.Error("MongoDB command error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB command error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB command error", tErr)
 
 	case mongo.WriteException:
 		log.Error("MongoDB write exception", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write exception", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write exception", tErr)
 
 	case mongo.ServerError:
 		log.Error("MongoDB server error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB server error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB server error", tErr)
 
 	case mongo.BulkWriteError:
 		log.Error("MongoDB bulk write error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB bulk write error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB bulk write error", tErr)
 
 	case mongo.WriteConcernError:
 		log.Error("MongoDB write concern error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write concern error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write concern error", tErr)
 
 	case mongo.WriteError:
 		log.Error("MongoDB write error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB write error", tErr)
 
 	case mongo.MarshalError:
 		log.Error("MongoDB write marshal error", zap.Error(tErr))
-		return apperror.New(http.StatusInternalServerError, "internal server error", "MongoDB marshal error", tErr)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB marshal error", tErr)
 	}
 	return nil
 }

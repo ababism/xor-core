@@ -5,13 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
-	"xor-go/pkg/apperror"
+	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/handler/http/models"
 )
 
 func AbortWithBadResponse(c *gin.Context, logger *zap.Logger, statusCode int, err error) {
-	logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, statusCode, apperror.GetLastMessage(err)))
-	c.AbortWithStatusJSON(statusCode, models.Error{Message: apperror.GetLastMessage(err)})
+	logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, statusCode, xapperror.GetLastMessage(err)))
+	c.AbortWithStatusJSON(statusCode, models.Error{Message: xapperror.GetLastMessage(err)})
 }
 
 func AbortWithErrorResponse(c *gin.Context, logger *zap.Logger, statusCode int, message string) {
@@ -20,17 +20,17 @@ func AbortWithErrorResponse(c *gin.Context, logger *zap.Logger, statusCode int, 
 }
 
 func MapErrorToCode(err error) int {
-	return apperror.GetCode(err)
+	return xapperror.GetCode(err)
 }
 
 func (h CoursesHandler) abortWithBadResponse(c *gin.Context, statusCode int, err error) {
-	h.logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, statusCode, apperror.GetLastMessage(err)))
-	c.AbortWithStatusJSON(statusCode, models.Error{Message: apperror.GetLastMessage(err)})
+	h.logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, statusCode, xapperror.GetLastMessage(err)))
+	c.AbortWithStatusJSON(statusCode, models.Error{Message: xapperror.GetLastMessage(err)})
 }
 
 func (h CoursesHandler) abortWithAutoResponse(c *gin.Context, err error) {
-	h.logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, apperror.GetCode(err), apperror.GetLastMessage(err)))
-	c.AbortWithStatusJSON(apperror.GetCode(err), models.Error{Message: apperror.GetLastMessage(err)})
+	h.logger.Debug(fmt.Sprintf("%s: %d %s", c.Request.URL, xapperror.GetCode(err), xapperror.GetLastMessage(err)))
+	c.AbortWithStatusJSON(xapperror.GetCode(err), models.Error{Message: xapperror.GetLastMessage(err)})
 }
 
 func (h CoursesHandler) bindRequestBody(c *gin.Context, obj any) bool {
