@@ -78,7 +78,7 @@ func (t Theme) ToDomain() domain.Theme {
 func (l Lesson) ToDomain() *domain.Lesson {
 	pr := domain.Product{}
 	if l.Product != nil {
-		pr = *l.Product.ToDomain()
+		pr = l.Product.ToDomain()
 	}
 	return &domain.Lesson{
 		CourseID:   l.CourseID,
@@ -91,13 +91,24 @@ func (l Lesson) ToDomain() *domain.Lesson {
 	}
 }
 
-func (p Product) ToDomain() *domain.Product {
-	return &domain.Product{
+func (p Product) ToDomain() domain.Product {
+	return domain.Product{
 		ID:    p.ID,
 		Item:  p.Item,
 		Owner: p.Owner,
 		Price: p.Price,
 	}
+}
+func ToProductSliceDomain(products []Product) []domain.Product {
+	if products == nil {
+		return nil
+	}
+
+	result := make([]domain.Product, len(products))
+	for i, p := range products {
+		result[i] = p.ToDomain()
+	}
+	return result
 }
 
 func (pr PaymentRedirect) ToDomain() domain.PaymentRedirect {
@@ -119,12 +130,53 @@ func (p PublicationRequest) ToDomain() domain.PublicationRequest {
 		UpdatedAt:     ToTimeDomain(p.UpdatedAt),
 	}
 }
+func (pr Teacher) ToDomain() domain.Teacher {
+	return domain.Teacher{
+		AccountID: pr.AccountID,
+	}
+}
+func (pr Student) ToDomain() domain.Student {
+	return domain.Student{
+		AccountID: pr.AccountID,
+	}
+}
 
 func ToTimeDomain(t *time.Time) time.Time {
 	if t == nil {
 		return time.Time{}
 	}
 	return *t
+}
+
+func (l LessonAccess) ToDomain() domain.LessonAccess {
+	var updatedAt *time.Time
+	if l.UpdatedAt != nil {
+		updatedAt = l.UpdatedAt
+	}
+
+	return domain.LessonAccess{
+		ID:           l.ID,
+		LessonID:     l.LessonID,
+		StudentID:    l.StudentID,
+		AccessStatus: ToAccessStatus(l.AccessStatus),
+		UpdatedAt:    ToTimeDomain(updatedAt),
+	}
+}
+
+func ToAccessStatus(accessStatus *LessonAccessAccessStatus) domain.AccessStatus {
+	if accessStatus == nil {
+		return 0
+	}
+	switch *accessStatus {
+	case Accessible:
+		return domain.Accessible
+	case Inaccessible:
+		return domain.Inaccessible
+	case Pending:
+		return domain.Pending
+	default:
+		return 0
+	}
 }
 
 func (t ThemeVisibility) ToDomain() domain.Visibility {

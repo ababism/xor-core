@@ -61,7 +61,7 @@ type UserService interface {
 	// GetLessonAccess student gets his access to lesson for a user
 	GetLessonAccess(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.LessonAccess, error)
 	// ChangeCourseAccess admin or moderator gives access to lesson for a user
-	ChangeCourseAccess(ctx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error)
+	ChangeLessonAccess(ctx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error)
 	// ConfirmAccess Finances system from webhook confirms payment
 	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, products []domain.Product) error
 }

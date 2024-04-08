@@ -460,12 +460,20 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Actor'
-  /user/access/confirm:
+  /user/access/confirm/{buyerID}:
     post:
       summary: Confirm user access to products
       tags:
         - User
       description: Confirm access from the Finances system webhook.
+      parameters:
+        - in: path
+          name: buyerID
+          required: true
+          description: ID of the confirmed owner.
+          schema:
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:

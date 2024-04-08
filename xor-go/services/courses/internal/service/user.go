@@ -137,11 +137,11 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	return nil
 }
 
-func (c CoursesService) ChangeCourseAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
+func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.ChangeCourseAccess")
+	ctx, span := tr.Start(initialCtx, "courses/service.ChangeLessonAccess")
 	defer span.End()
 
 	if !actor.HasRole(domain.AdminRole) {
@@ -161,7 +161,7 @@ func (c CoursesService) GetLessonAccess(initialCtx context.Context, actor domain
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.ChangeCourseAccess")
+	ctx, span := tr.Start(initialCtx, "courses/service.GetLessonAccess")
 	defer span.End()
 
 	access, err := c.student.GetLessonAccess(ctx, actor.ID, lessonID)

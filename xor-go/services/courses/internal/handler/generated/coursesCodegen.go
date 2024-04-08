@@ -293,8 +293,8 @@ type PostTeachersRegisterParams struct {
 	Actor *OptionalActor `json:"actor,omitempty"`
 }
 
-// PostUserAccessConfirmJSONBody defines parameters for PostUserAccessConfirm.
-type PostUserAccessConfirmJSONBody struct {
+// PostUserAccessConfirmBuyerIDJSONBody defines parameters for PostUserAccessConfirmBuyerID.
+type PostUserAccessConfirmBuyerIDJSONBody struct {
 	// BuyerID ID of the buyer.
 	BuyerID  *openapi_types.UUID `json:"buyerID,omitempty"`
 	Products *[]Product          `json:"products,omitempty"`
@@ -331,8 +331,8 @@ type PostStudentsRegisterJSONRequestBody = Student
 // PostTeachersRegisterJSONRequestBody defines body for PostTeachersRegister for application/json ContentType.
 type PostTeachersRegisterJSONRequestBody = Teacher
 
-// PostUserAccessConfirmJSONRequestBody defines body for PostUserAccessConfirm for application/json ContentType.
-type PostUserAccessConfirmJSONRequestBody PostUserAccessConfirmJSONBody
+// PostUserAccessConfirmBuyerIDJSONRequestBody defines body for PostUserAccessConfirmBuyerID for application/json ContentType.
+type PostUserAccessConfirmBuyerIDJSONRequestBody PostUserAccessConfirmBuyerIDJSONBody
 
 // PutUserAccessLessonsJSONRequestBody defines body for PutUserAccessLessons for application/json ContentType.
 type PutUserAccessLessonsJSONRequestBody = LessonAccess
@@ -391,8 +391,8 @@ type ServerInterface interface {
 	// (POST /teachers/register)
 	PostTeachersRegister(c *gin.Context, params PostTeachersRegisterParams)
 	// Confirm user access to products
-	// (POST /user/access/confirm)
-	PostUserAccessConfirm(c *gin.Context)
+	// (POST /user/access/confirm/{buyerID})
+	PostUserAccessConfirmBuyerID(c *gin.Context, buyerID openapi_types.UUID)
 	// Change student's access to lesson
 	// (PUT /user/access/lessons)
 	PutUserAccessLessons(c *gin.Context, params PutUserAccessLessonsParams)
@@ -1231,8 +1231,19 @@ func (siw *ServerInterfaceWrapper) PostTeachersRegister(c *gin.Context) {
 	siw.Handler.PostTeachersRegister(c, params)
 }
 
-// PostUserAccessConfirm operation middleware
-func (siw *ServerInterfaceWrapper) PostUserAccessConfirm(c *gin.Context) {
+// PostUserAccessConfirmBuyerID operation middleware
+func (siw *ServerInterfaceWrapper) PostUserAccessConfirmBuyerID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "buyerID" -------------
+	var buyerID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "buyerID", c.Param("buyerID"), &buyerID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter buyerID: %w", err), http.StatusBadRequest)
+		return
+	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -1241,7 +1252,7 @@ func (siw *ServerInterfaceWrapper) PostUserAccessConfirm(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostUserAccessConfirm(c)
+	siw.Handler.PostUserAccessConfirmBuyerID(c, buyerID)
 }
 
 // PutUserAccessLessons operation middleware
@@ -1381,7 +1392,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.PUT(options.BaseURL+"/publication-requests/:requestID", wrapper.PutPublicationRequestsRequestID)
 	router.POST(options.BaseURL+"/students/register", wrapper.PostStudentsRegister)
 	router.POST(options.BaseURL+"/teachers/register", wrapper.PostTeachersRegister)
-	router.POST(options.BaseURL+"/user/access/confirm", wrapper.PostUserAccessConfirm)
+	router.POST(options.BaseURL+"/user/access/confirm/:buyerID", wrapper.PostUserAccessConfirmBuyerID)
 	router.PUT(options.BaseURL+"/user/access/lessons", wrapper.PutUserAccessLessons)
 	router.GET(options.BaseURL+"/user/access/lessons/:lessonID", wrapper.GetUserAccessLessonsLessonID)
 }
