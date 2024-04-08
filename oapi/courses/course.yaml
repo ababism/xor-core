@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: Course Courses API
+  description: API specification for managing courses.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1/courses
+paths:
+  /courses/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read published Course
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+  /courses/edit:
+    post:
+      summary: Create Course
+      description: Create a new course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    get:
+      summary: Get Courses
+      tags:
+        - Course
+      description: Retrieve a list of courses.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+  /courses/edit/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get Course by ID
+      tags:
+        - Course
+      description: Retrieve a course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+    put:
+      summary: Update Course
+      tags:
+        - Course
+      description: Update an existing course.
+      parameters:
+        - name: courseID
+          in: path
+          description: ID of the course to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      summary: Delete Course
+      tags:
+        - Lesson
+      description: Delete a course.
+      parameters:
+        - name: courseID
+          in: path
+          description: ID of the course to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Course deleted successfully
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        TeacherID:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Discipline:
+          type: string
+        Landing:
+          type: string
+          format: binary
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+        Sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+    Section:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        Heading:
+          type: string
+        Description:
+          type: string
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+        Themes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+    Theme:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+        FeedbackID:
+          type: string
+          format: uuid
+        Heading:
+          type: string
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header

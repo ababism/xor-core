@@ -1,0 +1,183 @@
+openapi: 3.0.0
+info:
+  title: Courses Service API
+  description: API specification for the Courses service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1/courses
+paths:
+  /lessons/{lessonID}:
+    get:
+      summary: Retrieve published Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of published lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+  /lessons/edit/:
+    post:
+      summary: Create Lesson
+      tags:
+        - Lesson
+      description: Create a new lesson.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+      security:
+        - actorAuth: [ ]
+  /lessons/edit/{lessonID}:
+    get:
+      summary: Retrieve Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: []
+    put:
+      summary: Update Lesson
+      tags:
+        - Lesson
+      description: Update details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to update.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: []
+    delete:
+      summary: Delete Lesson
+      tags:
+        - Lesson
+      description: Delete a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to delete.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Lesson deleted successfully
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: []
+components:
+  schemas:
+    Lesson:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the lesson.
+        ThemeID:
+          type: string
+          format: uuid
+          description: ID of the theme associated with the lesson.
+        TeacherID:
+          type: string
+          format: uuid
+          description: ID of the teacher who created the lesson.
+        Product:
+          $ref: '#/components/schemas/Product'
+        Visibility:
+          type: string
+          enum: [Hidden, Visible]
+          description: Visibility status of the lesson.
+        Transcript:
+          type: string
+          description: Transcript of the lesson.
+        VideoURI:
+          type: string
+          format: uri
+          description: URI of the video associated with the lesson.
+    Product:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          description: Unique identifier for the product.
+        Owner:
+          type: string
+          format: uuid
+          description: ID of the owner of the product.
+        Price:
+          type: number
+          format: float
+          description: Price of the product.
+        Item:
+          type: string
+          format: uuid
+          description: ID of the item associated with the product.
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header
+      name: actor

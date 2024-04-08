@@ -1,5 +1,7 @@
 package xapp
 
+import "fmt"
+
 type Config struct {
 	Name        string      `mapstructure:"name"`
 	Environment Environment `mapstructure:"env"`
@@ -25,14 +27,18 @@ func (r *RawConfig) ToConfig() (*Config, error) {
 	}, nil
 }
 
-func (r *Config) IsProduction() bool {
-	return r.Environment == ProductionEnv
+func (c *Config) IsProduction() bool {
+	return c.Environment == ProductionEnv
 }
 
-func (r *Config) IsTesting() bool {
-	return r.Environment == TestingEnv
+func (c *Config) IsTesting() bool {
+	return c.Environment == TestingEnv
 }
 
-func (r *Config) IsDevelopment() bool {
-	return r.Environment == DevelopmentEnv
+func (c *Config) IsDevelopment() bool {
+	return c.Environment == DevelopmentEnv
+}
+
+func (c *Config) Release() string {
+	return fmt.Sprintf("%s-%s", c.Environment, c.Version)
 }

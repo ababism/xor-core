@@ -34,18 +34,18 @@ scrape_configs:
     honor_timestamps: true
     scrape_interval: 15s
     scrape_timeout: 10s
-    metrics_path: /finances/metrics
-    scheme: http
-    static_configs:
-      - targets:
-          - docker.for.mac.localhost:8080
-  - job_name: coursesService
-    honor_timestamps: true
-    scrape_interval: 15s
-    scrape_timeout: 10s
-    metrics_path: /courses/metrics
+    metrics_path: /system/metrics/prometheus
     scheme: http
     static_configs:
       - targets:
           - docker.for.mac.localhost:8084
+  - job_name: coursesService
+    honor_timestamps: true
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: /system/metrics/prometheus
+    scheme: http
+    static_configs:
+      - targets:
+          - docker.for.mac.localhost:8080
 # docker.for.mac.localhost:8080

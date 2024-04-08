@@ -1,0 +1,889 @@
+openapi: 3.0.0
+info:
+  title: Courses Service API
+  description: API specification for managing courses, lessons, publication requests, and user data.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1/courses
+paths:
+  /courses/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read published Course
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /courses/edit:
+    post:
+      summary: Create Course
+      description: Create a new course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    get:
+      summary: Get Courses
+      tags:
+        - Course
+      description: Retrieve a list of courses.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /courses/edit/{courseID}:
+    parameters:
+      - name: courseID
+        in: path
+        description: ID of the course to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get Course by ID
+      tags:
+        - Course
+      description: Retrieve a course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+    put:
+      summary: Update Course
+      tags:
+        - Course
+      description: Update an existing course.
+      parameters:
+        - name: courseID
+          in: path
+          description: ID of the course to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+    delete:
+      summary: Delete Course
+      tags:
+        - Lesson
+      description: Delete a course.
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+        - name: courseID
+          in: path
+          description: ID of the course to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Course deleted successfully
+  /lessons/{lessonID}:
+    get:
+      summary: Retrieve published Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of published lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+  /lessons/edit/:
+    post:
+      summary: Create Lesson
+      tags:
+        - Lesson
+      description: Create a new lesson.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /lessons/edit/{lessonID}:
+    get:
+      summary: Retrieve Lesson
+      tags:
+        - Lesson
+      description: Retrieve details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to retrieve.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+    put:
+      summary: Update Lesson
+      tags:
+        - Lesson
+      description: Update details of a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to update.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        '200':
+          description: Lesson updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+    delete:
+      summary: Delete Lesson
+      tags:
+        - Lesson
+      description: Delete a lesson.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to delete.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '204':
+          description: Lesson deleted successfully
+        '404':
+          description: Lesson not found
+      security:
+        - actorAuth: [ ]
+  /courses/{courseID}/buy:
+    post:
+      summary: Buy Course
+      tags:
+        - Course
+        - User
+      description: Buy a course.
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+        - in: path
+          name: courseID
+          required: true
+          description: ID of the course to buy.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Payment redirect URL generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRedirect'
+  /lessons/{lessonID}/buy:
+    post:
+      summary: Buy Lesson
+      tags:
+        - Lesson
+        - User
+      description: Buy a lesson within a course.
+      parameters:
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Payment redirect URL generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentRedirect:
+                    $ref: '#/components/schemas/PaymentRedirect'
+                  lessonAccess:
+                    $ref: '#/components/schemas/LessonAccess'
+  /students/register:
+    post:
+      summary: Register Student Profile
+      tags:
+        - User
+      description: Register a student profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student profile registered successfully
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /teachers/register:
+    post:
+      summary: Register Teacher Profile
+      tags:
+        - User
+      description: Register a teacher profile by admin or moderator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+      responses:
+        '200':
+          description: Teacher profile registered successfully
+      parameters:
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /user/access/lessons/{lessonID}:
+    get:
+      summary: Get actor's lesson access
+      tags:
+        - User
+      description: Get lesson access for a user.
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+        - in: path
+          name: lessonID
+          required: true
+          description: ID of the lesson to get access to.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lesson access retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonAccess'
+  /user/access/lessons:
+    put:
+      summary: Change student's access to lesson
+      tags:
+        - User
+      description: Change lesson access for a user by admin or moderator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonAccess'
+      responses:
+        '200':
+          description: Lesson access changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LessonAccess'
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /user/access/confirm/{buyerID}:
+    post:
+      summary: Confirm user access to products
+      tags:
+        - User
+      description: Confirm access from the Finances system webhook.
+      parameters:
+        - in: path
+          name: buyerID
+          required: true
+          description: ID of the confirmed owner.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                buyerID:
+                  type: string
+                  format: uuid
+                  description: ID of the buyer.
+                products:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Access confirmed successfully
+  /publication-requests:
+    post:
+      summary: Request Course Publication
+      tags:
+        - Moderation
+      description: Teacher requests publication of his course.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicationRequest'
+      responses:
+        '200':
+          description: Publication request submitted successfully
+      parameters:
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+  /publication-requests/{requestID}:
+    put:
+      summary: Update Publication Request
+      tags:
+        - Moderation
+      description: Moderator reviews publication request.
+      parameters:
+        - in: path
+          name: requestID
+          required: true
+          description: ID of the publication request to update.
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Publication request updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationRequest'
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        FeedbackID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        TeacherID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        Name:
+          type: string
+        Discipline:
+          type: string
+        Landing:
+          type: string
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+      required:
+        - Name
+        - Discipline
+        - Landing
+        - Visibility
+    Section:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+#        FeedbackID:
+#          x-go-type: uuid.UUID
+#          x-go-type-import:
+#            name: uuid
+#            path: github.com/google/uuid
+#          x-go-type-skip-optional-pointer: true
+#          type: string
+#          format: uuid
+        Heading:
+          type: string
+        Description:
+          type: string
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Themes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+      required:
+        - Heading
+        - Description
+        - Visibility
+    Theme:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+#        FeedbackID:
+#          x-go-type: uuid.UUID
+#          x-go-type-import:
+#            name: uuid
+#            path: github.com/google/uuid
+#          x-go-type-skip-optional-pointer: true
+#          type: string
+#          format: uuid
+        Heading:
+          type: string
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        LessonIDs:
+          type: array
+          items:
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              name: uuid
+              path: github.com/google/uuid
+            x-go-type-skip-optional-pointer: true
+            type: string
+            format: uuid
+          description: Lessons in theme.
+      required:
+        - Heading
+        - Visibility
+    Lesson:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        CourseID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        TeacherID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+        Product:
+          $ref: '#/components/schemas/Product'
+        Visibility:
+          type: string
+          enum: [ Hidden, Visible ]
+        Transcript:
+          type: string
+        VideoURI:
+          type: string
+      required:
+        - Transcript
+        - Visibility
+
+    Product:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: Unique identifier for the product.
+        Owner:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the owner of the product.
+        Price:
+          type: number
+          format: float
+          description: Price of the product.
+        Item:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the item associated with the product.
+      required:
+        - Price
+        - Owner
+        - Item
+    PaymentRedirect:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Payment redirect URL.
+    LessonAccess:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: Unique identifier for the lesson access.
+        LessonID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the lesson.
+        StudentID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the student.
+        AccessStatus:
+          type: string
+          enum: [ Inaccessible, Pending, Accessible ]
+          description: Access status of the lesson.
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the request was last updated.
+    Student:
+      type: object
+      properties:
+        AccountID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the student's account.
+    Teacher:
+      type: object
+      properties:
+        AccountID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the teacher's account.
+    PublicationRequest:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: Unique identifier for the publication request.
+        CourseID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the course associated with the request.
+        AssigneeID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: ID of the assignee (teacher or moderator).
+        RequestStatus:
+          type: string
+          enum: [ Unwatched, Approved, Rejected ]
+          description: Status of the publication request.
+        Comment:
+          type: string
+          description: Optional comment provided by the assignee.
+        UpdatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the request was last updated.
+    Actor:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: Unique identifier for the actor.
+        Roles:
+          type: array
+          items:
+            type: string
+          description: Roles of the actor.
+      required:
+        - ID
+        - Roles
+    OptionalActor:
+      type: object
+      properties:
+        ID:
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/google/uuid
+          x-go-type-skip-optional-pointer: true
+          type: string
+          format: uuid
+          description: Unique identifier for the actor.
+        Roles:
+          type: array
+          items:
+            type: string
+          description: Roles of the actor.
+  securitySchemes:
+    actorAuth:
+      type: apiKey
+      in: header
+      scheme: '#/components/schemas/Actor'

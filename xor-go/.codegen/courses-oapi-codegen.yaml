@@ -1,0 +1,12 @@
+# driver-oapi-codegen.yaml for driver api + server
+
+output: xor-go/services/courses/internal/handler/generated/coursesCodegen.go
+package: generated
+generate:
+  - types
+  - gin-server
+  - models
+
+
+# To RUN from root:
+# oapi-codegen --config xor-go/.codegen/courses-oapi-codegen.yaml oapi/courses.yaml

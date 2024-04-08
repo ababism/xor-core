@@ -7,6 +7,7 @@ import (
 
 func Prometheus(g *gin.RouterGroup) {
 	g.GET("/metrics/prometheus", prometheusHandler())
+	//g.GET("/metrics/prometheus",  metrics.HandleFunc())
 }
 
 func prometheusHandler() gin.HandlerFunc {

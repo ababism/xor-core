@@ -5,6 +5,10 @@ COPY . .
 
 ENV CGO_ENABLED=0
 ENV GOOS=linux
+#
+#RUN apt-get update && \
+#    apt-get --yes --no-install-recommends install make="4.3-4.1" && \
+#    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN go build -o finances-svc ./services/finances/cmd
 

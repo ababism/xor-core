@@ -1,0 +1,64 @@
+apiVersion: "1.0.0"
+
+app:
+  name: "courses"
+  env: "dev"
+  version: "1.0"
+
+logger:
+  env: "dev" # "prod"
+  #  level: "debug"
+  level: "info"
+  outputs:
+    - "stdout"
+  error_outputs:
+    - "stderr"
+  encoding: "json"
+  sentry_level: "error"
+  sentry_dsn: ""
+
+metrics:
+  enable: false
+  dsn: "<sentry_dsn_for_service>"
+
+graceful_shutdown:
+  delay: "3s"
+  wait_timeout: "15s"
+  callback_timeout: "5s"
+
+http:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: "15s"
+  write_timeout: "15s"
+
+finances_client:
+  uri: "http://location-svc:8084/api/v1"
+
+mongo:
+  database: courses
+  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+
+migrations_mongo:
+  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  path: "migrations"
+  enabled: true
+
+kafka_reader:
+  brokers:
+    - "kafka:9092"
+  topic: "outbound"
+  id_group: "courses-service"
+  min_bytes: 32
+  max_bytes: 2048
+
+kafka_writer:
+  broker: "kafka:9092"
+  topic: "inbound"
+
+scraper:
+  scrape_interval: 10s
+
+tracer:
+  enable: true
+  exp_target: "host.docker.internal:4317"
