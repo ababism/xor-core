@@ -15,7 +15,7 @@ type BankAccountGet struct {
 	Funds        float32
 	Data         BankAccountData
 	Status       string
-	LastDealAt   time.Time
+	LastDealAt   *time.Time
 	CreatedAt    time.Time
 	LastUpdateAt time.Time
 	Payments     []uuid.UUID
@@ -35,7 +35,7 @@ type BankAccountUpdate struct {
 	Funds       float32
 	Data        BankAccountData
 	Status      string
-	LastDealAt  time.Time
+	LastDealAt  *time.Time
 	Payments    []uuid.UUID
 }
 

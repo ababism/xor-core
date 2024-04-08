@@ -61,12 +61,12 @@ func GetLastMessage(err error) string {
 	if errors.As(err, &myErr) {
 		if appConfig.IsProduction() {
 			return myErr.Message
-		} else if appConfig.IsTesting() {
+		} else if appConfig.IsDevelopment() {
 			return myErr.DevMessage
 		}
 		return myErr.Message
 	} else {
-		if appConfig.IsTesting() {
+		if appConfig.IsDevelopment() {
 			return err.Error()
 		}
 		return ErrUnknown

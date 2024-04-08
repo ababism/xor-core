@@ -2,6 +2,7 @@ package postgre
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
@@ -17,12 +18,11 @@ const (
 
 const (
 	basePayoutRequestGetQuery = `
-		SELECT uuid, receiver, amount, data, received_at
+		SELECT uuid, receiver, amount, data, created_at
 		FROM payout_requests
-		WHERE uuid = $1
 	`
 	createPayoutRequestQuery = `
-		INSERT INTO payout_requests (receiver, amount, data, received_at)
+		INSERT INTO payout_requests (receiver, amount, data, created_at)
 		VALUES ($1, $2, $3, $4)
 		RETURNING uuid
 	`
@@ -77,18 +77,24 @@ func (r *payoutRequestRepository) Create(ctx context.Context, payout *domain.Pay
 	defer span.End()
 
 	payoutPostgres := repo_models.CreateToPayoutRequestPostgres(payout)
+	data, err := json.Marshal(payoutPostgres.Data)
+	if err != nil {
+		return nil, err
+	}
+
 	row := r.db.QueryRow(
 		createPayoutRequestQuery,
 		payoutPostgres.Receiver,
 		payoutPostgres.Amount,
-		payoutPostgres.Data,
+		string(data),
 		payoutPostgres.CreatedAt,
 	)
 	var id uuid.UUID
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return nil, err
 	}
+
 	return &id, nil
 }
 
@@ -102,6 +108,9 @@ func (r *payoutRequestRepository) Delete(ctx context.Context, id uuid.UUID) erro
 }
 
 func mapGetPayoutRequestRequestParams(params *domain.PayoutRequestFilter) map[string]interface{} {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]interface{})
 	if params.UUID != nil {
 		paramsMap["uuid"] = *params.UUID
@@ -113,7 +122,7 @@ func mapGetPayoutRequestRequestParams(params *domain.PayoutRequestFilter) map[st
 		paramsMap["amount"] = *params.Amount
 	}
 	if params.ReceivedAt != nil {
-		paramsMap["received_at"] = *params.ReceivedAt
+		paramsMap["created_at"] = *params.ReceivedAt
 	}
 	return paramsMap
 }

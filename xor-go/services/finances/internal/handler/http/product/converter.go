@@ -17,8 +17,9 @@ func DomainToGet(get domain.ProductGet) ProductGet {
 
 func CreateToDomain(create ProductCreate) domain.ProductCreate {
 	return domain.ProductCreate{
-		Name:  create.Name,
-		Price: create.Price,
+		Name:        create.Name,
+		Price:       create.Price,
+		IsAvailable: create.IsAvailable,
 	}
 }
 
@@ -36,8 +37,9 @@ func FilterToDomain(filter *ProductFilter) *domain.ProductFilter {
 		return nil
 	}
 	return &domain.ProductFilter{
-		UUID:  filter.UUID,
-		Name:  filter.Name,
-		Price: filter.Price,
+		UUID:        filter.UUID,
+		Name:        filter.Name,
+		Price:       filter.Price,
+		IsAvailable: filter.IsAvailable,
 	}
 }

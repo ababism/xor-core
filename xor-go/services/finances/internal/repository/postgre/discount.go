@@ -20,7 +20,6 @@ const (
 	baseDiscountGetQuery = `
 		SELECT uuid, created_by, percent, stand_alone, started_at, ended_at, status, created_at, updated_at
 		FROM discounts
-		WHERE uuid = $1
 	`
 	createDiscountQuery = `
 		INSERT INTO discounts (created_by, percent, stand_alone, started_at, ended_at, status)
@@ -128,6 +127,9 @@ func (r *discountRepository) EndDiscount(ctx context.Context, id uuid.UUID) erro
 }
 
 func mapGetDiscountRequestParams(params *domain.DiscountFilter) map[string]interface{} {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]interface{})
 	if params.UUID != nil {
 		paramsMap["uuid"] = *params.UUID

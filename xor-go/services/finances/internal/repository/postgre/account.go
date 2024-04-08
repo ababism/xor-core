@@ -2,6 +2,7 @@ package postgre
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
@@ -19,11 +20,10 @@ const (
 	baseBankAccountGetQuery = `
 		SELECT uuid, account_uuid, login, funds, data, status, last_deal_at, created_at, updated_at
 		FROM  bank_accounts
-		WHERE uuid = $1
 	`
 	createBankAccountQuery = `
-		INSERT INTO bank_accounts (account_uuid, login, data, status)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO bank_accounts (account_uuid, login, funds, data, status)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 	updateBankAccountQuery = `
 		UPDATE bank_accounts
@@ -68,7 +68,10 @@ func (r *bankAccountRepository) Present(ctx context.Context, filter *domain.Bank
 	return present, nil
 }
 
-func (r *bankAccountRepository) Get(ctx context.Context, filter *domain.BankAccountFilter) (*domain.BankAccountGet, error) {
+func (r *bankAccountRepository) Get(
+	ctx context.Context,
+	filter *domain.BankAccountFilter,
+) (*domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".Get")
 	defer span.End()
@@ -80,13 +83,19 @@ func (r *bankAccountRepository) Get(ctx context.Context, filter *domain.BankAcco
 	return xcommon.EnsureSingle(accounts)
 }
 
-func (r *bankAccountRepository) List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error) {
+func (r *bankAccountRepository) List(
+	ctx context.Context,
+	filter *domain.BankAccountFilter,
+) ([]domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".List")
 	defer span.End()
 
 	paramsMap := mapGetBankAccountRequestParams(filter)
-	query, args := xcommon.QueryWhereAnd(baseBankAccountGetQuery, paramsMap)
+	query, args := xcommon.QueryWhereAnd(
+		baseBankAccountGetQuery,
+		paramsMap,
+	)
 	var accounts []repo_models.BankAccount
 	err := r.db.SelectContext(ctx, &accounts, query, args...)
 	if err != nil {
@@ -101,13 +110,18 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 	defer span.End()
 
 	accountPostgres := repo_models.CreateToBankAccountPostgres(account)
-	_, err := r.db.ExecContext(
+	data, err := json.Marshal(accountPostgres.Data)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.ExecContext(
 		ctx,
 		createBankAccountQuery,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
 		accountPostgres.Funds,
-		accountPostgres.Data,
+		string(data),
 		accountPostgres.Status,
 	)
 	return err
@@ -129,6 +143,9 @@ func (r *bankAccountRepository) Update(ctx context.Context, account *domain.Bank
 }
 
 func mapGetBankAccountRequestParams(params *domain.BankAccountFilter) map[string]any {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]any)
 	if params.UUID != nil {
 		paramsMap["uuid"] = params.UUID

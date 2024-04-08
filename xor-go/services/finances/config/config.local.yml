@@ -37,10 +37,13 @@ graceful_shutdown:
 
 http:
   host: "localhost"
-  port: 8080
+  port: 8082
   read_timeout: "1s"
   write_timeout: "1s"
 
 tracer:
   enable: false
   exp_target: "jaeger-all-in-one:4317"
+
+payments_client:
+  uri: "payments/api/v1"

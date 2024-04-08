@@ -27,11 +27,11 @@ paths:
     get:
       operationId: getList
       summary: List products
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/ProductFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductFilter'
       responses:
         '200':
           description: Successful operation
@@ -44,24 +44,22 @@ paths:
     post:
       operationId: create
       summary: Create a product
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/ProductCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
       responses:
         '200':
           description: Successful operation
     put:
       operationId: update
       summary: Update a product
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/ProductUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
       responses:
         '200':
           description: Successful operation
@@ -113,9 +111,12 @@ components:
           type: string
         Price:
           type: number
+        IsAvailable:
+            type: boolean
       required:
         - Name
         - Price
+        - IsAvailable
     ProductUpdate:
       type: object
       properties:
@@ -143,3 +144,5 @@ components:
           type: string
         Price:
           type: number
+        IsAvailable:
+          type: boolean

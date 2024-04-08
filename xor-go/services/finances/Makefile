@@ -16,4 +16,4 @@ migrate-up:
 	migrate -path ./migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST):$(FINANCES_POSTGRES_PORT)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' up
 
 migrate-down:
-	migrate -path ./migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST):$(FINANCES_POSTGRES_PORT)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' down
+	migrate -path ./migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST):$(FINANCES_POSTGRES_PORT)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' down 1

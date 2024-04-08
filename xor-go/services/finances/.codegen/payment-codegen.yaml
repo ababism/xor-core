@@ -31,11 +31,11 @@ paths:
     get:
       operationId: getList
       summary: List payments
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PaymentFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentFilter'
       responses:
         '200':
           description: Successful operation
@@ -48,12 +48,11 @@ paths:
     post:
       operationId: create
       summary: Create a payment
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PaymentCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
       responses:
         '200':
           description: Successful operation

@@ -34,6 +34,6 @@ func ToPurchaseRequestDomain(model *PurchaseRequest) *domain.PurchaseRequestGet 
 		Receiver:   model.Receiver,
 		Products:   model.Products,
 		WebhookURL: model.WebhookURL,
-		ReceivedAt: model.CreatedAt,
+		CreatedAt:  model.CreatedAt,
 	}
 }

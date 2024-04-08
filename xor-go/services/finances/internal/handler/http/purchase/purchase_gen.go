@@ -16,7 +16,7 @@ import (
 // PurchaseRequestCreate defines model for PurchaseRequestCreate.
 type PurchaseRequestCreate struct {
 	Products   []openapi_types.UUID `json:"Products"`
-	ReceivedAt time.Time            `json:"ReceivedAt"`
+	ReceivedAt time.Time            `json:"CreatedAt"`
 	Receiver   openapi_types.UUID   `json:"Receiver"`
 	Sender     openapi_types.UUID   `json:"Sender"`
 	WebhookURL string               `json:"WebhookURL"`
@@ -24,7 +24,7 @@ type PurchaseRequestCreate struct {
 
 // PurchaseRequestFilter defines model for PurchaseRequestFilter.
 type PurchaseRequestFilter struct {
-	ReceivedAt *time.Time          `json:"ReceivedAt,omitempty"`
+	ReceivedAt *time.Time          `json:"CreatedAt,omitempty"`
 	Receiver   *openapi_types.UUID `json:"Receiver,omitempty"`
 	Sender     *openapi_types.UUID `json:"Sender,omitempty"`
 	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
@@ -34,31 +34,27 @@ type PurchaseRequestFilter struct {
 // PurchaseRequestGet defines model for PurchaseRequestGet.
 type PurchaseRequestGet struct {
 	Products   []openapi_types.UUID `json:"Products"`
-	ReceivedAt time.Time            `json:"ReceivedAt"`
+	ReceivedAt time.Time            `json:"CreatedAt"`
 	Receiver   openapi_types.UUID   `json:"Receiver"`
 	Sender     openapi_types.UUID   `json:"Sender"`
 	UUID       openapi_types.UUID   `json:"UUID"`
 	WebhookURL string               `json:"WebhookURL"`
 }
 
-// GetListParams defines parameters for GetList.
-type GetListParams struct {
-	Filter *PurchaseRequestFilter `form:"filter,omitempty" json:"filter,omitempty"`
-}
+// GetListJSONRequestBody defines body for GetList for application/json ContentType.
+type GetListJSONRequestBody = PurchaseRequestFilter
 
-// CreateParams defines parameters for Create.
-type CreateParams struct {
-	Model PurchaseRequestCreate `form:"model" json:"model"`
-}
+// CreateJSONRequestBody defines body for Create for application/json ContentType.
+type CreateJSONRequestBody = PurchaseRequestCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List purchase requests
 	// (GET /purchase-requests)
-	GetList(c *gin.Context, params GetListParams)
+	GetList(c *gin.Context)
 	// Create a purchase request
 	// (POST /purchase-requests)
-	Create(c *gin.Context, params CreateParams)
+	Create(c *gin.Context)
 	// Get purchase request by ID
 	// (GET /purchase-requests/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -79,19 +75,6 @@ type MiddlewareFunc func(c *gin.Context)
 // GetList operation middleware
 func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetListParams
-
-	// ------------- Optional query parameter "filter" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "filter", c.Request.URL.Query(), &params.Filter)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter filter: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -99,32 +82,12 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c, params)
+	siw.Handler.GetList(c)
 }
 
 // Create operation middleware
 func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params CreateParams
-
-	// ------------- Required query parameter "model" -------------
-
-	if paramValue := c.Query("model"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument model is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "model", c.Request.URL.Query(), &params.Model)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter model: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -132,7 +95,7 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c, params)
+	siw.Handler.Create(c)
 }
 
 // Get operation middleware

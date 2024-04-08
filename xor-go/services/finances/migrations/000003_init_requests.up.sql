@@ -1,6 +1,6 @@
 CREATE TABLE payout_requests
 (
-    uuid       UUID,
+    uuid       UUID      NOT NULL DEFAULT gen_random_uuid(),
     receiver   UUID      NOT NULL,
     amount     FLOAT(10) NOT NULL,
     data       JSONB     NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE payout_requests
 
 CREATE TABLE purchase_requests
 (
-    uuid        UUID,
+    uuid        UUID      NOT NULL DEFAULT gen_random_uuid(),
     sender      UUID,
     receiver    UUID,
     webhook_url TEXT      NOT NULL,

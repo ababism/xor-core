@@ -15,8 +15,9 @@ type ProductGet struct {
 }
 
 type ProductCreate struct {
-	Name  string
-	Price float32
+	Name        string
+	Price       float32
+	IsAvailable bool
 }
 
 type ProductUpdate struct {
@@ -27,7 +28,8 @@ type ProductUpdate struct {
 }
 
 type ProductFilter struct {
-	UUID  *uuid.UUID
-	Name  *string
-	Price *float32
+	UUID        *uuid.UUID
+	Name        *string
+	Price       *float32
+	IsAvailable *bool
 }

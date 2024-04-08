@@ -6,6 +6,7 @@ import (
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"io"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
@@ -32,28 +33,34 @@ func getPaymentTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getPaymentTracerSpan(c, ".Get")
+func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
+	_, newCtx, span := getPaymentTracerSpan(ctx, ".Get")
 	defer span.End()
 
 	domain, err := h.paymentService.Get(newCtx, uuid)
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
 	response := DomainToGet(*domain)
 
-	c.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(c *gin.Context, params GetListParams) {
-	_, newCtx, span := getPaymentTracerSpan(c, ".GetList")
+func (h *Handler) GetList(ctx *gin.Context) {
+	_, newCtx, span := getPaymentTracerSpan(ctx, ".GetList")
 	defer span.End()
 
-	domains, err := h.paymentService.List(newCtx, FilterToDomain(params.Filter))
+	var body *PaymentFilter
+	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	domains, err := h.paymentService.List(newCtx, FilterToDomain(body))
 	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -62,19 +69,25 @@ func (h *Handler) GetList(c *gin.Context, params GetListParams) {
 		list[i] = DomainToGet(item)
 	}
 
-	c.JSON(http.StatusOK, list)
+	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(c *gin.Context, params CreateParams) {
-	_, newCtx, span := getPaymentTracerSpan(c, ".Create")
+func (h *Handler) Create(ctx *gin.Context) {
+	_, newCtx, span := getPaymentTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	domain := CreateToDomain(params.Model)
-	err := h.paymentService.Create(newCtx, &domain)
-	if err != nil {
-		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
+	var body PaymentCreate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	domain := CreateToDomain(body)
+	err := h.paymentService.Create(newCtx, &domain)
+	if err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, http.NoBody)
 }

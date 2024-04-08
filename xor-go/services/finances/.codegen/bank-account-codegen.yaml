@@ -30,11 +30,11 @@ paths:
     get:
       operationId: getList
       summary: List bank accounts
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/BankAccountFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountFilter'
       responses:
         '200':
           description: Successful operation
@@ -47,12 +47,11 @@ paths:
     post:
       operationId: create
       summary: Create a bank account
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/BankAccountCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountCreate'
       responses:
         '201':
           description: Successful operation
@@ -61,12 +60,11 @@ paths:
     put:
       operationId: update
       summary: Update a bank account
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/BankAccountUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountUpdate'
       responses:
         '200':
           description: Successful operation
@@ -139,7 +137,6 @@ components:
         - Data
         - Status
         - Funds
-        - LastDealAt
         - CreatedAt
         - LastUpdateAt
         - Payments
@@ -195,7 +192,6 @@ components:
         - Funds
         - Data
         - Status
-        - LastDealAt
         - Payments
     BankAccountFilter:
       type: object

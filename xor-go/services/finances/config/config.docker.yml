@@ -1,23 +1,30 @@
 apiVersion: "1.0.0"
 
 app:
-  name: "template"
+  name: "finances"
   env: "dev"
+  version: "1.0"
 
 postgres:
+  port: "5436"
 
+#  host: ""
+#  port: ""
+#  hostname: ""
+#  dbname: ""
+#  password: ""
+#  SSLMode: ""
 
 logger:
   env: "dev" # "prod"
-  #  level: "debug"
   level: "info"
   outputs:
     - "stdout"
   error_outputs:
     - "stderr"
   encoding: "json"
-  sentry_level: "error"
   sentry_dsn: ""
+  sentry_level: "error"
 
 metrics:
   enable: false
@@ -33,36 +40,6 @@ http:
   port: 8080
   read_timeout: "15s"
   write_timeout: "15s"
-
-location_client:
-  uri: "http://location-svc:8084/api/v1"
-
-mongo:
-  database: template
-  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
-
-migrations_mongo:
-  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
-  path: "migrations"
-  enabled: true
-
-kafka_reader:
-  brokers:
-    - "kafka:9092"
-  topic: "outbound"
-  id_group: "template-service"
-  min_bytes: 32
-  max_bytes: 2048
-
-kafka_writer:
-  broker: "kafka:9092"
-  topic: "inbound"
-
-scraper:
-  scrape_interval: 10s
-
-long_poll:
-  long_poll_timeout: 10s
 
 tracer:
   enable: true

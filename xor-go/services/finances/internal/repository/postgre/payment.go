@@ -2,6 +2,7 @@ package postgre
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
 	"xor-go/pkg/xcommon"
@@ -15,7 +16,6 @@ const (
 	basePaymentGetQuery = `
 		SELECT uuid, sender, receiver, data, url, status, ended_at, created_at
 		FROM payments
-		WHERE uuid = $1
 	`
 	createPaymentQuery = `
 		INSERT INTO payments (uuid, sender, receiver, data, url, status, ended_at)
@@ -67,13 +67,17 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 	defer span.End()
 
 	accountPostgres := repo_models.CreateToPaymentPostgres(account)
-	_, err := r.db.ExecContext(
+	data, err := json.Marshal(accountPostgres.Data)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.ExecContext(
 		ctx,
 		createPaymentQuery,
 		accountPostgres.UUID,
 		accountPostgres.Sender,
 		accountPostgres.Receiver,
-		accountPostgres.Data,
+		string(data),
 		accountPostgres.URL,
 		accountPostgres.Status,
 		accountPostgres.EndedAt,
@@ -82,6 +86,9 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 }
 
 func mapGetPaymentRequestParams(params *domain.PaymentFilter) map[string]any {
+	if params == nil {
+		return map[string]any{}
+	}
 	paramsMap := make(map[string]any)
 	if params.UUID != nil {
 		paramsMap["uuid"] = params.UUID

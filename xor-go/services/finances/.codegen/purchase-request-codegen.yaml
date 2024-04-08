@@ -27,11 +27,11 @@ paths:
     get:
       operationId: getList
       summary: List purchase requests
-      parameters:
-        - in: query
-          name: filter
-          schema:
-            $ref: '#/components/schemas/PurchaseRequestFilter'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseRequestFilter'
       responses:
         '200':
           description: Successful operation
@@ -44,12 +44,11 @@ paths:
     post:
       operationId: create
       summary: Create a purchase request
-      parameters:
-        - in: query
-          name: model
-          required: true
-          schema:
-            $ref: '#/components/schemas/PurchaseRequestCreate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseRequestCreate'
       responses:
         '200':
           description: Successful operation
