@@ -7,15 +7,11 @@ import (
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 	"xor-go/pkg/metrics"
+	"xor-go/pkg/mylogger"
 	"xor-go/pkg/xapperror"
-	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/courses/internal/config"
-	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
-	"xor-go/services/courses/internal/daemons/scraper"
-	financesClient "xor-go/services/courses/internal/repository/financesclient"
-	financesClientGen "xor-go/services/courses/internal/repository/financesclient/generated"
 	"xor-go/services/courses/internal/repository/mongo"
 	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service"
@@ -36,7 +32,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// INFRASTRUCTURE ----------------------------------------------------------------------
 
 	// Инициализируем logger
-	logger, err := xlogger.Init(cfg.Logger, cfg.App)
+	//logger, err := xlogger.Init(cfg.Logger, cfg.App)
+	logger, err := mylogger.InitLogger(cfg.Logger, cfg.App.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +46,10 @@ func NewApp(cfg *config.Config) (*App, error) {
 			},
 		})
 	logger.Info("Init Logger – success")
+
+	logger.Debug("Logger Debug test")
+	logger.Info("Logger Info test")
+	logger.Error("Logger Error test")
 
 	// сохраняем logger в контекст
 	ctx := zapctx.WithLogger(startCtx, logger)
@@ -115,13 +116,13 @@ func NewApp(cfg *config.Config) (*App, error) {
 	publicationRepo := mongo.NewPublicationRepository(mongoDatabase)
 
 	// Инициализируем Location microservice client repository layer
-	client, err := financesClientGen.NewClientWithResponses(cfg.FinancesClient.Uri)
-	if err != nil {
-		logger.Fatal("cannot initialize generated location client:", zap.Error(err))
-		return nil, err
-	}
-	financesCLi := financesClient.NewClient(client)
-	logger.Info("Init Location client – success")
+	//client, err := financesClientGen.NewClientWithResponses(cfg.FinancesClient.Uri)
+	//if err != nil {
+	//	logger.Fatal("cannot initialize generated location client:", zap.Error(err))
+	//	return nil, err
+	//}
+	//finances := financesClient.NewClient(client)
+	//logger.Info("Init Location client – success")
 
 	// Kafka Producer in repository layer
 	//_ = kafkaproducer.NewKafkaProducer(cfg.KafkaWriter)
@@ -131,40 +132,40 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// Service layer
 	coursesService := service.NewCoursesService(courseRepo, courseEditRepo,
-		lessonRepo, lessonEditRepo, teacherRepo, studentRepo, publicationRepo, financesCLi)
+		lessonRepo, lessonEditRepo, teacherRepo, studentRepo, publicationRepo)
 
 	logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 
 	// Scraper for event calling
-	scr := scraper.NewScraper(logger, coursesService)
-	xshutdown.AddCallback(
-		&xshutdown.Callback{
-			Name:  "Data scraper stop",
-			FnCtx: scr.StopFunc(),
-		})
-
-	scrapeInterval, err := cfg.Scraper.GetScrapeInterval()
-	if err != nil {
-		logger.Fatal("can't parse time from scraper LongPollTimeout config string:", zap.Error(err))
-	}
-	logger.Info("Scraper interval – ", zap.Duration("interval", scrapeInterval))
-	// TODO Move to Start() ?
+	//scr := scraper.NewScraper(logger, coursesService)
+	//xshutdown.AddCallback(
+	//	&xshutdown.Callback{
+	//		Name:  "Data scraper stop",
+	//		FnCtx: scr.StopFunc(),
+	//	})
+	//
+	//scrapeInterval, err := cfg.Scraper.GetScrapeInterval()
+	//if err != nil {
+	//	logger.Fatal("can't parse time from scraper LongPollTimeout config string:", zap.Error(err))
+	//}
+	//logger.Info("Scraper interval – ", zap.Duration("interval", scrapeInterval))
+	//// TODO Move to Start() ?
 	//scr.Start(scrapeInterval)
 
-	logger.Info("Init Scraper – success")
+	//logger.Info("Init Scraper – success")
 
 	// TRANSPORT LAYER ----------------------------------------------------------------------
 
 	// Kafka consumer in transport layer
-	consumer := kafkaConsumer.NewKafkaConsumer(cfg.KafkaReader, coursesService)
-	kafkaConsumerClose := consumer.Start(ctx)
-	xshutdown.AddCallback(&xshutdown.Callback{
-		Name: "kafkaConsumer Close",
-		FnCtx: func(ctx context.Context) error {
-			return kafkaConsumerClose(consumer)
-		},
-	})
-	logger.Info("Init Kafka Consumer – success")
+	//consumer := kafkaConsumer.NewKafkaConsumer(cfg.KafkaReader, coursesService)
+	//kafkaConsumerClose := consumer.Start(ctx)
+	//xshutdown.AddCallback(&xshutdown.Callback{
+	//	Name: "kafkaConsumer Close",
+	//	FnCtx: func(ctx context.Context) error {
+	//		return kafkaConsumerClose(consumer)
+	//	},
+	//})
+	//logger.Info("Init Kafka Consumer – success")
 
 	// инициализируем адрес сервера
 	address := fmt.Sprintf(":%d", cfg.Http.Port)

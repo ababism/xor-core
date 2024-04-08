@@ -7,6 +7,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
+	"runtime"
 	"time"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/service/adapters"
@@ -40,6 +41,7 @@ func (s *Scraper) Start(scrapeInterval time.Duration) {
 		go func() {
 			for {
 				s.scrape(scrapeInterval)
+				runtime.Gosched()
 			}
 		}()
 		<-stop

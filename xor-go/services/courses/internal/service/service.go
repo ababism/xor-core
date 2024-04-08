@@ -28,17 +28,18 @@ func NewCoursesService(
 	teacherRepository adapters.TeacherRepository,
 	studentRepository adapters.StudentRepository,
 	publicationRequestRepository adapters.PublicationRequestRepository,
-	financesClient adapters.FinancesClient) adapters.CoursesService {
+	// financesClient adapters.FinancesClient
+) adapters.CoursesService {
 
 	return &CoursesService{
-		course:         courseRepository,
-		courseEdit:     courseEditRepository,
-		lesson:         lessonRepository,
-		lessonEdit:     lessonEditRepository,
-		student:        studentRepository,
-		teacher:        teacherRepository,
-		publication:    publicationRequestRepository,
-		financesClient: financesClient,
+		course:      courseRepository,
+		courseEdit:  courseEditRepository,
+		lesson:      lessonRepository,
+		lessonEdit:  lessonEditRepository,
+		student:     studentRepository,
+		teacher:     teacherRepository,
+		publication: publicationRequestRepository,
+		//financesClient: financesClient,
 	}
 }
 

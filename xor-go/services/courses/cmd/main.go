@@ -11,7 +11,7 @@ import (
 )
 
 const MainEnvName = ".env"
-const AppCapsName = "TEMPLATE"
+const AppCapsName = "COURSES"
 
 func init() {
 	if err := godotenv.Load(MainEnvName); err != nil {

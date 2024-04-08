@@ -2,11 +2,12 @@ apiVersion: "1.0.0"
 
 app:
   name: "courses"
-  env: "local"
+  env: "dev"
+  version: "1.0"
 
 logger:
   env: "dev" # "prod"
-  level: "info"
+  level: "debug"
   outputs:
     - "stdout"
   error_outputs:
@@ -34,11 +35,11 @@ finances_client:
   uri: "http://localhost:8084"
 
 mongo:
-  database: template
-  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  database: courses
+  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
 
 migrations_mongo:
-  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
   path: "./projects/template/migrations"
   enabled: true
 

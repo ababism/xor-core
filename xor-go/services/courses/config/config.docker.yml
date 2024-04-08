@@ -2,7 +2,7 @@ apiVersion: "1.0.0"
 
 app:
   name: "courses"
-  env: "local"
+  env: "dev"
   version: "1.0"
 
 logger:
@@ -36,11 +36,11 @@ finances_client:
   uri: "http://location-svc:8084/api/v1"
 
 mongo:
-  database: template
-  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  database: courses
+  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
 
 migrations_mongo:
-  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/template?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  uri: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
   path: "migrations"
   enabled: true
 
