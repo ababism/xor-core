@@ -66,6 +66,9 @@ type ServerInterface interface {
 	// Update a product
 	// (PUT /products)
 	Update(c *gin.Context)
+	// Get products price with discounts
+	// (GET /products/price/{uuids})
+	GetPrice(c *gin.Context, uuids []openapi_types.UUID)
 	// Get product by ID
 	// (GET /products/{id})
 	Get(c *gin.Context, id openapi_types.UUID)
@@ -120,6 +123,30 @@ func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 	}
 
 	siw.Handler.Update(c)
+}
+
+// GetPrice operation middleware
+func (siw *ServerInterfaceWrapper) GetPrice(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "uuids" -------------
+	var uuids []openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "uuids", c.Param("uuids"), &uuids)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter uuids: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetPrice(c, uuids)
 }
 
 // Get operation middleware
@@ -200,6 +227,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/products", wrapper.GetList)
 	router.POST(options.BaseURL+"/products", wrapper.Create)
 	router.PUT(options.BaseURL+"/products", wrapper.Update)
+	router.GET(options.BaseURL+"/products/price/:uuids", wrapper.GetPrice)
 	router.GET(options.BaseURL+"/products/:id", wrapper.Get)
 	router.PUT(options.BaseURL+"/products/:id/disable", wrapper.Disable)
 }

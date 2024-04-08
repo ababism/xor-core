@@ -73,8 +73,6 @@ components:
       type: object
       required:
         - UUID
-        - Sender
-        - Receiver
         - Products
         - WebhookURL
         - CreatedAt
@@ -101,8 +99,6 @@ components:
     PurchaseRequestCreate:
       type: object
       required:
-        - Sender
-        - Receiver
         - Products
         - WebhookURL
         - CreatedAt

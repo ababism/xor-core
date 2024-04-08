@@ -63,18 +63,6 @@ func (s *purchaseRequestService) Get(ctx context.Context, id uuid.UUID) (*domain
 	return request, nil
 }
 
-func (s *purchaseRequestService) GetPrice(ctx context.Context, id uuid.UUID) (*float32, error) {
-	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".GetPrice")
-	defer span.End()
-
-	request, err := s.rPurchase.GetPrice(newCtx, id)
-	if err != nil {
-		return nil, err
-	}
-
-	return request, nil
-}
-
 func (s *purchaseRequestService) List(
 	ctx context.Context,
 	filter *domain.PurchaseRequestFilter,
@@ -94,7 +82,12 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	id, err := s.rPurchase.Create(newCtx, purchase, 0)
+	price, err := s.rProduct.GetPrice(ctx, purchase.Products)
+	if err != nil {
+		return err
+	}
+
+	id, err := s.rPurchase.Create(newCtx, purchase, *price)
 	if err != nil {
 		return err
 	}
@@ -113,14 +106,12 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 		productsNames += " " + product.Name
 	}
 
-	err := s.rPurchase.Create(newCtx, purchase, 0)
-
 	createPurchase, err := s.cPayment.CreatePurchase(ctx, &domain.PaymentsCreatePurchase{
 		PaymentUUID: *id,
 		PaymentName: fmt.Sprintf("Payment for:%s", productsNames),
-		Money:       sum,
+		Money:       *price,
 		Currency:    "RUB",
-		FullName:    purchase.Sender.String(),
+		FullName:    fmt.Sprintf("%s,", purchase.Sender),
 		Phone:       "",
 		Email:       "",
 		Products:    []domain.PaymentsCreatePurchaseProduct{},
@@ -136,7 +127,8 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 
 	log.Logger.Info(fmt.Sprintf("Sending Purchase request result to %s", purchase.WebhookURL))
 
-	_, err = http.NewRequest(http.MethodPost, purchase.WebhookURL, bodyReader)
+	url := "http://" + purchase.WebhookURL
+	_, err = http.NewRequest(http.MethodPost, url, bodyReader)
 	if err != nil {
 		return err
 	}
@@ -154,8 +146,8 @@ func (s *purchaseRequestService) Archive(ctx context.Context, id uuid.UUID) erro
 	}
 
 	err = s.rPayment.Create(ctx, &domain.PaymentCreate{
-		Sender:   purchase.Sender,
-		Receiver: purchase.Receiver,
+		Sender:   *purchase.Sender,
+		Receiver: *purchase.Receiver,
 		Data:     domain.PaymentData{},
 		URL:      purchase.WebhookURL,
 		Status:   domain.STATUS_COMPLETED,
