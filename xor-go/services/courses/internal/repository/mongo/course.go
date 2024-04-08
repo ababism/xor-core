@@ -21,17 +21,15 @@ func NewCourseRepository(database *Database, name collections.CollectionName) *C
 	courseCollection := database.database.Collection(name.String())
 
 	return &CourseRepository{
-		db:             database,
-		course:         courseCollection,
-		collectionName: name,
+		db:     database,
+		course: courseCollection,
 	}
 }
 
 type CourseRepository struct {
 	db *Database
 
-	collectionName collections.CollectionName
-	course         *mongo.Collection
+	course *mongo.Collection
 }
 
 func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*domain.Course, error) {

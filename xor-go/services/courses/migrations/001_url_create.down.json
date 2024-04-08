@@ -1,6 +1,6 @@
 [
   {
-    "dropIndexes": "lesson_access",
+    "dropIndexes": "lesson_accesses",
     "index": "lesson_student_index"
   },
   {
@@ -10,9 +10,15 @@
     "dropCollections": "lessons"
   },
   {
+    "dropCollections": "courses_edt"
+  },
+  {
+    "dropCollections": "lessons_edit"
+  },
+  {
     "dropCollections": "publication_requests"
   },
   {
-    "drop": "lesson_access"
+    "drop": "lesson_accesses"
   }
 ]

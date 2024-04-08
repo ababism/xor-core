@@ -12,20 +12,21 @@ import (
 var _ adapters.TeacherRepository = &TeacherRepository{}
 
 func NewTeacherRepository(database *Database) *TeacherRepository {
-	courseCollection := database.database.Collection(collections.TeacherCollectionName.String())
+	teacherCollection := database.database.Collection(collections.TeacherCollectionName.String())
+	courseCollection := database.database.Collection(collections.CourseEditorCollectionName.String())
 
 	return &TeacherRepository{
-		db:             database,
-		course:         courseCollection,
-		collectionName: collections.TeacherCollectionName,
+		db:      database,
+		teacher: teacherCollection,
+		course:  courseCollection,
 	}
 }
 
 type TeacherRepository struct {
 	db *Database
 
-	collectionName collections.CollectionName
-	course         *mongo.Collection
+	teacher *mongo.Collection
+	course  *mongo.Collection
 }
 
 func (tr TeacherRepository) Create(ctx context.Context, profile domain.Teacher) error {

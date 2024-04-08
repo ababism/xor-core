@@ -7,11 +7,12 @@ func (cn CollectionName) String() string {
 }
 
 const (
-	CourseCollectionName              CollectionName = "course"
-	CourseEditorCollectionName        CollectionName = "course_edit"
-	LessonCollectionName              CollectionName = "lesson"
-	LessonEditorCollectionName        CollectionName = "lesson_edit"
-	StudentCollectionName             CollectionName = "student"
-	TeacherCollectionName             CollectionName = "teacher"
-	PublicationRequestsCollectionName CollectionName = "publication_request"
+	CourseCollectionName              CollectionName = "courses"
+	CourseEditorCollectionName        CollectionName = "courses_edit"
+	LessonCollectionName              CollectionName = "lessons"
+	LessonEditorCollectionName        CollectionName = "lessons_edit"
+	StudentCollectionName             CollectionName = "students"
+	TeacherCollectionName             CollectionName = "teachers"
+	PublicationRequestsCollectionName CollectionName = "publication_requests"
+	LessonAccessCollectionName        CollectionName = "lesson_accesses"
 )

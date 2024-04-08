@@ -12,20 +12,21 @@ import (
 var _ adapters.StudentRepository = &StudentRepository{}
 
 func NewStudentRepository(database *Database) *StudentRepository {
-	courseCollection := database.database.Collection(collections.StudentCollectionName.String())
+	studentCollection := database.database.Collection(collections.StudentCollectionName.String())
+	lessonAccessCollection := database.database.Collection(collections.LessonAccessCollectionName.String())
 
 	return &StudentRepository{
-		db:             database,
-		course:         courseCollection,
-		collectionName: collections.StudentCollectionName,
+		db:           database,
+		student:      studentCollection,
+		lessonAccess: lessonAccessCollection,
 	}
 }
 
 type StudentRepository struct {
 	db *Database
 
-	collectionName collections.CollectionName
-	course         *mongo.Collection
+	student      *mongo.Collection
+	lessonAccess *mongo.Collection
 }
 
 func (sr StudentRepository) GetLessonAccess(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error) {

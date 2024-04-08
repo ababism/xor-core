@@ -149,7 +149,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	}
 	logger.Info("Scraper interval – ", zap.Duration("interval", scrapeInterval))
 	// TODO Move to Start() ?
-	scr.Start(scrapeInterval)
+	//scr.Start(scrapeInterval)
 
 	logger.Info("Init Scraper – success")
 

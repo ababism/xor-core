@@ -12,11 +12,11 @@ import (
 var _ adapters.PublicationRequestRepository = &PublicationRequestRepository{}
 
 func NewPublicationRepository(database *Database) *PublicationRequestRepository {
-	courseCollection := database.database.Collection(collections.PublicationRequestsCollectionName.String())
+	publicationCollection := database.database.Collection(collections.PublicationRequestsCollectionName.String())
 
 	return &PublicationRequestRepository{
 		db:             database,
-		course:         courseCollection,
+		publications:   publicationCollection,
 		collectionName: collections.PublicationRequestsCollectionName,
 	}
 }
@@ -25,7 +25,7 @@ type PublicationRequestRepository struct {
 	db *Database
 
 	collectionName collections.CollectionName
-	course         *mongo.Collection
+	publications   *mongo.Collection
 }
 
 func (pr PublicationRequestRepository) Create(ctx context.Context, req domain.PublicationRequest) error {
