@@ -9,8 +9,8 @@ import (
 	"xor-go/pkg/apperror"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/mylogger"
-	"xor-go/pkg/mytracer"
 	"xor-go/pkg/xshutdown"
+	"xor-go/pkg/xtracer"
 	"xor-go/services/courses/internal/config"
 	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
 	"xor-go/services/courses/internal/daemons/scraper"
@@ -62,7 +62,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	//logger.Info("Importing constants from driver openApi – success")
 
 	// Инициализируем трассировку
-	tp, err := mytracer.InitTracer(cfg.Tracer, cfg.App)
+	tp, err := xtracer.Init(cfg.Tracer, cfg.App)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	// Инициализируем Prometheus
 	metrics.InitOnce(cfg.Metrics, logger, metrics.AppInfo{
 		Name:        cfg.App.Name,
-		Environment: cfg.App.Environment,
+		Environment: string(cfg.App.Environment),
 		Version:     cfg.App.Version,
 	})
 	logger.Info("Init Metrics – success")

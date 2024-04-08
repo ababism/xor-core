@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
-	"xor-go/pkg/app"
+	app "xor-go/pkg/xapp"
 )
 
 func TestInitAppError(t *testing.T) {
@@ -24,7 +24,7 @@ func TestInitAppError(t *testing.T) {
 
 		cfg := &app.Config{
 			Name:        "TestApp",
-			Environment: app.Production,
+			Environment: app.ProductionEnv,
 			Version:     "1.0.0",
 		}
 		err := InitAppError(cfg)
@@ -56,7 +56,7 @@ func TestGetLastMessage(t *testing.T) {
 	t.Run("AppErrorProduction", func(t *testing.T) {
 
 		appConfig = &app.Config{
-			Environment: app.Production,
+			Environment: app.ProductionEnv,
 		}
 		require.Equal(t, appConfig.IsProduction(), true)
 
@@ -67,9 +67,9 @@ func TestGetLastMessage(t *testing.T) {
 	t.Run("AppErrorLocal", func(t *testing.T) {
 
 		appConfig = &app.Config{
-			Environment: app.Local,
+			Environment: app.DevelopmentEnv,
 		}
-		require.Equal(t, appConfig.IsLocal(), true)
+		require.Equal(t, appConfig.IsDevelopment(), true)
 
 		resultMessage := GetLastMessage(testErr)
 		assert.Equal(t, devMessage, resultMessage)
@@ -79,9 +79,9 @@ func TestGetLastMessage(t *testing.T) {
 		const errorText = "random error"
 
 		appConfig = &app.Config{
-			Environment: app.Local,
+			Environment: app.DevelopmentEnv,
 		}
-		require.Equal(t, appConfig.IsLocal(), true)
+		require.Equal(t, appConfig.IsDevelopment(), true)
 
 		resultMessage := GetLastMessage(errors.New(errorText))
 		assert.Equal(t, errorText, resultMessage)
@@ -91,7 +91,7 @@ func TestGetLastMessage(t *testing.T) {
 		const errorText = "random error"
 
 		appConfig = &app.Config{
-			Environment: app.Production,
+			Environment: app.ProductionEnv,
 		}
 		require.Equal(t, appConfig.IsProduction(), true)
 
@@ -107,7 +107,7 @@ func TestGetLastMessage(t *testing.T) {
 		const errorText = "random error"
 
 		appConfig = &app.Config{
-			Environment: app.Production,
+			Environment: app.ProductionEnv,
 		}
 		require.Equal(t, appConfig.IsProduction(), true)
 
@@ -122,9 +122,9 @@ func TestGetLastMessage(t *testing.T) {
 		doubleErr := New(http.StatusInternalServerError, message, devMessage, insideAppErr)
 
 		appConfig = &app.Config{
-			Environment: app.Local,
+			Environment: app.DevelopmentEnv,
 		}
-		require.True(t, appConfig.IsLocal())
+		require.True(t, appConfig.IsDevelopment())
 
 		resultMessage := GetLastMessage(doubleErr)
 		assert.Equal(t, devMessage, resultMessage)
@@ -132,7 +132,7 @@ func TestGetLastMessage(t *testing.T) {
 
 	t.Run("NilErrProduction", func(t *testing.T) {
 		appConfig = &app.Config{
-			Environment: app.Production,
+			Environment: app.ProductionEnv,
 		}
 		require.Equal(t, appConfig.IsProduction(), true)
 
@@ -142,9 +142,9 @@ func TestGetLastMessage(t *testing.T) {
 
 	t.Run("NilErrLocal", func(t *testing.T) {
 		appConfig = &app.Config{
-			Environment: app.Local,
+			Environment: app.DevelopmentEnv,
 		}
-		require.Equal(t, appConfig.IsLocal(), true)
+		require.Equal(t, appConfig.IsDevelopment(), true)
 
 		resultMessage := GetLastMessage(nil)
 		assert.Equal(t, "", resultMessage)

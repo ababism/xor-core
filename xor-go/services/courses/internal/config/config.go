@@ -3,13 +3,13 @@ package config
 import (
 	"github.com/spf13/viper"
 	"log"
-	"xor-go/pkg/app"
 	"xor-go/pkg/http_server"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/mylogger"
-	"xor-go/pkg/mytracer"
+	"xor-go/pkg/xapp"
 	"xor-go/pkg/xconfig"
 	"xor-go/pkg/xshutdown"
+	"xor-go/pkg/xtracer"
 	kafkaConsumer "xor-go/services/courses/internal/daemons/kafkaConsumer"
 	"xor-go/services/courses/internal/daemons/scraper"
 	"xor-go/services/courses/internal/repository/financesclient"
@@ -18,7 +18,7 @@ import (
 )
 
 type Config struct {
-	App              *app.Config                  `mapstructure:"app"`
+	App              *xapp.Config                 `mapstructure:"app"`
 	Http             *http_server.Config          `mapstructure:"http"`
 	FinancesClient   *financesclient.ClientConfig `mapstructure:"finances_client"`
 	Logger           *mylogger.Config             `mapstructure:"logger"`
@@ -28,7 +28,7 @@ type Config struct {
 	GracefulShutdown *xshutdown.Config            `mapstructure:"graceful_shutdown"`
 	KafkaReader      *kafkaConsumer.Config        `mapstructure:"kafka_reader"`
 	KafkaWriter      *kafkaproducer.Config        `mapstructure:"kafka_writer"`
-	Tracer           *mytracer.Config             `mapstructure:"tracer"`
+	Tracer           *xtracer.Config              `mapstructure:"tracer"`
 	Scraper          *scraper.Config              `mapstructure:"scraper"`
 }
 

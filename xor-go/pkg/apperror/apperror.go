@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"xor-go/pkg/app"
+	"xor-go/pkg/xapp"
 )
 
 const (
@@ -13,21 +13,21 @@ const (
 	ErrUnknown = "unknown_error"
 )
 
-var appConfig *app.Config
+var appConfig *xapp.Config
 
 func init() {
-	appConfig = &app.Config{
+	appConfig = &xapp.Config{
 		Name:        appUnknown,
-		Environment: app.Production,
+		Environment: xapp.ProductionEnv,
 		Version:     verUnknown,
 	}
 }
 
-func InitAppError(cfg *app.Config) error {
+func InitAppError(cfg *xapp.Config) error {
 	if cfg == nil {
-		appConfig = &app.Config{
+		appConfig = &xapp.Config{
 			Name:        appUnknown,
-			Environment: app.Production,
+			Environment: xapp.ProductionEnv,
 			Version:     verUnknown,
 		}
 		return errors.New("application config is nil")
@@ -67,12 +67,12 @@ func GetLastMessage(err error) string {
 	if errors.As(err, &myErr) {
 		if appConfig.IsProduction() {
 			return myErr.Message
-		} else if appConfig.IsLocal() {
+		} else if appConfig.IsDevelopment() {
 			return myErr.DevMessage
 		}
 		return myErr.Message
 	} else {
-		if appConfig.IsLocal() {
+		if appConfig.IsDevelopment() {
 			return err.Error()
 		}
 		return ErrUnknown
