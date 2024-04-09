@@ -30,8 +30,8 @@ type Database struct {
 func NewDatabase(logger *zap.Logger) *Database {
 	return &Database{logger: logger}
 }
-func createIDFilter(ID uuid.UUID, id string) bson.M {
-	filter := bson.M{"_id": ID}
+func createUUIDFilter(ID uuid.UUID, id string) bson.M {
+	filter := bson.M{id: ID.String()}
 	return filter
 }
 

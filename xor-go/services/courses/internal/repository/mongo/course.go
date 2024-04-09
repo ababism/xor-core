@@ -74,7 +74,7 @@ func (cr CourseRepository) Get(ctx context.Context, courseID uuid.UUID) (*domain
 	defer span.End()
 
 	var course models.Course
-	filter := createIDFilter(courseID, "course_id")
+	filter := createUUIDFilter(courseID, "course_id")
 	err := cr.course.FindOne(newCtx, filter).Decode(&course)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr

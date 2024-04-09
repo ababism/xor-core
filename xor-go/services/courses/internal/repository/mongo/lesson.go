@@ -60,7 +60,7 @@ func (r LessonRepository) Get(ctx context.Context, lessonID uuid.UUID) (*domain.
 	defer span.End()
 
 	var lesson models.Lesson
-	filter := createIDFilter(lessonID, "lesson_id")
+	filter := createUUIDFilter(lessonID, "lesson_id")
 	err := r.lesson.FindOne(newCtx, filter).Decode(&lesson)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr
