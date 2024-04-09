@@ -4,7 +4,7 @@ info:
   description: API specification for managing courses, lessons, publication requests, and user data.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api/v1/courses
+  - url: http://localhost:8080/api/v1
 paths:
   /courses/{courseID}:
     parameters:
