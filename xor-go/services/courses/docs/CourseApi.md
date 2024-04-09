@@ -79,9 +79,9 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../API_README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../API_README.md#documentation-for-models)
+[[Back to README]](../API_README.md)
 
 
 ## CoursesCourseIDGet
@@ -144,16 +144,16 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[actorAuth](../README.md#actorAuth)
+[actorAuth](../API_README.md#actorAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../API_README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../API_README.md#documentation-for-models)
+[[Back to README]](../API_README.md)
 
 
 ## CoursesEditCourseIDGet
@@ -216,16 +216,16 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[actorAuth](../README.md#actorAuth)
+[actorAuth](../API_README.md#actorAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../API_README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../API_README.md#documentation-for-models)
+[[Back to README]](../API_README.md)
 
 
 ## CoursesEditCourseIDPut
@@ -290,16 +290,16 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[actorAuth](../README.md#actorAuth)
+[actorAuth](../API_README.md#actorAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: application/json
 - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../API_README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../API_README.md#documentation-for-models)
+[[Back to README]](../API_README.md)
 
 
 ## CoursesEditGet
@@ -356,14 +356,14 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[actorAuth](../README.md#actorAuth)
+[actorAuth](../API_README.md#actorAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../API_README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../API_README.md#documentation-for-models)
+[[Back to README]](../API_README.md)
 
