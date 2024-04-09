@@ -10,11 +10,13 @@ func (a OptionalActor) ToDomain() domain.Actor {
 		s := []string{domain.UnregisteredRole}
 		return domain.NewActor(a.ID, s)
 	}
-	return domain.NewActor(a.ID, *a.Roles)
+	s := []string{*a.Roles}
+	return domain.NewActor(a.ID, s)
 }
 
 func (a Actor) ToDomain() domain.Actor {
-	return domain.NewActor(a.ID, a.Roles)
+	s := []string{a.Roles}
+	return domain.NewActor(a.ID, s)
 }
 
 func (c Course) ToDomain() *domain.Course {

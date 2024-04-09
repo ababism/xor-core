@@ -34,13 +34,14 @@ http:
 finances_client:
   uri: "http://localhost:8084"
 
+#  "mongodb://localhost:27017,courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
 mongo:
   database: courses
-  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
+  uri: "mongodb://localhost:27017"
 
 migrations_mongo:
-  uri: "mongodb://localhost:27017,localhost:27018,localhost:27019/courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
-  path: "./projects/template/migrations"
+  uri: "mongodb://localhost:27017"
+  path: "./xor-go/services/courses/migrations"
   enabled: true
 
 kafka_reader:

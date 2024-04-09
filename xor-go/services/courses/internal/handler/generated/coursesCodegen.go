@@ -61,8 +61,8 @@ type Actor struct {
 	// ID Unique identifier for the actor.
 	ID uuid.UUID `json:"ID"`
 
-	// Roles Roles of the actor.
-	Roles []string `json:"Roles"`
+	// Roles Role of the actor.
+	Roles string `json:"Roles"`
 }
 
 // Course defines model for Course.
@@ -120,8 +120,8 @@ type OptionalActor struct {
 	// ID Unique identifier for the actor.
 	ID uuid.UUID `json:"ID,omitempty"`
 
-	// Roles Roles of the actor.
-	Roles *[]string `json:"Roles,omitempty"`
+	// Roles Role of the actor.
+	Roles *string `json:"Roles,omitempty"`
 }
 
 // PaymentRedirect defines model for PaymentRedirect.
