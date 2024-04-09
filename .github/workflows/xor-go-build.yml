@@ -1,0 +1,41 @@
+name: "[xor-go] Build Golang service"
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Choose service"
+        type: choice
+        options:
+          - sage
+        required: true
+  workflow_call:
+    inputs:
+      service:
+        type: string
+        required: true
+
+env:
+  SERVICE_ENTRY: >
+    ${{ fromJson('{
+      "sage": "./services/sage/cmd/main.go"
+    }')[github.event.inputs.service || inputs.service] }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./xor-go
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./xor-go/go.mod # this action use repo root
+          cache: false
+      - name: Run build
+        run: go build -o sage ${{env.SERVICE_ENTRY}}

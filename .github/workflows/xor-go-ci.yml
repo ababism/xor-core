@@ -1,0 +1,16 @@
+name: "[xor-go] Build monorepo"
+
+on:
+  push:
+    branches: ["master"]
+    paths: ["xor-go/**"]
+  pull_request:
+    branches: ["master"]
+    paths: ["xor-go/**"]
+  workflow_dispatch:
+
+jobs:
+  sage-build:
+    uses: ./.github/workflows/xor-go-build.yml
+    with:
+      service: sage
