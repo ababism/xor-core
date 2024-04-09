@@ -6,7 +6,6 @@ import (
 	"github.com/juju/zaputil/zapctx"
 	"go.mongodb.org/mongo-driver/mongo"
 	global "go.opentelemetry.io/otel"
-	"go.uber.org/zap"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
@@ -36,39 +35,47 @@ func (r LessonRepository) Create(ctx context.Context, lesson *domain.Lesson) (*d
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Create")
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Create")
 	defer span.End()
 
-	mongoLesson := models.ToMongoModelLesson(lesson)
-	insertRes, err := r.lesson.InsertOne(newCtx, mongoLesson)
+	mongoLesson := models.ToMongoModelLesson(*lesson)
+	_, err := r.lesson.InsertOne(newCtx, mongoLesson)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr
 	}
 	if err != nil {
-		appErr := xapperror.New(http.StatusBadRequest, "trip already created",
-			"failed to create trip in MongoDB", err)
+		appErr := xapperror.New(http.StatusBadRequest, "lesson already created",
+			"failed to create lesson in MongoDB", err)
 		return nil, appErr
 	}
 
-	insertedID, ok := insertRes.InsertedID.(string)
-	if !ok {
-		logger.Error("MongoDB id is not a string error", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"internal server error", "MongoDB _id is not a string", err)
-	}
-	resultID, err := uuid.Parse(insertedID)
-	if err != nil {
-		logger.Error("MongoDB id is not valid uuid", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"internal server error", "MongoDB _id is not a uuid", err)
-	}
-	course.ID = resultID
-	return course, nil
+	return lesson, nil
 }
 
 func (r LessonRepository) Get(ctx context.Context, lessonID uuid.UUID) (*domain.Lesson, error) {
-	//TODO implement me
-	panic("implement me")
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Get")
+	defer span.End()
+
+	var lesson models.Lesson
+	filter := createIDFilter(lessonID, "lesson_id")
+	err := r.lesson.FindOne(newCtx, filter).Decode(&lesson)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return nil, mErr
+	}
+	if err != nil {
+		appErr := xapperror.New(http.StatusNotFound, "can't find lesson", "error fetching lesson from MongoDB", err)
+		return nil, appErr
+	}
+
+	res, err := lesson.ToDomain()
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (r LessonRepository) GetAllByCourse(ctx context.Context, courseID uuid.UUID) ([]*domain.Lesson, error) {

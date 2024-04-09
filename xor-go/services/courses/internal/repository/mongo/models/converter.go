@@ -13,16 +13,25 @@ func ToMongoModelCourse(course *domain.Course) Course {
 func ToMongoModelSection(section *domain.Section) Section {
 	return Section{}
 }
-func ToMongoModelLesson(lesson domain.Lesson) Lesson {
+func ToMongoModelLesson(l domain.Lesson) Lesson {
 	return Lesson{
 		mID:        primitive.ObjectID{},
-		ID:         lesson.ID.String(),
-		CourseID:   primitive.ObjectID{},
-		TeacherID:  "",
-		Product:    Product{},
-		Visibility: 0,
-		Transcript: "",
-		VideoURI:   "",
+		ID:         l.ID.String(),
+		CourseID:   l.CourseID.String(),
+		TeacherID:  l.TeacherID.String(),
+		Product:    ToMongoModelProduct(l.Product),
+		Visibility: int(l.Visibility),
+		Transcript: l.Transcript,
+		VideoURI:   l.VideoURI,
+	}
+}
+func ToMongoModelProduct(p domain.Product) Product {
+	return Product{
+		mID:    primitive.ObjectID{},
+		ID:     p.ID.String(),
+		Owner:  p.Owner.String(),
+		Price:  p.Price,
+		ItemID: p.Item.String(),
 	}
 }
 
