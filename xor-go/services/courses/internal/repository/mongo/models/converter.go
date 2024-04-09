@@ -1,6 +1,9 @@
 package models
 
-import "xor-go/services/courses/internal/domain"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"xor-go/services/courses/internal/domain"
+)
 
 // TODO Rewrite
 func ToMongoModelCourse(course *domain.Course) Course {
@@ -9,6 +12,18 @@ func ToMongoModelCourse(course *domain.Course) Course {
 
 func ToMongoModelSection(section *domain.Section) Section {
 	return Section{}
+}
+func ToMongoModelLesson(lesson domain.Lesson) Lesson {
+	return Lesson{
+		mID:        primitive.ObjectID{},
+		ID:         lesson.ID.String(),
+		CourseID:   primitive.ObjectID{},
+		TeacherID:  "",
+		Product:    Product{},
+		Visibility: 0,
+		Transcript: "",
+		VideoURI:   "",
+	}
 }
 
 //

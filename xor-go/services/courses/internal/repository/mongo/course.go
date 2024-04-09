@@ -18,7 +18,7 @@ import (
 var _ adapters.CourseRepository = &CourseRepository{}
 
 func NewCourseRepository(database *Database, name collections.CollectionName) *CourseRepository {
-	courseCollection := database.database.Collection(name.String())
+	courseCollection := (*database).database.Collection(name.String())
 
 	return &CourseRepository{
 		db:     database,

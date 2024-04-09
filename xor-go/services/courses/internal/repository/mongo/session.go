@@ -127,16 +127,16 @@ func (cr CourseRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (lr LessonRepository) NewSession(ctx context.Context) (*Session, error) {
+func (r LessonRepository) NewSession(ctx context.Context) (*Session, error) {
 	logger := zapctx.Logger(ctx)
 
-	txClient, err := mongo.Connect(ctx, lr.db.clientOptions)
+	txClient, err := mongo.Connect(ctx, r.db.clientOptions)
 	if err != nil {
 		logger.Error("MongoDB create new client for session error", zap.Error(err))
 		return nil, xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB create new client for session error", err)
 	}
 
-	txDatabase := txClient.Database(lr.db.database.Name())
+	txDatabase := txClient.Database(r.db.database.Name())
 
 	session, err := txClient.StartSession()
 	if err != nil {
@@ -147,7 +147,7 @@ func (lr LessonRepository) NewSession(ctx context.Context) (*Session, error) {
 	newTxDB := Database{
 		client:        txClient,
 		database:      txDatabase,
-		clientOptions: lr.db.clientOptions,
+		clientOptions: r.db.clientOptions,
 	}
 
 	return &Session{

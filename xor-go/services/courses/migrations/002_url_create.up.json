@@ -18,10 +18,12 @@
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "feedback_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "teacher_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "name": {
             "bsonType": "string"
@@ -50,9 +52,6 @@
                   "bsonType": "string",
                   "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 },
-                "feedback_id": {
-                  "bsonType": "string"
-                },
                 "heading": {
                   "bsonType": "string"
                 },
@@ -77,9 +76,6 @@
                         "bsonType": "string",
                         "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                       },
-                      "feedback_id": {
-                        "bsonType": "string"
-                      },
                       "heading": {
                         "bsonType": "string"
                       },
@@ -89,7 +85,8 @@
                       "lesson_ids": {
                         "bsonType": "array",
                         "items": {
-                          "bsonType": "objectId"
+                          "bsonType": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                         }
                       }
                     }
@@ -124,7 +121,8 @@
             "bsonType": "string"
           },
           "teacher_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "name": {
             "bsonType": "string"
@@ -153,9 +151,6 @@
                   "bsonType": "string",
                   "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                 },
-                "feedback_id": {
-                  "bsonType": "string"
-                },
                 "heading": {
                   "bsonType": "string"
                 },
@@ -180,9 +175,6 @@
                         "bsonType": "string",
                         "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                       },
-                      "feedback_id": {
-                        "bsonType": "string"
-                      },
                       "heading": {
                         "bsonType": "string"
                       },
@@ -192,7 +184,8 @@
                       "lesson_ids": {
                         "bsonType": "array",
                         "items": {
-                          "bsonType": "objectId"
+                          "bsonType": "string",
+                          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
                         }
                       }
                     }
@@ -224,10 +217,12 @@
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "course_id": {
-            "bsonType": "objectId"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "teacher_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "product": {
             "bsonType": "object",
@@ -287,10 +282,12 @@
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "course_id": {
-            "bsonType": "objectId"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "teacher_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "product": {
             "bsonType": "object",
@@ -351,7 +348,8 @@
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "course_id": {
-            "bsonType": "objectId"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "assignee_id": {
             "bsonType": "string"
@@ -389,10 +387,12 @@
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "lesson_id": {
-            "bsonType": "objectId"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "student_id": {
-            "bsonType": "string"
+            "bsonType": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
           },
           "access_status": {
             "bsonType": "int"
