@@ -1,4 +1,4 @@
-name: "[xor-go] [sage] Build Golang"
+name: "[xor-go] Build monorepo"
 
 on:
   push:
@@ -10,22 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # The “build” workflow
-  build-sage:
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./xor-go
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: './go.mod'
-#        with:
-#          go-version: 1.21
-      - name: Run build
-        run: go build -o sage ./service/sage/cmd/main.go
+  sage-build:
+    uses: ./.github/workflows/xor-go-build.yml
+    with:
+      service: sage
