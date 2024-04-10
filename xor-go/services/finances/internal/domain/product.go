@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+type ProductSmall struct {
+	UUID  uuid.UUID
+	Name  string
+	Info  string
+	Price float32
+}
+
 type ProductGet struct {
 	UUID          uuid.UUID
 	Name          string
@@ -35,4 +42,21 @@ type ProductFilter struct {
 	Name        *string
 	Price       *float32
 	IsAvailable *bool
+}
+
+func ConvertProductToSmall(product ProductGet) ProductSmall {
+	return ProductSmall{
+		UUID:  product.UUID,
+		Name:  product.Name,
+		Info:  product.Info,
+		Price: product.Price,
+	}
+}
+
+func ConvertProductsToSmall(products []ProductGet) []ProductSmall {
+	res := make([]ProductSmall, len(products))
+	for i, product := range products {
+		res[i] = ConvertProductToSmall(product)
+	}
+	return res
 }

@@ -1,0 +1,10 @@
+# finances-codegen-config.yaml for finances api + server
+
+output: internal/handler/http/generated_gen.go
+package: finances
+generate:
+  - types
+  - gin-server
+
+# To RUN from root:
+# oapi-codegen --config .codegen/finances-codegen-config.yaml .codegen/finances-codegen.yaml
