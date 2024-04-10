@@ -32,23 +32,23 @@ func (r *GatewayHandler) InitRoutes(g *gin.RouterGroup) {
 }
 
 func (r *GatewayHandler) PassSecure(ctx *gin.Context) {
-	var gatewayPassRequest model.PassSecureResourceRequest
-	if err := ctx.BindJSON(&gatewayPassRequest); err != nil {
+	var passSecureResourceRequest model.PassSecureResourceRequest
+	if err := ctx.BindJSON(&passSecureResourceRequest); err != nil {
 		r.responser.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	idmVerifyResponse, err := r.gatewayService.Verify(ctx, model.ToPassSecureResourceInfo(&gatewayPassRequest))
+	idmVerifyResponse, err := r.gatewayService.Verify(ctx, model.ToPassSecureResourceInfo(&passSecureResourceRequest))
 	if err != nil {
 		r.responser.HandleXorErrorWithMessage(ctx, err)
 		return
 	}
 
-	internalResourceAccessResponse, err := r.gatewayService.PassSecure(ctx, &domain.PassSecureResourceRequest{
-		Resource:     gatewayPassRequest.Resource,
-		Route:        gatewayPassRequest.Route,
-		Method:       gatewayPassRequest.Method,
-		Body:         gatewayPassRequest.Body,
+	internalResourceResponse, err := r.gatewayService.PassSecure(ctx, &domain.PassSecureResourceRequest{
+		Resource:     passSecureResourceRequest.Resource,
+		Route:        passSecureResourceRequest.Route,
+		Method:       passSecureResourceRequest.Method,
+		Body:         passSecureResourceRequest.Body,
 		AccountUuid:  idmVerifyResponse.AccountUuid,
 		AccountEmail: idmVerifyResponse.AccountEmail,
 		Roles:        idmVerifyResponse.Roles,
@@ -58,32 +58,26 @@ func (r *GatewayHandler) PassSecure(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, model.ToPassResourceResponse(internalResourceAccessResponse))
+	ctx.JSON(200, model.ToPassResourceResponse(internalResourceResponse))
 }
 
 func (r *GatewayHandler) PassInsecure(ctx *gin.Context) {
-	var gatewayPassRequest model.PassInsecureResourceRequest
-	if err := ctx.BindJSON(&gatewayPassRequest); err != nil {
+	var passInsecureResourceRequest model.PassInsecureResourceRequest
+	if err := ctx.BindJSON(&passInsecureResourceRequest); err != nil {
 		r.responser.HandleErrorWithMessage(ctx, http.StatusBadRequest, err)
 		return
 	}
 
-	//idmVerifyResponse, err := r.gatewayService.Verify(ctx, gatewayPassRequest.ToPassSecureResourceInfo())
-	//if err != nil {
-	//	r.responser.HandleXorErrorWithMessage(ctx, err)
-	//	return
-	//}
-
-	internalResourceAccessResponse, err := r.gatewayService.PassInsecure(ctx, &domain.PassInsecureResourceRequest{
-		Resource: gatewayPassRequest.Resource,
-		Route:    gatewayPassRequest.Route,
-		Method:   gatewayPassRequest.Method,
-		Body:     gatewayPassRequest.Body,
+	internalResourceResponse, err := r.gatewayService.PassInsecure(ctx, &domain.PassInsecureResourceRequest{
+		Resource: passInsecureResourceRequest.Resource,
+		Route:    passInsecureResourceRequest.Route,
+		Method:   passInsecureResourceRequest.Method,
+		Body:     passInsecureResourceRequest.Body,
 	})
 	if err != nil {
 		r.responser.HandleXorErrorWithMessage(ctx, err)
 		return
 	}
 
-	ctx.JSON(200, model.ToPassResourceResponse(internalResourceAccessResponse))
+	ctx.JSON(200, model.ToPassResourceResponse(internalResourceResponse))
 }
