@@ -1,21 +1,14 @@
 package models
 
 import (
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"xor-go/services/courses/internal/domain"
 )
 
-// TODO Rewrite
-func ToMongoModelCourse(course *domain.Course) Course {
-	return Course{}
-}
-
-func ToMongoModelSection(section *domain.Section) Section {
-	return Section{}
-}
 func ToMongoModelLesson(l domain.Lesson) Lesson {
 	return Lesson{
-		mID:        primitive.ObjectID{},
+		mID:        primitive.NilObjectID,
 		ID:         l.ID.String(),
 		CourseID:   l.CourseID.String(),
 		TeacherID:  l.TeacherID.String(),
@@ -27,11 +20,105 @@ func ToMongoModelLesson(l domain.Lesson) Lesson {
 }
 func ToMongoModelProduct(p domain.Product) Product {
 	return Product{
-		mID:    primitive.ObjectID{},
+		mID:    primitive.NilObjectID,
 		ID:     p.ID.String(),
 		Owner:  p.Owner.String(),
 		Price:  p.Price,
 		ItemID: p.Item.String(),
+	}
+}
+
+func ToMongoModelPublicationRequest(pr domain.PublicationRequest) PublicationRequest {
+	return PublicationRequest{
+		mID:        primitive.NilObjectID,
+		ID:         pr.ID.String(),
+		CourseID:   pr.CourseID.String(),
+		AssigneeID: pr.AssigneeID.String(),
+		UpdatedAt:  pr.UpdatedAt,
+	}
+}
+
+func ToMongoModelTeacher(t domain.Teacher) Teacher {
+	return Teacher{
+		mID:       primitive.NilObjectID,
+		AccountID: t.AccountID.String(),
+	}
+}
+
+func ToMongoModelStudent(s domain.Student) Student {
+	return Student{
+		mID:       primitive.NilObjectID,
+		AccountID: s.AccountID.String(),
+	}
+}
+
+// TODO Rewrite
+func ToMongoModelCourse(course *domain.Course) Course {
+	return Course{
+		mID:        primitive.NilObjectID,
+		ID:         course.ID.String(),
+		FeedbackID: course.FeedbackID.String(),
+		TeacherID:  course.TeacherID.String(),
+		Name:       course.Name,
+		Discipline: course.Discipline,
+		Landing:    course.Landing,
+		Visibility: int(course.Visibility),
+		Sections:   ToMongoModelSections(course.Sections),
+	}
+}
+
+func ToMongoModelSections(sections []domain.Section) []Section {
+	var result []Section
+	for _, sec := range sections {
+		result = append(result, ToMongoModelSection(sec))
+	}
+	return result
+}
+
+func ToMongoModelSection(section domain.Section) Section {
+	return Section{
+		mID:         primitive.NilObjectID,
+		ID:          section.ID.String(),
+		Heading:     section.Heading,
+		Description: section.Description,
+		Visibility:  int(section.Visibility),
+		Themes:      ToMongoModelThemes(section.Themes),
+	}
+}
+
+func ToMongoModelThemes(themes []domain.Theme) []Theme {
+	var result []Theme
+	for _, theme := range themes {
+		result = append(result, ToMongoModelTheme(theme))
+	}
+	return result
+}
+
+func ToMongoModelTheme(theme domain.Theme) Theme {
+	return Theme{
+		mID:        primitive.NilObjectID,
+		ID:         theme.ID.String(),
+		Heading:    theme.Heading,
+		Visibility: int(theme.Visibility),
+		LessonIDs:  ToStringUUIDs(theme.LessonIDs),
+	}
+}
+
+func ToStringUUIDs(uuids []uuid.UUID) []string {
+	var result []string
+	for _, id := range uuids {
+		result = append(result, id.String())
+	}
+	return result
+}
+
+func ToMongoModelLessonAccess(course domain.LessonAccess) LessonAccess {
+	return LessonAccess{
+		mID:       primitive.NilObjectID,
+		ID:        course.ID.String(),
+		StudentID: course.StudentID.String(),
+		LessonID:  course.LessonID.String(),
+		UpdatedAt: course.UpdatedAt,
 	}
 }
 

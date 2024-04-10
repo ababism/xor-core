@@ -35,13 +35,13 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 				fmt.Sprintf("teacher do not own course %s", request.CourseID.String()), nil)
 		}
 	}
+	request.UpdatedAt = time.Now()
 
 	err := c.publication.Create(ctx, request)
 	if err != nil {
 		return domain.PublicationRequest{}, err
 	}
 
-	request.UpdatedAt = time.Now()
 	return request, nil
 }
 

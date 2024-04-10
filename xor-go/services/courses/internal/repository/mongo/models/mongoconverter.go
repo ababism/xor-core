@@ -8,9 +8,102 @@ import (
 	"xor-go/services/courses/internal/domain"
 )
 
-func (cm *Course) ToDomain() domain.Course {
-	return domain.Course{}
+func ParseUUID(uuidStr string) (uuid.UUID, error) {
+	id, err := uuid.Parse(uuidStr)
+	if err != nil {
+		return uuid.Nil, xapperror.New(http.StatusInternalServerError,
+			"can't parses uuid from db",
+			"can't parses uuid from db", err)
+	}
+
+	return id, nil
 }
+
+func (c *Course) ToDomain() (*domain.Course, error) {
+	ID, err := ParseUUID(c.ID)
+	if err != nil {
+		return nil, err
+	}
+	tID, err := ParseUUID(c.TeacherID)
+	if err != nil {
+		return nil, err
+	}
+	fID, err := ParseUUID(c.FeedbackID)
+	if err != nil {
+		return nil, err
+	}
+	dSections, err := ToSectionsDomain(c.Sections)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.Course{
+		ID:         ID,
+		FeedbackID: fID,
+		TeacherID:  tID,
+		Name:       c.Name,
+		Discipline: c.Discipline,
+		Landing:    c.Landing,
+		Visibility: domain.Visibility(c.Visibility),
+		Sections:   dSections,
+	}, nil
+}
+
+func ToSectionsDomain(sections []Section) ([]domain.Section, error) {
+	var result []domain.Section
+	for _, section := range sections {
+		s, err := section.ToDomain()
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, s)
+	}
+	return result, nil
+}
+
+func (s Section) ToDomain() (domain.Section, error) {
+	ID, err := ParseUUID(s.ID)
+	if err != nil {
+		return domain.Section{}, err
+	}
+	themes := make([]domain.Theme, 0)
+	for _, theme := range s.Themes {
+		t, err := theme.ToDomain()
+		if err != nil {
+			return domain.Section{}, err
+		}
+		themes = append(themes, t)
+	}
+	return domain.Section{
+		ID:          ID,
+		Heading:     s.Heading,
+		Description: s.Description,
+		Visibility:  domain.Visibility(s.Visibility),
+		Themes:      themes,
+	}, nil
+
+}
+
+func (s Theme) ToDomain() (domain.Theme, error) {
+	ID, err := ParseUUID(s.ID)
+	if err != nil {
+		return domain.Theme{}, err
+	}
+	lessonIDs := make([]uuid.UUID, 0)
+	for _, lessonID := range s.LessonIDs {
+		id, err := ParseUUID(lessonID)
+		if err != nil {
+			return domain.Theme{}, err
+		}
+		lessonIDs = append(lessonIDs, id)
+	}
+	return domain.Theme{
+		ID:         ID,
+		Heading:    s.Heading,
+		Visibility: domain.Visibility(s.Visibility),
+		LessonIDs:  lessonIDs,
+	}, nil
+}
+
 func (l *Lesson) ToDomain() (*domain.Lesson, error) {
 	ID, err := ParseUUID(l.ID)
 	if err != nil {
@@ -25,26 +118,102 @@ func (l *Lesson) ToDomain() (*domain.Lesson, error) {
 		return nil, err
 	}
 
+	lProduct, err := l.Product.ToDomain()
+	if err != nil {
+		return nil, err
+	}
+
 	return &domain.Lesson{
 		ID:         ID,
 		CourseID:   cID,
 		TeacherID:  tID,
-		Product:    domain.Product{},
+		Product:    lProduct,
 		Visibility: domain.Visibility(l.Visibility),
 		Transcript: l.Transcript,
 		VideoURI:   l.VideoURI,
 	}, nil
 }
-func ParseUUID(uuidStr string) (uuid.UUID, error) {
-	id, err := uuid.Parse(uuidStr)
+func (l *Product) ToDomain() (domain.Product, error) {
+	ID, err := ParseUUID(l.ID)
 	if err != nil {
-		return uuid.Nil, xapperror.New(http.StatusInternalServerError,
-			"can't parses uuid from db",
-			"can't parses uuid from db", err)
+		return domain.Product{}, err
 	}
+	oID, err := ParseUUID(l.Owner)
+	if err != nil {
+		return domain.Product{}, err
 
-	return id, nil
+	}
+	iID, err := ParseUUID(l.ItemID)
+	if err != nil {
+		return domain.Product{}, err
+
+	}
+	return domain.Product{
+		ID:    ID,
+		Owner: oID,
+		Price: l.Price,
+		Item:  iID,
+	}, nil
 }
+
+func (p *PublicationRequest) ToDomain() (*domain.PublicationRequest, error) {
+	ID, err := ParseUUID(p.ID)
+	if err != nil {
+		return nil, err
+	}
+	cID, err := ParseUUID(p.CourseID)
+	if err != nil {
+		return nil, err
+	}
+	aID, err := ParseUUID(p.AssigneeID)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.PublicationRequest{
+		ID:         ID,
+		CourseID:   cID,
+		AssigneeID: aID,
+		UpdatedAt:  p.UpdatedAt,
+	}, nil
+}
+
+func (t *Teacher) ToDomain() (*domain.Teacher, error) {
+	aID, err := ParseUUID(t.AccountID)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.Teacher{
+		AccountID: aID,
+	}, nil
+}
+
+func (s *Student) ToDomain() (*domain.Student, error) {
+	aID, err := ParseUUID(s.AccountID)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.Student{
+		AccountID: aID,
+	}, nil
+}
+
+func (la *LessonAccess) ToDomain() (domain.LessonAccess, error) {
+	ID, err := ParseUUID(la.ID)
+	if err != nil {
+		return domain.LessonAccess{}, err
+	}
+	lID, err := ParseUUID(la.LessonID)
+	if err != nil {
+		return domain.LessonAccess{}, err
+	}
+	return domain.LessonAccess{
+		ID:           ID,
+		LessonID:     lID,
+		AccessStatus: domain.AccessStatus(la.AccessStatus),
+		UpdatedAt:    la.UpdatedAt,
+	}, nil
+}
+
 func ParseUUIDWithInfo(uuidStr, fieldName, structName string) (uuid.UUID, error) {
 
 	id, err := uuid.Parse(uuidStr)

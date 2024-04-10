@@ -32,14 +32,14 @@ type StudentRepository interface {
 type TeacherRepository interface {
 	Create(ctx context.Context, profile domain.Teacher) error
 	IsCourseAccessible(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) (bool, error)
-	CreateAccessToCourse(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) error
+	//CreateAccessToCourse(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) error
 }
 
 type PublicationRequestRepository interface {
 	Create(ctx context.Context, req domain.PublicationRequest) error
 	Get(ctx context.Context, reqID uuid.UUID) (*domain.PublicationRequest, error)
 	GetAll(ctx context.Context, offset, limit int) ([]domain.PublicationRequest, error)
-	GetAllFrom(ctx context.Context, teacher int, offset, limit int) ([]domain.PublicationRequest, error)
+	GetAllFromTeacher(ctx context.Context, teacher uuid.UUID, offset, limit int) ([]domain.PublicationRequest, error)
 	Update(ctx context.Context, req domain.PublicationRequest) error
 	//Delete(ctx context.Context, lessonID uuid.UUID) error
 	NewSession(ctx context.Context) (*Session, error)
