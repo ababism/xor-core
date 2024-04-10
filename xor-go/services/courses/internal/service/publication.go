@@ -3,13 +3,17 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	_ "github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/repository/mongo/collections"
 )
 
@@ -19,6 +23,8 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.RequestCoursePublication")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have teacher rights to publish course",
@@ -35,13 +41,20 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 				fmt.Sprintf("teacher do not own course %s", request.CourseID.String()), nil)
 		}
 	}
+	request.UpdatedAt = time.Now()
+	request.RequestStatus = domain.Unwatched
+	request.AssigneeID = actor.ID
+
+	if request.ID == uuid.Nil || (request.ID == uuid.UUID{}) {
+		request.ID = uuid.New()
+	}
 
 	err := c.publication.Create(ctx, request)
 	if err != nil {
 		return domain.PublicationRequest{}, err
 	}
 
-	request.UpdatedAt = time.Now()
+	span.AddEvent("publication request created", trace.WithAttributes(attribute.String(keys.LessonIDAttributeKey, request.ID.String())))
 	return request, nil
 }
 
@@ -51,6 +64,8 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdatePublicationRequest")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
@@ -258,6 +273,8 @@ func (c CoursesService) UpdatePublicationRequestWithoutTx(initialCtx context.Con
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdatePublicationRequest")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",

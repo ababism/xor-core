@@ -2,6 +2,7 @@ package models
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 // TODO Review
@@ -97,28 +98,28 @@ type Course struct {
 }
 
 type Section struct {
-	mID         primitive.ObjectID `bson:"_id,omitempty"`
-	ID          string             `bson:"section_id,omitempty"`
-	FeedbackID  string             `bson:"feedback_id"`
-	Heading     string             `bson:"heading"`
-	Description string             `bson:"description"`
-	Visibility  int                `bson:"visibility"`
-	Themes      []Theme            `bson:"themes"`
+	mID primitive.ObjectID `bson:"_id,omitempty"`
+	ID  string             `bson:"section_id,omitempty"`
+	//FeedbackID  string             `bson:"feedback_id"`
+	Heading     string  `bson:"heading"`
+	Description string  `bson:"description"`
+	Visibility  int     `bson:"visibility"`
+	Themes      []Theme `bson:"themes"`
 }
 
 type Theme struct {
-	mID        primitive.ObjectID   `bson:"_id,omitempty"`
-	ID         string               `bson:"theme_id,omitempty"`
-	FeedbackID string               `bson:"feedback_id"`
-	Heading    string               `bson:"heading"`
-	Visibility int                  `bson:"visibility"`
-	LessonIDs  []primitive.ObjectID `bson:"lesson_ids"`
+	mID primitive.ObjectID `bson:"_id,omitempty"`
+	ID  string             `bson:"theme_id,omitempty"`
+	//FeedbackID string             `bson:"feedback_id"`
+	Heading    string   `bson:"heading"`
+	Visibility int      `bson:"visibility"`
+	LessonIDs  []string `bson:"lesson_ids"`
 }
 
 type Lesson struct {
 	mID        primitive.ObjectID `bson:"_id,omitempty"`
 	ID         string             `bson:"lesson_id,omitempty"`
-	CourseID   primitive.ObjectID `bson:"course_id"`
+	CourseID   string             `bson:"course_id"`
 	TeacherID  string             `bson:"teacher_id"`
 	Product    Product            `bson:"product"`
 	Visibility int                `bson:"visibility"`
@@ -127,28 +128,28 @@ type Lesson struct {
 }
 
 type Product struct {
-	mID   primitive.ObjectID `bson:"_id,omitempty"`
-	ID    string             `bson:"product_id,omitempty"`
-	Owner string             `bson:"owner"`
-	Price float32            `bson:"price"`
-	Item  primitive.ObjectID `bson:"item"`
+	mID    primitive.ObjectID `bson:"_id,omitempty"`
+	ID     string             `bson:"product_id,omitempty"`
+	Owner  string             `bson:"owner"`
+	Price  float32            `bson:"price"`
+	ItemID string             `bson:"item"`
 }
 
 type PublicationRequest struct {
 	mID           primitive.ObjectID `bson:"_id,omitempty"`
 	ID            string             `bson:"publication_request_id,omitempty"`
-	CourseID      primitive.ObjectID `bson:"course_id"`
+	CourseID      string             `bson:"course_id"`
 	AssigneeID    string             `bson:"assignee_id"`
 	RequestStatus int                `bson:"request_status"`
 	Comment       *string            `bson:"comment,omitempty"`
-	UpdatedAt     primitive.DateTime `bson:"updated_at"`
+	UpdatedAt     time.Time          `bson:"updated_at"`
 }
 
 type LessonAccess struct {
 	mID          primitive.ObjectID `bson:"_id,omitempty"`
 	ID           string             `bson:"lesson_access_id,omitempty"`
-	LessonID     primitive.ObjectID `bson:"lesson_id"`
+	LessonID     string             `bson:"lesson_id"`
 	StudentID    string             `bson:"student_id"`
 	AccessStatus int                `bson:"access_status"`
-	UpdatedAt    primitive.DateTime `bson:"updated_at"`
+	UpdatedAt    time.Time          `bson:"updated_at"`
 }

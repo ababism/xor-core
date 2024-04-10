@@ -2,6 +2,8 @@ package domain
 
 import (
 	"github.com/google/uuid"
+	"net/http"
+	"xor-go/pkg/xapperror"
 	"xor-go/pkg/xstringset"
 )
 
@@ -10,6 +12,18 @@ func NewActor(ID uuid.UUID, roles []string) Actor {
 		roles: xstringset.New()}
 	a.initRoles(roles)
 	return a
+}
+
+func (c *Actor) GetRoles() []string {
+	// TODO - does it necessary to return make([]string, 0)
+	if c == nil || c.roles == nil {
+		return make([]string, 0)
+	}
+	copyRoles := make([]string, 0, c.roles.Size())
+	for r, _ := range c.roles {
+		copyRoles = append(copyRoles, r)
+	}
+	return copyRoles
 }
 
 func (c *Actor) HasRole(role string) bool {
@@ -88,10 +102,36 @@ func (l *Lesson) ApplyPaywall() {
 	l.Transcript = ""
 
 }
+func (c *Course) FillEmptyUUIDs() {
+	if c.ID == uuid.Nil || (c.ID == uuid.UUID{}) {
+		c.ID = uuid.New()
+	}
+	for i := range c.Sections {
+		if c.Sections[i].ID == uuid.Nil || (c.Sections[i].ID == uuid.UUID{}) {
+			c.Sections[i].FillEmptyUUIDs()
+		}
+	}
+}
+func (s *Section) FillEmptyUUIDs() {
+	if s.ID == uuid.Nil || (s.ID == uuid.UUID{}) {
+		s.ID = uuid.New()
+	}
+	for i := range s.Themes {
+		if s.Themes[i].ID == uuid.Nil || (s.Themes[i].ID == uuid.UUID{}) {
+			s.Themes[i].FillEmptyUUIDs()
+		}
+	}
+}
+func (t *Theme) FillEmptyUUIDs() {
+	if t.ID == uuid.Nil || (t.ID == uuid.UUID{}) {
+		t.ID = uuid.New()
+	}
+}
 
 func (c *Course) Validate() error {
-	// TODO
-	//apperror.New(http.StatusInternalServerError, message, "invalid course fields", err)
+	if c.ID == uuid.Nil || (c.ID == uuid.UUID{}) {
+		return xapperror.New(http.StatusInternalServerError, "courses id shouldn't be empty", "validate courses id shouldn't be empty", nil)
+	}
 	return nil
 }
 
@@ -108,8 +148,16 @@ func (t *Theme) Validate() error {
 }
 
 func (l *Lesson) Validate() error {
-	// TODO
-	//apperror.New(http.StatusInternalServerError, message, "invalid lesson fields", err)
+	if l.ID == uuid.Nil || (l.ID == uuid.UUID{}) {
+		return xapperror.New(http.StatusInternalServerError, "lesson id shouldn't be empty", "validate lesson id shouldn't be empty", nil)
+	}
+	return nil
+}
+
+func (m PublicationRequest) Validate() error {
+	if m.ID == uuid.Nil || (m.ID == uuid.UUID{}) {
+		return xapperror.New(http.StatusInternalServerError, "publication request id shouldn't be empty", "validate publication request id shouldn't be empty", nil)
+	}
 	return nil
 }
 

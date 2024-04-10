@@ -6,9 +6,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 )
 
 func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Actor, course *domain.Course) (*domain.Course, error) {
@@ -18,23 +21,31 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
+
+	course.TeacherID = actor.ID
+
+	//if course.ID == uuid.Nil || (course.ID == uuid.UUID{}) {
+	//	course.ID = uuid.New()
+	//}
+	course.FillEmptyUUIDs()
 
 	err := course.Validate()
 	if err != nil {
 		return nil, err
 	}
 
-	course.TeacherID = actor.ID
-
 	newCourse, err := c.courseEdit.Create(ctx, course)
 	if err != nil {
 		return nil, err
 	}
 
+	span.AddEvent("course created", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, newCourse.ID.String())))
 	return newCourse, nil
 }
 
@@ -44,6 +55,8 @@ func (c CoursesService) GetCourse(initialCtx context.Context, actor domain.Actor
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.GetCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to read unpublished course",
@@ -64,11 +77,14 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
+	course.ID = courseID
 	err := course.Validate()
 	if err != nil {
 		return nil, err
@@ -90,6 +106,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 		return nil, err
 	}
 
+	span.AddEvent("course updated", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, course.ID.String())))
 	return course, nil
 }
 
@@ -100,6 +117,8 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.DeleteCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return xapperror.New(http.StatusForbidden, "user does not have teacher rights to delete course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -109,6 +128,7 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	if err != nil {
 		return err
 	}
+	span.AddEvent("course deleted", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, courseID.String())))
 
 	return nil
 }
@@ -119,6 +139,8 @@ func (c CoursesService) ReadCourse(initialCtx context.Context, actor domain.Acto
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.ReadCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	course, err := c.course.Get(ctx, courseID)
 	if err != nil {

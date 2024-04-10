@@ -15,6 +15,7 @@ import (
 
 // ProductCreate defines model for ProductCreate.
 type ProductCreate struct {
+	Info        string  `json:"Info"`
 	IsAvailable bool    `json:"IsAvailable"`
 	Name        string  `json:"Name"`
 	Price       float32 `json:"Price"`
@@ -31,6 +32,7 @@ type ProductFilter struct {
 // ProductGet defines model for ProductGet.
 type ProductGet struct {
 	CreatedAt     time.Time          `json:"CreatedAt"`
+	Info          string             `json:"Info"`
 	IsAvailable   bool               `json:"IsAvailable"`
 	LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
 	Name          string             `json:"Name"`
@@ -40,11 +42,15 @@ type ProductGet struct {
 
 // ProductUpdate defines model for ProductUpdate.
 type ProductUpdate struct {
+	Info        string             `json:"Info"`
 	IsAvailable bool               `json:"IsAvailable"`
 	Name        string             `json:"Name"`
 	Price       float32            `json:"Price"`
 	UUID        openapi_types.UUID `json:"UUID"`
 }
+
+// CreateManyJSONBody defines parameters for CreateMany.
+type CreateManyJSONBody = []ProductCreate
 
 // GetListJSONRequestBody defines body for GetList for application/json ContentType.
 type GetListJSONRequestBody = ProductFilter
@@ -54,6 +60,9 @@ type CreateJSONRequestBody = ProductCreate
 
 // UpdateJSONRequestBody defines body for Update for application/json ContentType.
 type UpdateJSONRequestBody = ProductUpdate
+
+// CreateManyJSONRequestBody defines body for CreateMany for application/json ContentType.
+type CreateManyJSONRequestBody = CreateManyJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -66,6 +75,9 @@ type ServerInterface interface {
 	// Update a product
 	// (PUT /products)
 	Update(c *gin.Context)
+	// Create many products
+	// (POST /products/list)
+	CreateMany(c *gin.Context)
 	// Get products price with discounts
 	// (GET /products/price/{uuids})
 	GetPrice(c *gin.Context, uuids []openapi_types.UUID)
@@ -123,6 +135,19 @@ func (siw *ServerInterfaceWrapper) Update(c *gin.Context) {
 	}
 
 	siw.Handler.Update(c)
+}
+
+// CreateMany operation middleware
+func (siw *ServerInterfaceWrapper) CreateMany(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateMany(c)
 }
 
 // GetPrice operation middleware
@@ -227,6 +252,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/products", wrapper.GetList)
 	router.POST(options.BaseURL+"/products", wrapper.Create)
 	router.PUT(options.BaseURL+"/products", wrapper.Update)
+	router.POST(options.BaseURL+"/products/list", wrapper.CreateMany)
 	router.GET(options.BaseURL+"/products/price/:uuids", wrapper.GetPrice)
 	router.GET(options.BaseURL+"/products/:id", wrapper.Get)
 	router.PUT(options.BaseURL+"/products/:id/disable", wrapper.Disable)

@@ -5,16 +5,32 @@ import (
 	"xor-go/services/courses/internal/domain"
 )
 
+func (a OptionalActor) ToDomainWithRoles(roles []string) domain.Actor {
+	if a.Roles == nil {
+		s := []string{domain.UnregisteredRole}
+		return domain.NewActor(a.ID, s)
+	}
+	roles = append(roles, *a.Roles)
+	return domain.NewActor(a.ID, roles)
+}
+
 func (a OptionalActor) ToDomain() domain.Actor {
 	if a.Roles == nil {
 		s := []string{domain.UnregisteredRole}
 		return domain.NewActor(a.ID, s)
 	}
-	return domain.NewActor(a.ID, *a.Roles)
+	s := []string{*a.Roles}
+	return domain.NewActor(a.ID, s)
+}
+
+func (a Actor) ToDomainWithRoles(roles []string) domain.Actor {
+	roles = append(roles, a.Roles)
+	return domain.NewActor(a.ID, roles)
 }
 
 func (a Actor) ToDomain() domain.Actor {
-	return domain.NewActor(a.ID, a.Roles)
+	s := []string{a.Roles}
+	return domain.NewActor(a.ID, s)
 }
 
 func (c Course) ToDomain() *domain.Course {

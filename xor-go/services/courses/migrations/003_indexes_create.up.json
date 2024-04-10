@@ -1,0 +1,68 @@
+[
+  {
+    "createIndexes": "courses",
+    "indexes": [
+      {
+        "key": {
+          "course_id": 1
+        },
+        "name": "course_id_unique"
+      }
+    ]
+  },
+  {
+    "createIndexes": "courses_edit",
+    "indexes": [
+      {
+        "key": {
+          "course_id": 1
+        },
+        "name": "course_edit_id_unique"
+      }
+    ]
+  },
+  {
+    "createIndexes": "lessons",
+    "indexes": [
+      {
+        "key": {
+          "lesson_id": 1
+        },
+        "name": "lesson_id_unique"
+      }
+    ]
+  },
+  {
+    "createIndexes": "lessons_edit",
+    "indexes": [
+      {
+        "key": {
+          "lesson_id": 1
+        },
+        "name": "lesson_edit_id_unique"
+      }
+    ]
+  },
+  {
+    "createIndexes": "publication_requests",
+    "indexes": [
+      {
+        "key": {
+          "publication_request_id": 1
+        },
+        "name": "publication_request_id_unique"
+      }
+    ]
+  },
+  {
+    "createIndexes": "lesson_accesses",
+    "indexes": [
+      {
+        "key": {
+          "lesson_access_id": 1
+        },
+        "name": "lesson_access_id_unique"
+      }
+    ]
+  }
+]

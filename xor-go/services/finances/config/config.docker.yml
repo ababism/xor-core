@@ -23,8 +23,8 @@ logger:
   error_outputs:
     - "stderr"
   encoding: "json"
-  sentry_dsn: ""
   sentry_level: "error"
+  sentry_dsn: ""
 
 metrics:
   enable: false
@@ -44,3 +44,6 @@ http:
 tracer:
   enable: true
   exp_target: "host.docker.internal:4317"
+
+payments_client:
+  uri: "http://payments-svc:8088/api/v1"

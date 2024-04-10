@@ -8,6 +8,7 @@ import (
 type ProductGet struct {
 	UUID          uuid.UUID
 	Name          string
+	Info          string
 	Price         float32
 	IsAvailable   bool
 	CreatedAt     time.Time
@@ -16,6 +17,7 @@ type ProductGet struct {
 
 type ProductCreate struct {
 	Name        string
+	Info        string
 	Price       float32
 	IsAvailable bool
 }
@@ -23,6 +25,7 @@ type ProductCreate struct {
 type ProductUpdate struct {
 	UUID        uuid.UUID
 	Name        string
+	Info        string
 	Price       float32
 	IsAvailable bool
 }

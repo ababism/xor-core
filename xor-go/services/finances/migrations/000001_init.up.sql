@@ -32,6 +32,7 @@ CREATE TABLE products
 (
     uuid         UUID         NOT NULL DEFAULT gen_random_uuid(),
     name         VARCHAR(255) NOT NULL,
+    info         TEXT         NOT NULL,
     price        FLOAT(10)    NOT NULL,
     is_available BOOLEAN      NOT NULL,
     created_at   TIMESTAMP    NOT NULL DEFAULT NOW(),
@@ -40,25 +41,26 @@ CREATE TABLE products
 );
 
 CREATE
-OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
+    OR REPLACE FUNCTION update_updated_at()
+    RETURNS TRIGGER AS
+$$
 BEGIN
     NEW.updated_at
-= NOW();
-RETURN NEW;
+        = NOW();
+    RETURN NEW;
 END;
 $$
-language 'plpgsql';
+    language 'plpgsql';
 
 CREATE TRIGGER update_bank_accounts_updated_at
     BEFORE UPDATE
     ON bank_accounts
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
+EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER update_products_updated_at
     BEFORE UPDATE
     ON products
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
+EXECUTE FUNCTION update_updated_at();
 

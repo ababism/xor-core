@@ -127,16 +127,16 @@ func (cr CourseRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (lr LessonRepository) NewSession(ctx context.Context) (*Session, error) {
+func (r LessonRepository) NewSession(ctx context.Context) (*Session, error) {
 	logger := zapctx.Logger(ctx)
 
-	txClient, err := mongo.Connect(ctx, lr.db.clientOptions)
+	txClient, err := mongo.Connect(ctx, r.db.clientOptions)
 	if err != nil {
 		logger.Error("MongoDB create new client for session error", zap.Error(err))
 		return nil, xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB create new client for session error", err)
 	}
 
-	txDatabase := txClient.Database(lr.db.database.Name())
+	txDatabase := txClient.Database(r.db.database.Name())
 
 	session, err := txClient.StartSession()
 	if err != nil {
@@ -147,7 +147,7 @@ func (lr LessonRepository) NewSession(ctx context.Context) (*Session, error) {
 	newTxDB := Database{
 		client:        txClient,
 		database:      txDatabase,
-		clientOptions: lr.db.clientOptions,
+		clientOptions: r.db.clientOptions,
 	}
 
 	return &Session{
@@ -156,16 +156,16 @@ func (lr LessonRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (sr StudentRepository) NewSession(ctx context.Context) (*Session, error) {
+func (r StudentRepository) NewSession(ctx context.Context) (*Session, error) {
 	logger := zapctx.Logger(ctx)
 
-	txClient, err := mongo.Connect(ctx, sr.db.clientOptions)
+	txClient, err := mongo.Connect(ctx, r.db.clientOptions)
 	if err != nil {
 		logger.Error("MongoDB create new txClient for session error", zap.Error(err))
 		return nil, xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB create new txClient for session error", err)
 	}
 
-	txDatabase := txClient.Database(sr.db.database.Name())
+	txDatabase := txClient.Database(r.db.database.Name())
 
 	session, err := txClient.StartSession()
 	if err != nil {
@@ -176,7 +176,7 @@ func (sr StudentRepository) NewSession(ctx context.Context) (*Session, error) {
 	newTxDB := Database{
 		client:        txClient,
 		database:      txDatabase,
-		clientOptions: sr.db.clientOptions,
+		clientOptions: r.db.clientOptions,
 	}
 
 	return &Session{
@@ -185,16 +185,16 @@ func (sr StudentRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (tr TeacherRepository) NewSession(ctx context.Context) (*Session, error) {
+func (r TeacherRepository) NewSession(ctx context.Context) (*Session, error) {
 	logger := zapctx.Logger(ctx)
 
-	txClient, err := mongo.Connect(ctx, tr.db.clientOptions)
+	txClient, err := mongo.Connect(ctx, r.db.clientOptions)
 	if err != nil {
 		logger.Error("MongoDB create new client for session error", zap.Error(err))
 		return nil, xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB create new client for session error", err)
 	}
 
-	txDatabase := txClient.Database(tr.db.database.Name())
+	txDatabase := txClient.Database(r.db.database.Name())
 
 	session, err := txClient.StartSession()
 	if err != nil {
@@ -205,7 +205,7 @@ func (tr TeacherRepository) NewSession(ctx context.Context) (*Session, error) {
 	newTxDB := Database{
 		client:        txClient,
 		database:      txDatabase,
-		clientOptions: tr.db.clientOptions,
+		clientOptions: r.db.clientOptions,
 	}
 
 	return &Session{
@@ -214,16 +214,16 @@ func (tr TeacherRepository) NewSession(ctx context.Context) (*Session, error) {
 	}, nil
 }
 
-func (pr PublicationRequestRepository) NewSession(ctx context.Context) (*adapters.Session, error) {
+func (r PublicationRequestRepository) NewSession(ctx context.Context) (*adapters.Session, error) {
 	logger := zapctx.Logger(ctx)
 
-	txClient, err := mongo.Connect(ctx, pr.db.clientOptions)
+	txClient, err := mongo.Connect(ctx, r.db.clientOptions)
 	if err != nil {
 		logger.Error("MongoDB create new client for session error", zap.Error(err))
 		return nil, xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB create new client for session error", err)
 	}
 
-	txDatabase := txClient.Database(pr.db.database.Name())
+	txDatabase := txClient.Database(r.db.database.Name())
 
 	session, err := txClient.StartSession()
 	if err != nil {
@@ -234,7 +234,7 @@ func (pr PublicationRequestRepository) NewSession(ctx context.Context) (*adapter
 	newTxDB := Database{
 		client:        txClient,
 		database:      txDatabase,
-		clientOptions: pr.db.clientOptions,
+		clientOptions: r.db.clientOptions,
 	}
 
 	s := Session{

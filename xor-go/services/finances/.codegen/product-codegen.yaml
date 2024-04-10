@@ -65,6 +65,21 @@ paths:
       responses:
         '200':
           description: Successful operation
+  /products/list:
+    post:
+      operationId: createMany
+      summary: Create many products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '200':
+          description: Successful operation
   /products/{id}/disable:
     put:
       operationId: disable
@@ -105,6 +120,8 @@ components:
           format: uuid
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
         IsAvailable:
@@ -118,6 +135,7 @@ components:
       required:
         - UUID
         - Name
+        - Info
         - Price
         - IsAvailable
         - CreatedAt
@@ -127,12 +145,15 @@ components:
       properties:
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
         IsAvailable:
           type: boolean
       required:
         - Name
+        - Info
         - Price
         - IsAvailable
     ProductUpdate:
@@ -143,6 +164,8 @@ components:
           format: uuid
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
         IsAvailable:
@@ -150,6 +173,7 @@ components:
       required:
         - UUID
         - Name
+        - Info
         - Price
         - IsAvailable
     ProductFilter:
