@@ -30,8 +30,8 @@ type Database struct {
 func NewDatabase(logger *zap.Logger) *Database {
 	return &Database{logger: logger}
 }
-func createIDFilter(ID uuid.UUID) bson.M {
-	filter := bson.M{"_id": ID}
+func createUUIDFilter(ID uuid.UUID, id string) bson.M {
+	filter := bson.M{id: ID.String()}
 	return filter
 }
 
@@ -57,7 +57,7 @@ func (r *Database) Connect(ctx context.Context, cfg *Config, migrateCfg *ConfigM
 	r.client = client
 	database := client.Database(cfg.Database)
 
-	//r.databaseName = cfg.Database
+	r.database = database
 
 	if migrateCfg.Enabled {
 		migrationSvc := migrate.NewMigrationsService(r.logger, database)

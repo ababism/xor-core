@@ -1,0 +1,27 @@
+[
+  {
+    "dropIndexes": "courses",
+    "index": "course_id_unique"
+  },
+
+  {
+    "dropIndexes": "courses_edit",
+    "index": "course_edit_id_unique"
+  },
+  {
+    "dropIndexes": "lessons",
+    "index": "lesson_id_unique"
+  },
+  {
+    "dropIndexes": "lessons_edit",
+    "index": "lesson_edit_id_unique"
+  },
+  {
+    "dropIndexes": "publication_requests",
+    "index": "publication_request_id_unique"
+  },
+  {
+    "dropIndexes": "lesson_accesses",
+    "index": "lesson_access_id_unique"
+  }
+]

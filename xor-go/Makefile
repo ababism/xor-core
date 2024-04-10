@@ -3,17 +3,20 @@ include .env
 up:
 	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait
 
-up-pair:
+up-p:
 	docker-compose up --build courses-svc finances-svc
 
-up-r:
-	docker-compose up driver-svc location-svc
+up-c:
+	docker-compose up --build courses-svc
 
 up-d:
-	docker-compose up --build driver-svc location-svc -d
+	docker-compose up --build courses-svc finances-svc -d
 
 down:
-	docker-compose down driver-svc location-svc
+	docker-compose down courses-svc finances-svc
+
+down-c:
+	docker-compose down courses-svc
 
 up-obs:
 	docker-compose -f ./deployments/compose.yaml up -d --build

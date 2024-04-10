@@ -18,7 +18,7 @@ import (
 var _ adapters.CourseRepository = &CourseRepository{}
 
 func NewCourseRepository(database *Database, name collections.CollectionName) *CourseRepository {
-	courseCollection := database.database.Collection(name.String())
+	courseCollection := (*database).database.Collection(name.String())
 
 	return &CourseRepository{
 		db:     database,
@@ -74,7 +74,7 @@ func (cr CourseRepository) Get(ctx context.Context, courseID uuid.UUID) (*domain
 	defer span.End()
 
 	var course models.Course
-	filter := createIDFilter(courseID)
+	filter := createUUIDFilter(courseID, "course_id")
 	err := cr.course.FindOne(newCtx, filter).Decode(&course)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr

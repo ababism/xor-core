@@ -4,7 +4,7 @@ info:
   description: API specification for managing courses, lessons, publication requests, and user data.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api/v1/courses
+  - url: http://localhost:8080/api/v1
 paths:
   /courses/{courseID}:
     parameters:
@@ -858,10 +858,12 @@ components:
           format: uuid
           description: Unique identifier for the actor.
         Roles:
-          type: array
-          items:
-            type: string
-          description: Roles of the actor.
+          type: string
+          description: Role of the actor.
+#          type: array
+#          items:
+#            type: string
+#          description: Roles of the actor.
       required:
         - ID
         - Roles
@@ -878,12 +880,15 @@ components:
           format: uuid
           description: Unique identifier for the actor.
         Roles:
-          type: array
-          items:
-            type: string
-          description: Roles of the actor.
+          type: string
+          description: Role of the actor.
+#          type: array
+#          items:
+#            type: string
+#          description: Roles of the actor.
   securitySchemes:
     actorAuth:
       type: apiKey
+      name: apiKey
       in: header
       scheme: '#/components/schemas/Actor'
