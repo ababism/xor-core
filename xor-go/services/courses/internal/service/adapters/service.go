@@ -48,6 +48,7 @@ type PublicationRequestService interface {
 
 // UserService represents the part of interface for user data management.
 type UserService interface {
+	GetActorRoles(ctx context.Context, actor domain.Actor) ([]string, error)
 	// BuyCourse student buy course
 	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error)
 	// BuyLesson student buy lesson

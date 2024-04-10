@@ -15,6 +15,27 @@ import (
 	"xor-go/services/courses/internal/domain/keys"
 )
 
+func (c CoursesService) GetActorRoles(ctx context.Context, actor domain.Actor) ([]string, error) {
+	_ = zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(ctx, "courses/service.GetActorRoles")
+	defer span.End()
+
+	roles := make([]string, 0)
+	_, err := c.student.Get(ctx, actor.ID)
+	if err == nil {
+		roles = append(roles, domain.StudentRole)
+	}
+
+	_, err = c.teacher.Get(ctx, actor.ID)
+	if err == nil {
+		roles = append(roles, domain.TeacherRole)
+	}
+
+	return roles, nil
+
+}
 func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error) {
 	_ = zapctx.Logger(initialCtx)
 
