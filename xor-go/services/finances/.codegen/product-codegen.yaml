@@ -7,7 +7,6 @@ servers:
 paths:
   /products/{id}:
     get:
-      operationId: get
       summary: Get product by ID
       parameters:
         - in: path
@@ -25,7 +24,6 @@ paths:
                 $ref: '#/components/schemas/ProductGet'
   /products:
     get:
-      operationId: getList
       summary: List products
       requestBody:
         content:
@@ -42,7 +40,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/ProductGet'
     post:
-      operationId: create
       summary: Create a product
       requestBody:
         required: true
@@ -54,7 +51,6 @@ paths:
         '200':
           description: Successful operation
     put:
-      operationId: update
       summary: Update a product
       requestBody:
         required: true
@@ -67,7 +63,6 @@ paths:
           description: Successful operation
   /products/list:
     post:
-      operationId: createMany
       summary: Create many products
       requestBody:
         required: true
@@ -82,7 +77,6 @@ paths:
           description: Successful operation
   /products/{id}/disable:
     put:
-      operationId: disable
       summary: Disable a product
       parameters:
         - in: path
@@ -96,7 +90,6 @@ paths:
           description: Successful operation
   /products/price/{uuids}:
     get:
-      operationId: getPrice
       summary: Get products price with discounts
       parameters:
         - in: path

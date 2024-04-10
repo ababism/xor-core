@@ -7,7 +7,6 @@ servers:
 paths:
   /discounts/{id}:
     get:
-      operationId: get
       summary: Get discount by ID
       parameters:
         - in: path
@@ -25,7 +24,6 @@ paths:
                 $ref: '#/components/schemas/DiscountGet'
   /discounts:
     get:
-      operationId: getList
       summary: List discounts
       requestBody:
         required: true
@@ -43,7 +41,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/DiscountGet'
     post:
-      operationId: create
       summary: Create a discount
       requestBody:
         content:
@@ -54,7 +51,6 @@ paths:
         '200':
           description: Successful operation
     put:
-      operationId: update
       summary: Update a discount
       requestBody:
         required: true
@@ -67,7 +63,6 @@ paths:
           description: Successful operation
   /discounts/{id}/end:
     patch:
-      operationId: end
       summary: End a discount
       parameters:
         - in: path

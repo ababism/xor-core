@@ -33,7 +33,7 @@ func getDiscountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) GetDiscountsId(ctx *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(ctx *gin.Context) {
+func (h *Handler) GetDiscounts(ctx *gin.Context) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".GetList")
 	defer span.End()
 
@@ -72,7 +72,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) PostDiscounts(ctx *gin.Context) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -92,7 +92,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(ctx *gin.Context) {
+func (h *Handler) PutDiscounts(ctx *gin.Context) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".Update")
 	defer span.End()
 
@@ -112,7 +112,7 @@ func (h *Handler) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) End(ctx *gin.Context, id openapitypes.UUID) {
+func (h *Handler) PatchDiscountsIdEnd(ctx *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".End")
 	defer span.End()
 

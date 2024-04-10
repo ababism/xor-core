@@ -9,7 +9,6 @@ paths:
     get:
       tags:
         - Bank Account
-      operationId: getListBankAccounts
       summary: List bank accounts
       requestBody:
         content:
@@ -28,7 +27,6 @@ paths:
     post:
       tags:
         - Bank Account
-      operationId: createBankAccount
       summary: Create a bank account
       requestBody:
         content:
@@ -44,7 +42,6 @@ paths:
     get:
       tags:
         - Bank Account
-      operationId: getBankAccount
       summary: Get bank account by login
       parameters:
         - in: path
@@ -66,7 +63,6 @@ paths:
     put:
       tags:
         - Bank Account
-      operationId: updateBankAccount
       summary: Update a bank account
       parameters:
         - in: path
@@ -90,7 +86,6 @@ paths:
     put:
       tags:
         - Bank Account
-      operationId: changeBankAccountFunds
       summary: Change bank account funds
       parameters:
         - in: path
@@ -114,7 +109,6 @@ paths:
     get:
       tags:
         - Discount
-      operationId: getDiscount
       summary: Get discount by ID
       parameters:
         - in: path
@@ -134,7 +128,6 @@ paths:
     get:
       tags:
         - Discount
-      operationId: getListDiscounts
       summary: List discounts
       requestBody:
         content:
@@ -153,7 +146,6 @@ paths:
     post:
       tags:
         - Discount
-      operationId: createDiscount
       summary: Create a discount
       requestBody:
         content:
@@ -166,7 +158,6 @@ paths:
     put:
       tags:
         - Discount
-      operationId: updateDiscount
       summary: Update a discount
       requestBody:
         content:
@@ -180,7 +171,6 @@ paths:
     patch:
       tags:
         - Discount
-      operationId: endDiscount
       summary: End a discount
       parameters:
         - in: path
@@ -196,7 +186,6 @@ paths:
     get:
       tags:
         - Payment
-      operationId: getPayment
       summary: Get payment by UUID
       parameters:
         - in: path
@@ -220,7 +209,6 @@ paths:
     get:
       tags:
         - Payment
-      operationId: getListPayments
       summary: List payments
       requestBody:
         content:
@@ -239,7 +227,6 @@ paths:
     post:
       tags:
         - Payment
-      operationId: createPayment
       summary: Create a payment
       requestBody:
         content:
@@ -255,7 +242,6 @@ paths:
     get:
       tags:
         - Payout Request
-      operationId: getPayoutRequest
       summary: Get payout request by ID
       parameters:
         - in: path
@@ -275,7 +261,6 @@ paths:
     get:
       tags:
         - Payout Request
-      operationId: getListPayoutRequests
       summary: List payout requests
       requestBody:
         content:
@@ -294,7 +279,6 @@ paths:
     post:
       tags:
         - Payout Request
-      operationId: createPayoutRequest
       summary: Create a payout request
       requestBody:
         content:
@@ -308,7 +292,6 @@ paths:
     put:
       tags:
         - Payout Request
-      operationId: archivePayoutRequest
       summary: Archive a payout request
       parameters:
         - in: path
@@ -324,7 +307,6 @@ paths:
     get:
       tags:
         - Product
-      operationId: getProduct
       summary: Get product by ID
       parameters:
         - in: path
@@ -344,7 +326,6 @@ paths:
     get:
       tags:
         - Product
-      operationId: getListProducts
       summary: List products
       requestBody:
         content:
@@ -363,7 +344,6 @@ paths:
     post:
       tags:
         - Product
-      operationId: createProduct
       summary: Create a product
       requestBody:
         content:
@@ -376,7 +356,6 @@ paths:
     put:
       tags:
         - Product
-      operationId: updateProduct
       summary: Update a product
       requestBody:
         content:
@@ -390,7 +369,6 @@ paths:
     put:
       tags:
         - Product
-      operationId: disableProduct
       summary: Disable a product
       parameters:
         - in: path
@@ -406,7 +384,6 @@ paths:
     get:
       tags:
         - Purchase request
-      operationId: getPurchaseRequest
       summary: Get purchase request by ID
       parameters:
         - in: path
@@ -426,7 +403,6 @@ paths:
     get:
       tags:
         - Purchase request
-      operationId: getListPurchaseRequests
       summary: List purchase requests
       requestBody:
         content:
@@ -445,7 +421,6 @@ paths:
     post:
       tags:
         - Purchase request
-      operationId: createPurchaseRequest
       summary: Create a purchase request
       requestBody:
         content:
@@ -459,7 +434,6 @@ paths:
     put:
       tags:
         - Purchase request
-      operationId: archivePurchaseRequest
       summary: Archive a purchase request
       parameters:
         - in: path

@@ -119,11 +119,11 @@ type GetStatusResult struct {
 	Status *string             `json:"status,omitempty"`
 }
 
-// CreatePayoutRequestJSONRequestBody defines body for CreatePayoutRequest for application/json ContentType.
-type CreatePayoutRequestJSONRequestBody = CreatePayout
+// PostPayoutJSONRequestBody defines body for PostPayout for application/json ContentType.
+type PostPayoutJSONRequestBody = CreatePayout
 
-// CreatePurchaseRequestJSONRequestBody defines body for CreatePurchaseRequest for application/json ContentType.
-type CreatePurchaseRequestJSONRequestBody = CreatePurchase
+// PostPurchaseJSONRequestBody defines body for PostPurchase for application/json ContentType.
+type PostPurchaseJSONRequestBody = CreatePurchase
 
 // GetStatusJSONRequestBody defines body for GetStatus for application/json ContentType.
 type GetStatusJSONRequestBody = GetStatusPayload
@@ -201,15 +201,15 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// CreatePayoutRequestWithBody request with any body
-	CreatePayoutRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostPayoutWithBody request with any body
+	PostPayoutWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreatePayoutRequest(ctx context.Context, body CreatePayoutRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostPayout(ctx context.Context, body PostPayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreatePurchaseRequestWithBody request with any body
-	CreatePurchaseRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostPurchaseWithBody request with any body
+	PostPurchaseWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreatePurchaseRequest(ctx context.Context, body CreatePurchaseRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostPurchase(ctx context.Context, body PostPurchaseJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetStatusWithBody request with any body
 	GetStatusWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -217,8 +217,8 @@ type ClientInterface interface {
 	GetStatus(ctx context.Context, body GetStatusJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) CreatePayoutRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreatePayoutRequestRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostPayoutWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostPayoutRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -229,8 +229,8 @@ func (c *Client) CreatePayoutRequestWithBody(ctx context.Context, contentType st
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreatePayoutRequest(ctx context.Context, body CreatePayoutRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreatePayoutRequestRequest(c.Server, body)
+func (c *Client) PostPayout(ctx context.Context, body PostPayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostPayoutRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -241,8 +241,8 @@ func (c *Client) CreatePayoutRequest(ctx context.Context, body CreatePayoutReque
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreatePurchaseRequestWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreatePurchaseRequestRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostPurchaseWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostPurchaseRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -253,8 +253,8 @@ func (c *Client) CreatePurchaseRequestWithBody(ctx context.Context, contentType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreatePurchaseRequest(ctx context.Context, body CreatePurchaseRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreatePurchaseRequestRequest(c.Server, body)
+func (c *Client) PostPurchase(ctx context.Context, body PostPurchaseJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostPurchaseRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -289,19 +289,19 @@ func (c *Client) GetStatus(ctx context.Context, body GetStatusJSONRequestBody, r
 	return c.Client.Do(req)
 }
 
-// NewCreatePayoutRequestRequest calls the generic CreatePayoutRequest builder with application/json body
-func NewCreatePayoutRequestRequest(server string, body CreatePayoutRequestJSONRequestBody) (*http.Request, error) {
+// NewPostPayoutRequest calls the generic PostPayout builder with application/json body
+func NewPostPayoutRequest(server string, body PostPayoutJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreatePayoutRequestRequestWithBody(server, "application/json", bodyReader)
+	return NewPostPayoutRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreatePayoutRequestRequestWithBody generates requests for CreatePayoutRequest with any type of body
-func NewCreatePayoutRequestRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostPayoutRequestWithBody generates requests for PostPayout with any type of body
+func NewPostPayoutRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -329,19 +329,19 @@ func NewCreatePayoutRequestRequestWithBody(server string, contentType string, bo
 	return req, nil
 }
 
-// NewCreatePurchaseRequestRequest calls the generic CreatePurchaseRequest builder with application/json body
-func NewCreatePurchaseRequestRequest(server string, body CreatePurchaseRequestJSONRequestBody) (*http.Request, error) {
+// NewPostPurchaseRequest calls the generic PostPurchase builder with application/json body
+func NewPostPurchaseRequest(server string, body PostPurchaseJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreatePurchaseRequestRequestWithBody(server, "application/json", bodyReader)
+	return NewPostPurchaseRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreatePurchaseRequestRequestWithBody generates requests for CreatePurchaseRequest with any type of body
-func NewCreatePurchaseRequestRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostPurchaseRequestWithBody generates requests for PostPurchase with any type of body
+func NewPostPurchaseRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -452,15 +452,15 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// CreatePayoutRequestWithBodyWithResponse request with any body
-	CreatePayoutRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePayoutRequestResponse, error)
+	// PostPayoutWithBodyWithResponse request with any body
+	PostPayoutWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPayoutResponse, error)
 
-	CreatePayoutRequestWithResponse(ctx context.Context, body CreatePayoutRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePayoutRequestResponse, error)
+	PostPayoutWithResponse(ctx context.Context, body PostPayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPayoutResponse, error)
 
-	// CreatePurchaseRequestWithBodyWithResponse request with any body
-	CreatePurchaseRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePurchaseRequestResponse, error)
+	// PostPurchaseWithBodyWithResponse request with any body
+	PostPurchaseWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPurchaseResponse, error)
 
-	CreatePurchaseRequestWithResponse(ctx context.Context, body CreatePurchaseRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePurchaseRequestResponse, error)
+	PostPurchaseWithResponse(ctx context.Context, body PostPurchaseJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPurchaseResponse, error)
 
 	// GetStatusWithBodyWithResponse request with any body
 	GetStatusWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetStatusResponse, error)
@@ -468,14 +468,14 @@ type ClientWithResponsesInterface interface {
 	GetStatusWithResponse(ctx context.Context, body GetStatusJSONRequestBody, reqEditors ...RequestEditorFn) (*GetStatusResponse, error)
 }
 
-type CreatePayoutRequestResponse struct {
+type PostPayoutResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CreatePayoutResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r CreatePayoutRequestResponse) Status() string {
+func (r PostPayoutResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -483,21 +483,21 @@ func (r CreatePayoutRequestResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreatePayoutRequestResponse) StatusCode() int {
+func (r PostPayoutResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type CreatePurchaseRequestResponse struct {
+type PostPurchaseResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CreatePurchaseResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r CreatePurchaseRequestResponse) Status() string {
+func (r PostPurchaseResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -505,7 +505,7 @@ func (r CreatePurchaseRequestResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreatePurchaseRequestResponse) StatusCode() int {
+func (r PostPurchaseResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -534,38 +534,38 @@ func (r GetStatusResponse) StatusCode() int {
 	return 0
 }
 
-// CreatePayoutRequestWithBodyWithResponse request with arbitrary body returning *CreatePayoutRequestResponse
-func (c *ClientWithResponses) CreatePayoutRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePayoutRequestResponse, error) {
-	rsp, err := c.CreatePayoutRequestWithBody(ctx, contentType, body, reqEditors...)
+// PostPayoutWithBodyWithResponse request with arbitrary body returning *PostPayoutResponse
+func (c *ClientWithResponses) PostPayoutWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPayoutResponse, error) {
+	rsp, err := c.PostPayoutWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreatePayoutRequestResponse(rsp)
+	return ParsePostPayoutResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreatePayoutRequestWithResponse(ctx context.Context, body CreatePayoutRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePayoutRequestResponse, error) {
-	rsp, err := c.CreatePayoutRequest(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostPayoutWithResponse(ctx context.Context, body PostPayoutJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPayoutResponse, error) {
+	rsp, err := c.PostPayout(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreatePayoutRequestResponse(rsp)
+	return ParsePostPayoutResponse(rsp)
 }
 
-// CreatePurchaseRequestWithBodyWithResponse request with arbitrary body returning *CreatePurchaseRequestResponse
-func (c *ClientWithResponses) CreatePurchaseRequestWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePurchaseRequestResponse, error) {
-	rsp, err := c.CreatePurchaseRequestWithBody(ctx, contentType, body, reqEditors...)
+// PostPurchaseWithBodyWithResponse request with arbitrary body returning *PostPurchaseResponse
+func (c *ClientWithResponses) PostPurchaseWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPurchaseResponse, error) {
+	rsp, err := c.PostPurchaseWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreatePurchaseRequestResponse(rsp)
+	return ParsePostPurchaseResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreatePurchaseRequestWithResponse(ctx context.Context, body CreatePurchaseRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePurchaseRequestResponse, error) {
-	rsp, err := c.CreatePurchaseRequest(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostPurchaseWithResponse(ctx context.Context, body PostPurchaseJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPurchaseResponse, error) {
+	rsp, err := c.PostPurchase(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreatePurchaseRequestResponse(rsp)
+	return ParsePostPurchaseResponse(rsp)
 }
 
 // GetStatusWithBodyWithResponse request with arbitrary body returning *GetStatusResponse
@@ -585,15 +585,15 @@ func (c *ClientWithResponses) GetStatusWithResponse(ctx context.Context, body Ge
 	return ParseGetStatusResponse(rsp)
 }
 
-// ParseCreatePayoutRequestResponse parses an HTTP response from a CreatePayoutRequestWithResponse call
-func ParseCreatePayoutRequestResponse(rsp *http.Response) (*CreatePayoutRequestResponse, error) {
+// ParsePostPayoutResponse parses an HTTP response from a PostPayoutWithResponse call
+func ParsePostPayoutResponse(rsp *http.Response) (*PostPayoutResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreatePayoutRequestResponse{
+	response := &PostPayoutResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -611,15 +611,15 @@ func ParseCreatePayoutRequestResponse(rsp *http.Response) (*CreatePayoutRequestR
 	return response, nil
 }
 
-// ParseCreatePurchaseRequestResponse parses an HTTP response from a CreatePurchaseRequestWithResponse call
-func ParseCreatePurchaseRequestResponse(rsp *http.Response) (*CreatePurchaseRequestResponse, error) {
+// ParsePostPurchaseResponse parses an HTTP response from a PostPurchaseWithResponse call
+func ParsePostPurchaseResponse(rsp *http.Response) (*PostPurchaseResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreatePurchaseRequestResponse{
+	response := &PostPurchaseResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

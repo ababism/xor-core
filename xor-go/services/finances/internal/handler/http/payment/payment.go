@@ -33,7 +33,7 @@ func getPaymentTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) GetPaymentsUuid(ctx *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getPaymentTracerSpan(ctx, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(ctx *gin.Context) {
+func (h *Handler) GetPayments(ctx *gin.Context) {
 	_, newCtx, span := getPaymentTracerSpan(ctx, ".GetList")
 	defer span.End()
 
@@ -72,7 +72,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) PostPayments(ctx *gin.Context) {
 	_, newCtx, span := getPaymentTracerSpan(ctx, ".Create")
 	defer span.End()
 
