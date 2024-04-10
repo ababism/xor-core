@@ -6,18 +6,46 @@ import (
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 )
 
+func (c CoursesService) GetActorRoles(ctx context.Context, actor domain.Actor) ([]string, error) {
+	_ = zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(ctx, "courses/service.GetActorRoles")
+	defer span.End()
+
+	ToSpan(&span, actor)
+
+	roles := make([]string, 0)
+	_, err := c.student.Get(ctx, actor.ID)
+	if err == nil {
+		roles = append(roles, domain.StudentRole)
+	}
+
+	_, err = c.teacher.Get(ctx, actor.ID)
+	if err == nil {
+		roles = append(roles, domain.TeacherRole)
+	}
+
+	return roles, nil
+
+}
 func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error) {
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.BuyCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
@@ -42,12 +70,14 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	if len(productsToBuy) == 0 {
 		return domain.PaymentRedirect{}, err
 	}
+	stringProducts := keys.ProductToStrings(productsToBuy)
+	span.AddEvent("products to buy", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
 	redirect, err := c.financesClient.CreatePurchase(ctx, productsToBuy)
 	if err != nil {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
 	}
-
+	span.AddEvent("purchase created", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
 	return redirect, nil
 }
 
@@ -57,6 +87,8 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.BuyLesson")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
@@ -83,7 +115,7 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
-
+	span.AddEvent("purchase created", trace.WithAttributes(attribute.String(keys.ProductIDAttributeKey, lesson.Product.ID.String())))
 	return redirect, access, nil
 }
 
@@ -93,6 +125,8 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.RegisterStudentProfile")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasRole(domain.UnregisteredRole) {
 		return xapperror.New(http.StatusForbidden, "user can't be registered",
@@ -109,6 +143,7 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 		return err
 	}
 
+	span.AddEvent("student created", trace.WithAttributes(attribute.String(keys.StudentIDAttributeKey, profile.AccountID.String())))
 	return nil
 }
 
@@ -118,6 +153,8 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.RegisterTeacherProfile")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasRole(domain.AdminRole) {
 		return xapperror.New(http.StatusForbidden, "user can't register teachers",
@@ -133,20 +170,37 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	if err != nil {
 		return err
 	}
-
+	span.AddEvent("teacher created", trace.WithAttributes(attribute.String(keys.TeacherIDAttributeKey, profile.AccountID.String())))
 	return nil
 }
 
-func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
+func (c CoursesService) CreateOrChangeLessonAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.ChangeLessonAccess")
+	ctx, span := tr.Start(initialCtx, "courses/service.CreateOrChangeLessonAccess")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasRole(domain.AdminRole) {
 		return domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "user can't give access to lessons",
 			fmt.Sprintf("user can't give acces to lessons no %s role", domain.AdminRole), nil)
+	}
+
+	curAccess, err := c.student.GetLessonAccess(ctx, access.StudentID, access.LessonID)
+	// if access exists
+	if err == nil {
+		access.ID = curAccess.ID
+		updatedAccess, err := c.student.UpdateAccessToLesson(ctx, access)
+		if err != nil {
+			return domain.LessonAccess{}, err
+		}
+		return updatedAccess, nil
+	}
+	// if access does not exist
+	if access.ID == uuid.Nil || (access.ID == uuid.UUID{}) {
+		access.ID = uuid.New()
 	}
 
 	newAccess, err := c.student.CreateAccessToLesson(ctx, access)
@@ -154,6 +208,7 @@ func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor dom
 		return domain.LessonAccess{}, err
 	}
 
+	span.AddEvent("lesson access created", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, newAccess.ID.String())))
 	return newAccess, nil
 }
 
@@ -163,6 +218,8 @@ func (c CoursesService) GetLessonAccess(initialCtx context.Context, actor domain
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.GetLessonAccess")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	access, err := c.student.GetLessonAccess(ctx, actor.ID, lessonID)
 	if err != nil {
@@ -179,9 +236,11 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	ctx, span := tr.Start(initialCtx, "courses/service.ConfirmAccess")
 	defer span.End()
 
+	span.AddEvent("products to confirm", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, keys.ProductToStrings(products))))
+
 	for _, pr := range products {
 		lessonAccess := domain.LessonAccess{
-			ID:           uuid.UUID{},
+			ID:           uuid.Nil,
 			LessonID:     pr.Item,
 			StudentID:    buyerID,
 			AccessStatus: domain.Accessible,

@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"time"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
@@ -55,7 +56,7 @@ func generateRequestID() string {
 
 func WithRequestID(ctx context.Context) context.Context {
 	requestID := generateRequestID()
-	return context.WithValue(ctx, domain.KeyRequestID, requestID)
+	return context.WithValue(ctx, keys.KeyRequestID, requestID)
 }
 
 func (s *Scraper) scrape(scrapeInterval time.Duration) {

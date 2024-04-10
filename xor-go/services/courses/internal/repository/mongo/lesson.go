@@ -72,23 +72,88 @@ func (r LessonRepository) Get(ctx context.Context, lessonID uuid.UUID) (*domain.
 
 	res, err := lesson.ToDomain()
 	if err != nil {
-		return nil, err
+		appErr := xapperror.New(http.StatusInternalServerError, "can't convert lesson", "error converting lesson to domain", err)
+		return nil, appErr
 	}
 
 	return res, nil
 }
 
 func (r LessonRepository) GetAllByCourse(ctx context.Context, courseID uuid.UUID) ([]*domain.Lesson, error) {
-	//TODO implement me
-	panic("implement me")
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.GetAllByCourse")
+	defer span.End()
+
+	var lessons []models.Lesson
+	filter := createUUIDFilter(courseID, "course_id")
+	cursor, err := r.lesson.Find(newCtx, filter)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return nil, mErr
+	}
+	if err != nil {
+		appErr := xapperror.New(http.StatusNotFound, "can't find lessons", "error fetching lessons from MongoDB", err)
+		return nil, appErr
+	}
+
+	if err := cursor.All(newCtx, &lessons); err != nil {
+		appErr := xapperror.New(http.StatusInternalServerError, "can't fetch lessons",
+			"error fetching lessons from MongoDB", err)
+		return nil, appErr
+	}
+
+	var res []*domain.Lesson
+	for _, l := range lessons {
+		d, err := l.ToDomain()
+		if err != nil {
+			appErr := xapperror.New(http.StatusInternalServerError, "can't convert lesson",
+				"error converting lesson to domain", err)
+			return nil, appErr
+		}
+		res = append(res, d)
+	}
+
+	return res, nil
 }
 
 func (r LessonRepository) Update(ctx context.Context, lesson *domain.Lesson) error {
-	//TODO implement me
-	panic("implement me")
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Update")
+	defer span.End()
+
+	mongoLesson := models.ToMongoModelLesson(*lesson)
+	filter := createUUIDFilter(lesson.ID, "lesson_id")
+	_, err := r.lesson.ReplaceOne(newCtx, filter, mongoLesson)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return mErr
+	}
+	if err != nil {
+		appErr := xapperror.New(http.StatusNotFound, "can't update lesson", "error updating lesson in MongoDB", err)
+		return appErr
+	}
+
+	return nil
 }
 
 func (r LessonRepository) Delete(ctx context.Context, lessonID uuid.UUID) error {
-	//TODO implement me
-	panic("implement me")
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Delete")
+	defer span.End()
+
+	filter := createUUIDFilter(lessonID, "lesson_id")
+	_, err := r.lesson.DeleteOne(newCtx, filter)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return mErr
+	}
+	if err != nil {
+		appErr := xapperror.New(http.StatusNotFound, "can't delete lesson", "error deleting lesson from MongoDB", err)
+		return appErr
+	}
+
+	return nil
 }

@@ -1,3 +1,3 @@
-package domain
+package keys
 
 const KeyRequestID = "RequestID"

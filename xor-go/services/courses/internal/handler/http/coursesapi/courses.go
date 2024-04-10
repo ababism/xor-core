@@ -66,7 +66,9 @@ func (h CoursesHandler) PostCoursesEdit(ginCtx *gin.Context, params generated.Po
 	var coursePayload generated.Course
 	h.bindRequestBody(ginCtx, &coursePayload)
 
-	course, err := h.coursesService.CreateCourse(ctx, params.Actor.ToDomain(), coursePayload.ToDomain())
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.CreateCourse(ctx, params.Actor.ToDomainWithRoles(roles), coursePayload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -90,7 +92,9 @@ func (h CoursesHandler) GetCoursesEditCourseID(ginCtx *gin.Context, courseID ope
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	course, err := h.coursesService.GetCourse(ctx, params.Actor.ToDomain(), courseID)
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.GetCourse(ctx, params.Actor.ToDomainWithRoles(roles), courseID)
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -114,7 +118,9 @@ func (h CoursesHandler) PutCoursesEditCourseID(ginCtx *gin.Context, courseID uui
 	var coursePayload generated.Course
 	h.bindRequestBody(ginCtx, &coursePayload)
 
-	course, err := h.coursesService.UpdateCourse(ctx, params.Actor.ToDomain(), courseID, coursePayload.ToDomain())
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.UpdateCourse(ctx, params.Actor.ToDomainWithRoles(roles), courseID, coursePayload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -137,7 +143,9 @@ func (h CoursesHandler) DeleteCoursesEditCourseID(ginCtx *gin.Context, courseID 
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	err := h.coursesService.DeleteCourse(ctx, params.Actor.ToDomain(), courseID)
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	err = h.coursesService.DeleteCourse(ctx, params.Actor.ToDomainWithRoles(roles), courseID)
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -154,7 +162,9 @@ func (h CoursesHandler) PostCoursesCourseIDBuy(ginCtx *gin.Context, courseID ope
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	redirect, err := h.coursesService.BuyCourse(ctx, params.Actor.ToDomain(), courseID)
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	redirect, err := h.coursesService.BuyCourse(ctx, params.Actor.ToDomainWithRoles(roles), courseID)
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return

@@ -34,7 +34,7 @@ type LessonService interface {
 	// CreateLesson GetLesson UpdateLesson DeleteLesson — teacher lessonCRUD
 	CreateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) (*domain.Lesson, error)
 	GetLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (*domain.Lesson, error)
-	UpdateLesson(ctx context.Context, actor domain.Actor, lesson *domain.Lesson) (*domain.Lesson, error)
+	UpdateLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID, lesson *domain.Lesson) (*domain.Lesson, error)
 	DeleteLesson(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) error
 }
 
@@ -48,6 +48,7 @@ type PublicationRequestService interface {
 
 // UserService represents the part of interface for user data management.
 type UserService interface {
+	GetActorRoles(ctx context.Context, actor domain.Actor) ([]string, error)
 	// BuyCourse student buy course
 	BuyCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error)
 	// BuyLesson student buy lesson
@@ -61,7 +62,7 @@ type UserService interface {
 	// GetLessonAccess student gets his access to lesson for a user
 	GetLessonAccess(ctx context.Context, actor domain.Actor, lessonID uuid.UUID) (domain.LessonAccess, error)
 	// ChangeCourseAccess admin or moderator gives access to lesson for a user
-	ChangeLessonAccess(ctx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error)
+	CreateOrChangeLessonAccess(ctx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error)
 	// ConfirmAccess Finances system from webhook confirms payment
 	ConfirmAccess(ctx context.Context, buyerID uuid.UUID, products []domain.Product) error
 }

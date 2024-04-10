@@ -21,7 +21,9 @@ func (h CoursesHandler) PostPublicationRequests(ginCtx *gin.Context, params gene
 	var payload generated.PublicationRequest
 	h.bindRequestBody(ginCtx, &payload)
 
-	publication, err := h.coursesService.RequestCoursePublication(ctx, params.Actor.ToDomain(), payload.ToDomain())
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	publication, err := h.coursesService.RequestCoursePublication(ctx, params.Actor.ToDomainWithRoles(roles), payload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -44,7 +46,9 @@ func (h CoursesHandler) PutPublicationRequestsRequestID(ginCtx *gin.Context, req
 
 	payload.ID = requestID
 
-	publication, err := h.coursesService.UpdatePublicationRequest(ctx, params.Actor.ToDomain(), payload.ToDomain())
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	publication, err := h.coursesService.UpdatePublicationRequest(ctx, params.Actor.ToDomainWithRoles(roles), payload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
