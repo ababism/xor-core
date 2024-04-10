@@ -24,6 +24,8 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 	ctx, span := tr.Start(initialCtx, "courses/service.RequestCoursePublication")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have teacher rights to publish course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -62,6 +64,8 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdatePublicationRequest")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",
@@ -269,6 +273,8 @@ func (c CoursesService) UpdatePublicationRequestWithoutTx(initialCtx context.Con
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdatePublicationRequest")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.ModeratorRole, domain.AdminRole) {
 		return domain.PublicationRequest{}, xapperror.New(http.StatusForbidden, "user does not have moderator rights to publish course",

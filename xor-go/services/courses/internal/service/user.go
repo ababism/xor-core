@@ -22,6 +22,8 @@ func (c CoursesService) GetActorRoles(ctx context.Context, actor domain.Actor) (
 	ctx, span := tr.Start(ctx, "courses/service.GetActorRoles")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	roles := make([]string, 0)
 	_, err := c.student.Get(ctx, actor.ID)
 	if err == nil {
@@ -42,6 +44,8 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.BuyCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
@@ -84,6 +88,8 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	ctx, span := tr.Start(initialCtx, "courses/service.BuyLesson")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
 			fmt.Sprintf("%s or %s roles can't buy course", domain.TeacherRole, domain.AdminRole), nil)
@@ -120,6 +126,8 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 	ctx, span := tr.Start(initialCtx, "courses/service.RegisterStudentProfile")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasRole(domain.UnregisteredRole) {
 		return xapperror.New(http.StatusForbidden, "user can't be registered",
 			fmt.Sprintf("user can't be registere user do not have %s role", domain.UnregisteredRole), nil)
@@ -146,6 +154,8 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	ctx, span := tr.Start(initialCtx, "courses/service.RegisterTeacherProfile")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasRole(domain.AdminRole) {
 		return xapperror.New(http.StatusForbidden, "user can't register teachers",
 			fmt.Sprintf("user can't register teachers no %s role", domain.AdminRole), nil)
@@ -170,6 +180,8 @@ func (c CoursesService) CreateOrChangeLessonAccess(initialCtx context.Context, a
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateOrChangeLessonAccess")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasRole(domain.AdminRole) {
 		return domain.LessonAccess{}, xapperror.New(http.StatusForbidden, "user can't give access to lessons",
@@ -206,6 +218,8 @@ func (c CoursesService) GetLessonAccess(initialCtx context.Context, actor domain
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.GetLessonAccess")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	access, err := c.student.GetLessonAccess(ctx, actor.ID, lessonID)
 	if err != nil {

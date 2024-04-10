@@ -21,6 +21,8 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -54,6 +56,8 @@ func (c CoursesService) GetCourse(initialCtx context.Context, actor domain.Actor
 	ctx, span := tr.Start(initialCtx, "courses/service.GetCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to read unpublished course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -72,6 +76,8 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
@@ -111,6 +117,8 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	ctx, span := tr.Start(initialCtx, "courses/service.DeleteCourse")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return xapperror.New(http.StatusForbidden, "user does not have teacher rights to delete course",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -131,6 +139,8 @@ func (c CoursesService) ReadCourse(initialCtx context.Context, actor domain.Acto
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.ReadCourse")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	course, err := c.course.Get(ctx, courseID)
 	if err != nil {

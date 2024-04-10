@@ -7,7 +7,7 @@ import (
 	"xor-go/services/courses/internal/domain/keys"
 )
 
-func ToSpan(a domain.Actor, span *trace.Span) {
+func ToSpan(span *trace.Span, a domain.Actor) {
 	if span == nil {
 		return
 	}

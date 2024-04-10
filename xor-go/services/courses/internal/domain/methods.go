@@ -15,6 +15,10 @@ func NewActor(ID uuid.UUID, roles []string) Actor {
 }
 
 func (c *Actor) GetRoles() []string {
+	// TODO - does it necessary to return make([]string, 0)
+	if c == nil || c.roles == nil {
+		return make([]string, 0)
+	}
 	copyRoles := make([]string, 0, c.roles.Size())
 	for r, _ := range c.roles {
 		copyRoles = append(copyRoles, r)

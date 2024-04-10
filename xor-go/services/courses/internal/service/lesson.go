@@ -22,6 +22,8 @@ func (c CoursesService) ReadLesson(initialCtx context.Context, actor domain.Acto
 	ctx, span := tr.Start(initialCtx, "courses/service.ReadLesson")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	lesson, err := c.lesson.Get(ctx, lessonID)
 	if err != nil {
 		return nil, err
@@ -49,6 +51,8 @@ func (c CoursesService) CreateLesson(initialCtx context.Context, actor domain.Ac
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateLesson")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create lesson",
@@ -82,6 +86,8 @@ func (c CoursesService) GetLesson(initialCtx context.Context, actor domain.Actor
 	ctx, span := tr.Start(initialCtx, "courses/service.GetLesson")
 	defer span.End()
 
+	ToSpan(&span, actor)
+
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to see unpublished lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
@@ -101,6 +107,8 @@ func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Ac
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateLesson")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update lesson",
@@ -137,6 +145,8 @@ func (c CoursesService) DeleteLesson(initialCtx context.Context, actor domain.Ac
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.DeleteLesson")
 	defer span.End()
+
+	ToSpan(&span, actor)
 
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return xapperror.New(http.StatusForbidden, "user does not have teacher rights to delete lesson",
