@@ -8,6 +8,7 @@ func DomainToGet(get domain.ProductGet) ProductGet {
 	return ProductGet{
 		UUID:          get.UUID,
 		Name:          get.Name,
+		Info:          get.Info,
 		Price:         get.Price,
 		IsAvailable:   get.IsAvailable,
 		CreatedAt:     get.CreatedAt,
@@ -18,6 +19,7 @@ func DomainToGet(get domain.ProductGet) ProductGet {
 func CreateToDomain(create ProductCreate) domain.ProductCreate {
 	return domain.ProductCreate{
 		Name:        create.Name,
+		Info:        create.Info,
 		Price:       create.Price,
 		IsAvailable: create.IsAvailable,
 	}
@@ -27,6 +29,7 @@ func UpdateToDomain(update ProductUpdate) domain.ProductUpdate {
 	return domain.ProductUpdate{
 		UUID:        update.UUID,
 		Name:        update.Name,
+		Info:        update.Info,
 		Price:       update.Price,
 		IsAvailable: update.IsAvailable,
 	}

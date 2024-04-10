@@ -105,6 +105,28 @@ func (h *Handler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
+func (h *Handler) CreateMany(ctx *gin.Context) {
+	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
+	defer span.End()
+
+	var body []ProductCreate
+	if err := ctx.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		return
+	}
+
+	for _, product := range body {
+		domain := CreateToDomain(product)
+		err := h.productService.Create(newCtx, &domain)
+		if err != nil {
+			http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+			return
+		}
+	}
+
+	ctx.JSON(http.StatusOK, http.NoBody)
+}
+
 func (h *Handler) Update(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".Update")
 	defer span.End()
