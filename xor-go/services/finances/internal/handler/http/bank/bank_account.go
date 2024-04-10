@@ -34,7 +34,7 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(ctx *gin.Context, login string) {
+func (h *Handler) GetBankAccountsLogin(ctx *gin.Context, login string) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
 	defer span.End()
 
@@ -49,7 +49,7 @@ func (h *Handler) Get(ctx *gin.Context, login string) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(ctx *gin.Context) {
+func (h *Handler) GetBankAccounts(ctx *gin.Context) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".GetList")
 	defer span.End()
 
@@ -73,7 +73,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) PostBankAccounts(ctx *gin.Context) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -94,7 +94,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(ctx *gin.Context) {
+func (h *Handler) PutBankAccounts(ctx *gin.Context) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Update")
 	defer span.End()
 
@@ -114,7 +114,11 @@ func (h *Handler) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Change(c *gin.Context, login string, params ChangeParams) {
+func (h *Handler) PutBankAccountsLoginChangeFunds(
+	c *gin.Context,
+	login string,
+	params PutBankAccountsLoginChangeFundsParams,
+) {
 	_, newCtx, span := getAccountTracerSpan(c, ".Change")
 	defer span.End()
 

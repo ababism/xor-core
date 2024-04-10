@@ -41,26 +41,26 @@ type PurchaseRequestGet struct {
 	WebhookURL string               `json:"WebhookURL"`
 }
 
-// GetListJSONRequestBody defines body for GetList for application/json ContentType.
-type GetListJSONRequestBody = PurchaseRequestFilter
+// GetPurchaseRequestsJSONRequestBody defines body for GetPurchaseRequests for application/json ContentType.
+type GetPurchaseRequestsJSONRequestBody = PurchaseRequestFilter
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = PurchaseRequestCreate
+// PostPurchaseRequestsJSONRequestBody defines body for PostPurchaseRequests for application/json ContentType.
+type PostPurchaseRequestsJSONRequestBody = PurchaseRequestCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List purchase requests
 	// (GET /purchase-requests)
-	GetList(c *gin.Context)
+	GetPurchaseRequests(c *gin.Context)
 	// Create a purchase request
 	// (POST /purchase-requests)
-	Create(c *gin.Context)
+	PostPurchaseRequests(c *gin.Context)
 	// Get purchase request by ID
 	// (GET /purchase-requests/{id})
-	Get(c *gin.Context, id openapi_types.UUID)
+	GetPurchaseRequestsId(c *gin.Context, id openapi_types.UUID)
 	// Archive a purchase request
 	// (PUT /purchase-requests/{id}/archive)
-	Archive(c *gin.Context, id openapi_types.UUID)
+	PutPurchaseRequestsIdArchive(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -72,8 +72,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetList operation middleware
-func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
+// GetPurchaseRequests operation middleware
+func (siw *ServerInterfaceWrapper) GetPurchaseRequests(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -82,11 +82,11 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetPurchaseRequests(c)
 }
 
-// Create operation middleware
-func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
+// PostPurchaseRequests operation middleware
+func (siw *ServerInterfaceWrapper) PostPurchaseRequests(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -95,11 +95,11 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.PostPurchaseRequests(c)
 }
 
-// Get operation middleware
-func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
+// GetPurchaseRequestsId operation middleware
+func (siw *ServerInterfaceWrapper) GetPurchaseRequestsId(c *gin.Context) {
 
 	var err error
 
@@ -119,11 +119,11 @@ func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Get(c, id)
+	siw.Handler.GetPurchaseRequestsId(c, id)
 }
 
-// Archive operation middleware
-func (siw *ServerInterfaceWrapper) Archive(c *gin.Context) {
+// PutPurchaseRequestsIdArchive operation middleware
+func (siw *ServerInterfaceWrapper) PutPurchaseRequestsIdArchive(c *gin.Context) {
 
 	var err error
 
@@ -143,7 +143,7 @@ func (siw *ServerInterfaceWrapper) Archive(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Archive(c, id)
+	siw.Handler.PutPurchaseRequestsIdArchive(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -173,8 +173,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/purchase-requests", wrapper.GetList)
-	router.POST(options.BaseURL+"/purchase-requests", wrapper.Create)
-	router.GET(options.BaseURL+"/purchase-requests/:id", wrapper.Get)
-	router.PUT(options.BaseURL+"/purchase-requests/:id/archive", wrapper.Archive)
+	router.GET(options.BaseURL+"/purchase-requests", wrapper.GetPurchaseRequests)
+	router.POST(options.BaseURL+"/purchase-requests", wrapper.PostPurchaseRequests)
+	router.GET(options.BaseURL+"/purchase-requests/:id", wrapper.GetPurchaseRequestsId)
+	router.PUT(options.BaseURL+"/purchase-requests/:id/archive", wrapper.PutPurchaseRequestsIdArchive)
 }

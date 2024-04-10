@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
@@ -82,6 +83,8 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Create")
 	defer span.End()
 
+	_, newCtxSpanCreate, spanCreate := getPurchaseRequestTracerSpan(newCtx, ".Create.PurchaseRequest")
+	defer spanCreate.End()
 	price, err := s.rProduct.GetPrice(ctx, purchase.Products)
 	if err != nil {
 		return err
@@ -91,7 +94,10 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	if err != nil {
 		return err
 	}
+	spanCreate.End()
 
+	_, newCtxSendPayment, spanPayments := getPurchaseRequestTracerSpan(newCtxSpanCreate, ".Create.SendPayment")
+	defer spanPayments.End()
 	products := make([]domain.ProductGet, 0)
 	productsNames := ""
 	for _, productId := range purchase.Products {
@@ -106,7 +112,7 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 		productsNames += " " + product.Name
 	}
 
-	createPurchase, err := s.cPayment.CreatePurchase(ctx, &domain.PaymentsCreatePurchase{
+	createPurchase, err := s.cPayment.CreatePurchase(newCtx, &domain.PaymentsCreatePurchase{
 		PaymentUUID: *id,
 		PaymentName: fmt.Sprintf("Payment for:%s", productsNames),
 		Money:       *price,
@@ -119,19 +125,31 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	if err != nil {
 		return err
 	}
+	spanPayments.End()
 
 	log.Logger.Info(fmt.Sprintf("Purchase created: %v", createPurchase))
 
-	jsonBody := []byte(`{"client_message": "Hello, Courses!"}`)
-	bodyReader := bytes.NewReader(jsonBody)
+	_, _, spanSendResult := getPurchaseRequestTracerSpan(newCtxSendPayment, ".Create.SendResultByWebhook")
+	defer newCtxSendPayment.Done()
+	webhook := domain.PurchaseRequestWebhook{
+		Sender:   uuid.UUID{},
+		Receiver: uuid.UUID{},
+		Products: domain.ConvertProductsToSmall(products),
+	}
 
+	jsonBody, err := json.Marshal(webhook)
+	if err != nil {
+		return err
+	}
+	bodyReader := bytes.NewReader(jsonBody)
 	log.Logger.Info(fmt.Sprintf("Sending Purchase request result to %s", purchase.WebhookURL))
 
-	url := "http://" + purchase.WebhookURL
+	url := purchase.WebhookURL
 	_, err = http.NewRequest(http.MethodPost, url, bodyReader)
 	if err != nil {
 		return err
 	}
+	spanSendResult.End()
 
 	return nil
 }

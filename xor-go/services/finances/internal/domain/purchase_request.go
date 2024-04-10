@@ -30,3 +30,9 @@ type PurchaseRequestFilter struct {
 	WebhookURL *string
 	CreatedAt  *time.Time
 }
+
+type PurchaseRequestWebhook struct {
+	Sender   uuid.UUID      `json:"buyer_id"`
+	Receiver uuid.UUID      `json:"seller_id"`
+	Products []ProductSmall `json:"products"`
+}
