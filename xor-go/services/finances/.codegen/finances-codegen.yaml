@@ -5,6 +5,28 @@ info:
 servers:
   - url: http://localhost:8082/api/v1/finances
 paths:
+  /bank-accounts/{login}:
+    get:
+      tags:
+        - Bank Account
+      summary: Get bank account by login
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountGet'
+        '400':
+          description: Incorrect bank account login
+        '404':
+          description: Bank account not found
   /bank-accounts:
     get:
       tags:
@@ -29,6 +51,7 @@ paths:
         - Bank Account
       summary: Create a bank account
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -38,38 +61,10 @@ paths:
           description: Successful operation
         '400':
           description: Incorrect bank account data
-  /bank-accounts/{login}:
-    get:
-      tags:
-        - Bank Account
-      summary: Get bank account by login
-      parameters:
-        - in: path
-          name: login
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BankAccountGet'
-        '400':
-          description: Incorrect bank account login
-        '404':
-          description: Bank account not found
     put:
       tags:
         - Bank Account
       summary: Update a bank account
-      parameters:
-        - in: path
-          name: login
-          required: true
-          schema:
-            type: string
       requestBody:
         content:
           application/json:
@@ -130,6 +125,7 @@ paths:
         - Discount
       summary: List discounts
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -160,6 +156,7 @@ paths:
         - Discount
       summary: Update a discount
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -229,6 +226,7 @@ paths:
         - Payment
       summary: Create a payment
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -281,6 +279,7 @@ paths:
         - Payout Request
       summary: Create a payout request
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -346,6 +345,7 @@ paths:
         - Product
       summary: Create a product
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -358,10 +358,27 @@ paths:
         - Product
       summary: Update a product
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200':
+          description: Successful operation
+  /products/list:
+    post:
+      tags:
+        - Product
+      summary: Create many products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductCreate'
       responses:
         '200':
           description: Successful operation
@@ -377,6 +394,23 @@ paths:
           schema:
             type: string
             format: uuid
+      responses:
+        '200':
+          description: Successful operation
+  /products/price/{uuids}:
+    get:
+      tags:
+        - Product
+      summary: Get products price with discounts
+      parameters:
+        - in: path
+          name: uuids
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
       responses:
         '200':
           description: Successful operation
@@ -423,6 +457,7 @@ paths:
         - Purchase request
       summary: Create a purchase request
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -488,7 +523,6 @@ components:
         - Data
         - Status
         - Funds
-        - LastDealAt
         - CreatedAt
         - LastUpdateAt
         - Payments
@@ -544,7 +578,6 @@ components:
         - Funds
         - Data
         - Status
-        - LastDealAt
         - Payments
     BankAccountFilter:
       type: object
@@ -736,6 +769,7 @@ components:
         EndedAt:
           type: string
           format: date-time
+
     PayoutRequestData:
       type: object
       properties: { }
@@ -801,6 +835,8 @@ components:
           format: uuid
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
         IsAvailable:
@@ -814,6 +850,7 @@ components:
       required:
         - UUID
         - Name
+        - Info
         - Price
         - IsAvailable
         - CreatedAt
@@ -823,11 +860,17 @@ components:
       properties:
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
+        IsAvailable:
+          type: boolean
       required:
         - Name
+        - Info
         - Price
+        - IsAvailable
     ProductUpdate:
       type: object
       properties:
@@ -836,6 +879,8 @@ components:
           format: uuid
         Name:
           type: string
+        Info:
+          type: string
         Price:
           type: number
         IsAvailable:
@@ -843,6 +888,7 @@ components:
       required:
         - UUID
         - Name
+        - Info
         - Price
         - IsAvailable
     ProductFilter:
@@ -855,12 +901,14 @@ components:
           type: string
         Price:
           type: number
+        IsAvailable:
+          type: boolean
+
     PurchaseRequestGet:
       type: object
       required:
         - UUID
-        - Sender
-        - Receiver
+        - Products
         - WebhookURL
         - CreatedAt
       properties:
@@ -873,6 +921,11 @@ components:
         Receiver:
           type: string
           format: uuid
+        Products:
+          type: array
+          items:
+            type: string
+            format: uuid
         WebhookURL:
           type: string
         CreatedAt:
@@ -881,8 +934,7 @@ components:
     PurchaseRequestCreate:
       type: object
       required:
-        - Sender
-        - Receiver
+        - Products
         - WebhookURL
         - CreatedAt
       properties:
@@ -892,6 +944,11 @@ components:
         Receiver:
           type: string
           format: uuid
+        Products:
+          type: array
+          items:
+            type: string
+            format: uuid
         WebhookURL:
           type: string
         CreatedAt:
