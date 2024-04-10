@@ -18,24 +18,35 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
-// GetListJSONBody defines parameters for GetList.
-type GetListJSONBody struct {
-	IsAvailable *bool               `json:"IsAvailable,omitempty"`
-	Name        *string             `json:"Name,omitempty"`
-	Price       *float32            `json:"Price,omitempty"`
-	UUID        *openapi_types.UUID `json:"UUID,omitempty"`
-}
-
-// CreateJSONBody defines parameters for Create.
-type CreateJSONBody struct {
+// ProductCreate defines model for ProductCreate.
+type ProductCreate struct {
 	Info        string  `json:"Info"`
 	IsAvailable bool    `json:"IsAvailable"`
 	Name        string  `json:"Name"`
 	Price       float32 `json:"Price"`
 }
 
-// UpdateJSONBody defines parameters for Update.
-type UpdateJSONBody struct {
+// ProductFilter defines model for ProductFilter.
+type ProductFilter struct {
+	IsAvailable *bool               `json:"IsAvailable,omitempty"`
+	Name        *string             `json:"Name,omitempty"`
+	Price       *float32            `json:"Price,omitempty"`
+	UUID        *openapi_types.UUID `json:"UUID,omitempty"`
+}
+
+// ProductGet defines model for ProductGet.
+type ProductGet struct {
+	CreatedAt     time.Time          `json:"CreatedAt"`
+	Info          string             `json:"Info"`
+	IsAvailable   bool               `json:"IsAvailable"`
+	LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
+	Name          string             `json:"Name"`
+	Price         float32            `json:"Price"`
+	UUID          openapi_types.UUID `json:"UUID"`
+}
+
+// ProductUpdate defines model for ProductUpdate.
+type ProductUpdate struct {
 	Info        string             `json:"Info"`
 	IsAvailable bool               `json:"IsAvailable"`
 	Name        string             `json:"Name"`
@@ -44,21 +55,16 @@ type UpdateJSONBody struct {
 }
 
 // CreateManyJSONBody defines parameters for CreateMany.
-type CreateManyJSONBody = []struct {
-	Info        string  `json:"Info"`
-	IsAvailable bool    `json:"IsAvailable"`
-	Name        string  `json:"Name"`
-	Price       float32 `json:"Price"`
-}
+type CreateManyJSONBody = []ProductCreate
 
 // GetListJSONRequestBody defines body for GetList for application/json ContentType.
-type GetListJSONRequestBody GetListJSONBody
+type GetListJSONRequestBody = ProductFilter
 
 // CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody CreateJSONBody
+type CreateJSONRequestBody = ProductCreate
 
 // UpdateJSONRequestBody defines body for Update for application/json ContentType.
-type UpdateJSONRequestBody UpdateJSONBody
+type UpdateJSONRequestBody = ProductUpdate
 
 // CreateManyJSONRequestBody defines body for CreateMany for application/json ContentType.
 type CreateManyJSONRequestBody = CreateManyJSONBody
@@ -636,15 +642,7 @@ type ClientWithResponsesInterface interface {
 type GetListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]struct {
-		CreatedAt     time.Time          `json:"CreatedAt"`
-		Info          string             `json:"Info"`
-		IsAvailable   bool               `json:"IsAvailable"`
-		LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
-		Name          string             `json:"Name"`
-		Price         float32            `json:"Price"`
-		UUID          openapi_types.UUID `json:"UUID"`
-	}
+	JSON200      *[]ProductGet
 }
 
 // Status returns HTTPResponse.Status
@@ -750,15 +748,7 @@ func (r GetPriceResponse) StatusCode() int {
 type GetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *struct {
-		CreatedAt     time.Time          `json:"CreatedAt"`
-		Info          string             `json:"Info"`
-		IsAvailable   bool               `json:"IsAvailable"`
-		LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
-		Name          string             `json:"Name"`
-		Price         float32            `json:"Price"`
-		UUID          openapi_types.UUID `json:"UUID"`
-	}
+	JSON200      *ProductGet
 }
 
 // Status returns HTTPResponse.Status
@@ -908,15 +898,7 @@ func ParseGetListResponse(rsp *http.Response) (*GetListResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []struct {
-			CreatedAt     time.Time          `json:"CreatedAt"`
-			Info          string             `json:"Info"`
-			IsAvailable   bool               `json:"IsAvailable"`
-			LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
-			Name          string             `json:"Name"`
-			Price         float32            `json:"Price"`
-			UUID          openapi_types.UUID `json:"UUID"`
-		}
+		var dest []ProductGet
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1006,15 +988,7 @@ func ParseGetResponse(rsp *http.Response) (*GetResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			CreatedAt     time.Time          `json:"CreatedAt"`
-			Info          string             `json:"Info"`
-			IsAvailable   bool               `json:"IsAvailable"`
-			LastUpdatedAt time.Time          `json:"LastUpdatedAt"`
-			Name          string             `json:"Name"`
-			Price         float32            `json:"Price"`
-			UUID          openapi_types.UUID `json:"UUID"`
-		}
+		var dest ProductGet
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

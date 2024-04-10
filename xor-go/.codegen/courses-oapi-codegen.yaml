@@ -6,7 +6,7 @@ generate:
   - types
   - gin-server
   - models
-
+#  - embedded-spec
 
 # To RUN from root:
 # oapi-codegen --config xor-go/.codegen/courses-oapi-codegen.yaml oapi/courses.yaml
