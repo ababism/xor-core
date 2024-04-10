@@ -27,7 +27,11 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 	}
 
 	course.TeacherID = actor.ID
-	course.ID = uuid.New()
+
+	//if course.ID == uuid.Nil || (course.ID == uuid.UUID{}) {
+	//	course.ID = uuid.New()
+	//}
+	course.FillEmptyUUIDs()
 
 	err := course.Validate()
 	if err != nil {

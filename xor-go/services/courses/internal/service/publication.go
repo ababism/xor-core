@@ -42,7 +42,11 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 	request.UpdatedAt = time.Now()
 	request.RequestStatus = domain.Unwatched
 	request.AssigneeID = actor.ID
-	request.ID = uuid.New()
+
+	if request.ID == uuid.Nil || (request.ID == uuid.UUID{}) {
+		request.ID = uuid.New()
+	}
+
 	err := c.publication.Create(ctx, request)
 	if err != nil {
 		return domain.PublicationRequest{}, err

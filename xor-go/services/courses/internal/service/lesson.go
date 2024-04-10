@@ -56,7 +56,10 @@ func (c CoursesService) CreateLesson(initialCtx context.Context, actor domain.Ac
 	}
 
 	lesson.TeacherID = actor.ID
-	lesson.ID = uuid.New()
+
+	if lesson.ID == uuid.Nil || (lesson.ID == uuid.UUID{}) {
+		lesson.ID = uuid.New()
+	}
 
 	err := lesson.Validate()
 	if err != nil {

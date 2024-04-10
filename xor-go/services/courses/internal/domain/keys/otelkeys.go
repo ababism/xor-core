@@ -13,6 +13,8 @@ const (
 	ProductSliceAttributeKey   = "product_slice"
 	StudentIDAttributeKey      = "student_id"
 	TeacherIDAttributeKey      = "teacher_id"
+	ActorIDAttributeKey        = "actor_id"
+	ActorRolesAttributeKey     = "actor_roles"
 )
 
 func ProductToStrings(products []domain.Product) []string {

@@ -79,7 +79,9 @@ func (h CoursesHandler) PutUserAccessLessons(ginCtx *gin.Context, params generat
 	var payload generated.LessonAccess
 	h.bindRequestBody(ginCtx, &payload)
 
-	lessonAccess, err := h.coursesService.CreateOrChangeLessonAccess(ctx, params.Actor.ToDomain(), payload.ToDomain())
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	lessonAccess, err := h.coursesService.CreateOrChangeLessonAccess(ctx, params.Actor.ToDomainWithRoles(roles), payload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return
@@ -97,7 +99,9 @@ func (h CoursesHandler) GetUserAccessLessonsLessonID(ginCtx *gin.Context, lesson
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	lessonAccess, err := h.coursesService.GetLessonAccess(ctx, params.Actor.ToDomain(), lessonID)
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	lessonAccess, err := h.coursesService.GetLessonAccess(ctx, params.Actor.ToDomainWithRoles(roles), lessonID)
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return

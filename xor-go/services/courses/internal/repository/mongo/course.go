@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	global "go.opentelemetry.io/otel"
-	"go.uber.org/zap"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
@@ -42,7 +41,7 @@ func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*
 	defer span.End()
 
 	mongoCourse := models.ToMongoModelCourse(course)
-	insertRes, err := cr.course.InsertOne(newCtx, mongoCourse)
+	_, err := cr.course.InsertOne(newCtx, mongoCourse)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr
 	}
@@ -52,19 +51,6 @@ func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*
 		return nil, appErr
 	}
 
-	insertedID, ok := insertRes.InsertedID.(string)
-	if !ok {
-		logger.Error("MongoDB id is not a string error", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"internal server error", "MongoDB _id is not a string", err)
-	}
-	resultID, err := uuid.Parse(insertedID)
-	if err != nil {
-		logger.Error("MongoDB id is not valid uuid", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"internal server error", "MongoDB _id is not a uuid", err)
-	}
-	course.ID = resultID
 	return course, nil
 }
 

@@ -187,7 +187,10 @@ func (c CoursesService) CreateOrChangeLessonAccess(initialCtx context.Context, a
 		return updatedAccess, nil
 	}
 	// if access does not exist
-	access.ID = uuid.New()
+	if access.ID == uuid.Nil || (access.ID == uuid.UUID{}) {
+		access.ID = uuid.New()
+	}
+
 	newAccess, err := c.student.CreateAccessToLesson(ctx, access)
 	if err != nil {
 		return domain.LessonAccess{}, err
