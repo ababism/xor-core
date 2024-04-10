@@ -43,7 +43,7 @@ func (a *App) startHTTPServer(ctx context.Context) {
 	srv := xhttp.NewServer(a.cfg.Http, router)
 
 	// Стартуем
-	log.Logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%d", a.cfg.App.Name, a.cfg.Http.Host, a.cfg.Http.Port))
+	log.Logger.Info(fmt.Sprintf("Starting %s HTTP server at %s:%s", a.cfg.App.Name, a.cfg.Http.Host, a.cfg.Http.Port))
 	if err := srv.Start(); err != nil {
 		log.Logger.Error(fmt.Sprintf("Fail with %s HTTP server: %s", a.cfg.App.Name, err.Error()))
 		xshutdown.Now()
