@@ -22,14 +22,108 @@ type CoursesHandler struct {
 	coursesService adapters.CoursesService
 }
 
-func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
-	return &CoursesHandler{logger: logger, coursesService: coursesService}
+func (h CoursesHandler) GetCoursesEditList(ginCtx *gin.Context, params generated.GetCoursesEditListParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEditList")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.GetAllCoursesTemplates(ctx, params.Actor.ToDomainWithRoles(roles), params.Offset, params.Limit)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if course == nil {
+		err := xapperror.New(http.StatusInternalServerError, "nil courses without error", "GetCourse returned nil courses without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseListResponse(course)
+
+	ginCtx.JSON(http.StatusOK, resp)
 }
 
-// GetCoursesEdit LIST COURSES
-func (h CoursesHandler) GetCoursesEdit(ginCtx *gin.Context, params generated.GetCoursesEditParams) {
-	//	 TODO
-	panic("implement me")
+func (h CoursesHandler) GetCoursesEditListTeacherID(ginCtx *gin.Context, teacherID openapitypes.UUID, params generated.GetCoursesEditListTeacherIDParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesEditListTeacherID")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.GetTeacherCoursesTemplates(ctx, params.Actor.ToDomainWithRoles(roles), teacherID, params.Offset, params.Limit)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if course == nil {
+		err := xapperror.New(http.StatusInternalServerError, "nil courses without error", "GetCourse returned nil courses without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseListResponse(course)
+
+	ginCtx.JSON(http.StatusOK, resp)
+}
+
+func (h CoursesHandler) GetCoursesList(ginCtx *gin.Context, params generated.GetCoursesListParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesList")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.GetPublishedCoursesList(ctx, params.Actor.ToDomainWithRoles(roles), params.Offset, params.Limit)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if course == nil {
+		err := xapperror.New(http.StatusInternalServerError, "nil courses without error", "GetCourse returned nil courses without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseListResponse(course)
+
+	ginCtx.JSON(http.StatusOK, resp)
+}
+
+func (h CoursesHandler) GetCoursesListTeacherID(ginCtx *gin.Context, teacherID openapitypes.UUID, params generated.GetCoursesListTeacherIDParams) {
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetCoursesListTeacherID")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	course, err := h.coursesService.GetTeachersPublishedCourses(ctx, params.Actor.ToDomainWithRoles(roles), teacherID, params.Offset, params.Limit)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if course == nil {
+		err := xapperror.New(http.StatusInternalServerError, "nil courses without error", "GetCourse returned nil courses without error", nil)
+		h.logger.Error("nil course", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+	}
+	resp := models.ToCourseListResponse(course)
+
+	ginCtx.JSON(http.StatusOK, resp)
+}
+
+func NewCoursesHandler(logger *zap.Logger, coursesService adapters.CoursesService) *CoursesHandler {
+	return &CoursesHandler{logger: logger, coursesService: coursesService}
 }
 
 // GetCoursesCourseID READ Published

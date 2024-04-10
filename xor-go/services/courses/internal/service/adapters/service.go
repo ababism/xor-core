@@ -17,10 +17,14 @@ type CoursesService interface {
 type CourseService interface {
 	// CreateCourse GetCourse UpdateCourse DeleteCourse — teacher courseCRUD
 	CreateCourse(ctx context.Context, actor domain.Actor, course *domain.Course) (*domain.Course, error)
-	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error) // hide fields if role == user
+	// GetCourse hides fields if role == user
+	GetCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error)
 	UpdateCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) (*domain.Course, error)
 	DeleteCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) error
-	//GetCourses(ctx context.Context, actor domain.Actor, courseID uuid.UUID, offset, limit int) ([]*domain.Course, error) // hide fields if role == user
+	GetPublishedCoursesList(ctx context.Context, actor domain.Actor, offset, limit int) ([]*domain.Course, error)
+	GetTeachersPublishedCourses(ctx context.Context, actor domain.Actor, teacherID uuid.UUID, offset, limit int) ([]*domain.Course, error)
+	GetAllCoursesTemplates(ctx context.Context, actor domain.Actor, offset, limit int) ([]*domain.Course, error)
+	GetTeacherCoursesTemplates(ctx context.Context, actor domain.Actor, teacherID uuid.UUID, offset, limit int) ([]*domain.Course, error)
 
 	// ReadCourse  — user gets published course (with visibility applied based on roles)
 	ReadCourse(ctx context.Context, actor domain.Actor, courseID uuid.UUID) (*domain.Course, error)

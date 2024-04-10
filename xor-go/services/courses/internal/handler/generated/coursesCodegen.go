@@ -136,10 +136,10 @@ type Product struct {
 	ID uuid.UUID `json:"ID,omitempty"`
 
 	// Item ID of the item associated with the product.
-	Item uuid.UUID `json:"Item"`
+	Item uuid.UUID `json:"Item,omitempty"`
 
 	// Owner ID of the owner of the product.
-	Owner uuid.UUID `json:"Owner"`
+	Owner uuid.UUID `json:"Owner,omitempty"`
 
 	// Price Price of the product.
 	Price float32 `json:"Price"`
@@ -206,14 +206,23 @@ type Theme struct {
 // ThemeVisibility defines model for Theme.Visibility.
 type ThemeVisibility string
 
-// GetCoursesEditParams defines parameters for GetCoursesEdit.
-type GetCoursesEditParams struct {
-	Actor Actor `json:"actor"`
-}
-
 // PostCoursesEditParams defines parameters for PostCoursesEdit.
 type PostCoursesEditParams struct {
 	Actor Actor `json:"actor"`
+}
+
+// GetCoursesEditListParams defines parameters for GetCoursesEditList.
+type GetCoursesEditListParams struct {
+	Offset int   `form:"offset" json:"offset"`
+	Limit  int   `form:"limit" json:"limit"`
+	Actor  Actor `json:"actor"`
+}
+
+// GetCoursesEditListTeacherIDParams defines parameters for GetCoursesEditListTeacherID.
+type GetCoursesEditListTeacherIDParams struct {
+	Offset int   `form:"offset" json:"offset"`
+	Limit  int   `form:"limit" json:"limit"`
+	Actor  Actor `json:"actor"`
 }
 
 // DeleteCoursesEditCourseIDParams defines parameters for DeleteCoursesEditCourseID.
@@ -229,6 +238,20 @@ type GetCoursesEditCourseIDParams struct {
 // PutCoursesEditCourseIDParams defines parameters for PutCoursesEditCourseID.
 type PutCoursesEditCourseIDParams struct {
 	Actor Actor `json:"actor"`
+}
+
+// GetCoursesListParams defines parameters for GetCoursesList.
+type GetCoursesListParams struct {
+	Offset int            `form:"offset" json:"offset"`
+	Limit  int            `form:"limit" json:"limit"`
+	Actor  *OptionalActor `json:"actor,omitempty"`
+}
+
+// GetCoursesListTeacherIDParams defines parameters for GetCoursesListTeacherID.
+type GetCoursesListTeacherIDParams struct {
+	Offset int            `form:"offset" json:"offset"`
+	Limit  int            `form:"limit" json:"limit"`
+	Actor  *OptionalActor `json:"actor,omitempty"`
 }
 
 // GetCoursesCourseIDParams defines parameters for GetCoursesCourseID.
@@ -337,12 +360,15 @@ type PutUserAccessLessonsJSONRequestBody = LessonAccess
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Get Courses
-	// (GET /courses/edit)
-	GetCoursesEdit(c *gin.Context, params GetCoursesEditParams)
 	// Create Course
 	// (POST /courses/edit)
 	PostCoursesEdit(c *gin.Context, params PostCoursesEditParams)
+	// Get Courses templates
+	// (GET /courses/edit/list)
+	GetCoursesEditList(c *gin.Context, params GetCoursesEditListParams)
+	// Get Courses templates of Teacher
+	// (GET /courses/edit/list/{teacherID})
+	GetCoursesEditListTeacherID(c *gin.Context, teacherID openapi_types.UUID, params GetCoursesEditListTeacherIDParams)
 	// Delete Course
 	// (DELETE /courses/edit/{courseID})
 	DeleteCoursesEditCourseID(c *gin.Context, courseID openapi_types.UUID, params DeleteCoursesEditCourseIDParams)
@@ -352,6 +378,12 @@ type ServerInterface interface {
 	// Update Course
 	// (PUT /courses/edit/{courseID})
 	PutCoursesEditCourseID(c *gin.Context, courseID openapi_types.UUID, params PutCoursesEditCourseIDParams)
+	// Read list of published Courses
+	// (GET /courses/list)
+	GetCoursesList(c *gin.Context, params GetCoursesListParams)
+	// Read list of published Courses
+	// (GET /courses/list/{teacherID})
+	GetCoursesListTeacherID(c *gin.Context, teacherID openapi_types.UUID, params GetCoursesListTeacherIDParams)
 	// Read published Course
 	// (GET /courses/{courseID})
 	GetCoursesCourseID(c *gin.Context, courseID openapi_types.UUID, params GetCoursesCourseIDParams)
@@ -408,50 +440,6 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetCoursesEdit operation middleware
-func (siw *ServerInterfaceWrapper) GetCoursesEdit(c *gin.Context) {
-
-	var err error
-
-	c.Set(ActorAuthScopes, []string{})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetCoursesEditParams
-
-	headers := c.Request.Header
-
-	// ------------- Required header parameter "actor" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
-		var Actor Actor
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
-			return
-		}
-
-		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
-		if err != nil {
-			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
-			return
-		}
-
-		params.Actor = Actor
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetCoursesEdit(c, params)
-}
-
 // PostCoursesEdit operation middleware
 func (siw *ServerInterfaceWrapper) PostCoursesEdit(c *gin.Context) {
 
@@ -494,6 +482,163 @@ func (siw *ServerInterfaceWrapper) PostCoursesEdit(c *gin.Context) {
 	}
 
 	siw.Handler.PostCoursesEdit(c, params)
+}
+
+// GetCoursesEditList operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesEditList(c *gin.Context) {
+
+	var err error
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesEditListParams
+
+	// ------------- Required query parameter "offset" -------------
+
+	if paramValue := c.Query("offset"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument offset is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "offset", c.Request.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "limit" -------------
+
+	if paramValue := c.Query("limit"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument limit is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "limit", c.Request.URL.Query(), &params.Limit)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCoursesEditList(c, params)
+}
+
+// GetCoursesEditListTeacherID operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesEditListTeacherID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "teacherID" -------------
+	var teacherID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "teacherID", c.Param("teacherID"), &teacherID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter teacherID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesEditListTeacherIDParams
+
+	// ------------- Required query parameter "offset" -------------
+
+	if paramValue := c.Query("offset"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument offset is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "offset", c.Request.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "limit" -------------
+
+	if paramValue := c.Query("limit"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument limit is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "limit", c.Request.URL.Query(), &params.Limit)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor Actor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = Actor
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter actor is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCoursesEditListTeacherID(c, teacherID, params)
 }
 
 // DeleteCoursesEditCourseID operation middleware
@@ -651,6 +796,157 @@ func (siw *ServerInterfaceWrapper) PutCoursesEditCourseID(c *gin.Context) {
 	}
 
 	siw.Handler.PutCoursesEditCourseID(c, courseID, params)
+}
+
+// GetCoursesList operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesList(c *gin.Context) {
+
+	var err error
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesListParams
+
+	// ------------- Required query parameter "offset" -------------
+
+	if paramValue := c.Query("offset"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument offset is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "offset", c.Request.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "limit" -------------
+
+	if paramValue := c.Query("limit"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument limit is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "limit", c.Request.URL.Query(), &params.Limit)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCoursesList(c, params)
+}
+
+// GetCoursesListTeacherID operation middleware
+func (siw *ServerInterfaceWrapper) GetCoursesListTeacherID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "teacherID" -------------
+	var teacherID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "teacherID", c.Param("teacherID"), &teacherID)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter teacherID: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(ActorAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetCoursesListTeacherIDParams
+
+	// ------------- Required query parameter "offset" -------------
+
+	if paramValue := c.Query("offset"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument offset is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "offset", c.Request.URL.Query(), &params.Offset)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Required query parameter "limit" -------------
+
+	if paramValue := c.Query("limit"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument limit is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "limit", c.Request.URL.Query(), &params.Limit)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	headers := c.Request.Header
+
+	// ------------- Optional header parameter "actor" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("actor")]; found {
+		var Actor OptionalActor
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for actor, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "actor", runtime.ParamLocationHeader, valueList[0], &Actor)
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter actor: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.Actor = &Actor
+
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCoursesListTeacherID(c, teacherID, params)
 }
 
 // GetCoursesCourseID operation middleware
@@ -1373,11 +1669,14 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/courses/edit", wrapper.GetCoursesEdit)
 	router.POST(options.BaseURL+"/courses/edit", wrapper.PostCoursesEdit)
+	router.GET(options.BaseURL+"/courses/edit/list", wrapper.GetCoursesEditList)
+	router.GET(options.BaseURL+"/courses/edit/list/:teacherID", wrapper.GetCoursesEditListTeacherID)
 	router.DELETE(options.BaseURL+"/courses/edit/:courseID", wrapper.DeleteCoursesEditCourseID)
 	router.GET(options.BaseURL+"/courses/edit/:courseID", wrapper.GetCoursesEditCourseID)
 	router.PUT(options.BaseURL+"/courses/edit/:courseID", wrapper.PutCoursesEditCourseID)
+	router.GET(options.BaseURL+"/courses/list", wrapper.GetCoursesList)
+	router.GET(options.BaseURL+"/courses/list/:teacherID", wrapper.GetCoursesListTeacherID)
 	router.GET(options.BaseURL+"/courses/:courseID", wrapper.GetCoursesCourseID)
 	router.POST(options.BaseURL+"/courses/:courseID/buy", wrapper.PostCoursesCourseIDBuy)
 	router.POST(options.BaseURL+"/lessons/edit/", wrapper.PostLessonsEdit)

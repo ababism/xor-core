@@ -153,3 +153,93 @@ func (c CoursesService) ReadCourse(initialCtx context.Context, actor domain.Acto
 
 	return course, nil
 }
+
+func (c CoursesService) GetTeachersPublishedCourses(initialCtx context.Context, actor domain.Actor, teacherID uuid.UUID, offset, limit int) ([]*domain.Course, error) {
+	_ = zapctx.Logger(initialCtx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(initialCtx, "courses/service.GetTeachersPublishedCourses")
+	defer span.End()
+
+	ToSpan(&span, actor)
+
+	courses, err := c.course.GetAllByTeacher(ctx, teacherID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	if !((actor.HasRole(domain.TeacherRole) && actor.ID == teacherID) || actor.HasRole(domain.AdminRole)) {
+		for _, course := range courses {
+			course.ApplyVisibility()
+		}
+	}
+
+	return courses, nil
+}
+
+func (c CoursesService) GetPublishedCoursesList(initialCtx context.Context, actor domain.Actor, offset, limit int) ([]*domain.Course, error) {
+	_ = zapctx.Logger(initialCtx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(initialCtx, "courses/service.GetPublishedCoursesList")
+	defer span.End()
+
+	ToSpan(&span, actor)
+
+	courses, err := c.course.GetAll(ctx, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	if !actor.HasRole(domain.AdminRole) {
+		for _, course := range courses {
+			course.ApplyVisibility()
+		}
+	}
+
+	return courses, nil
+}
+
+func (c CoursesService) GetTeacherCoursesTemplates(initialCtx context.Context, actor domain.Actor, teacherID uuid.UUID, offset, limit int) ([]*domain.Course, error) {
+	_ = zapctx.Logger(initialCtx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(initialCtx, "courses/service.GetTeacherCoursesTemplates")
+	defer span.End()
+
+	ToSpan(&span, actor)
+
+	if !((actor.HasRole(domain.TeacherRole) && actor.ID == teacherID) || actor.HasRole(domain.AdminRole)) {
+		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to read this teacher's courses",
+			fmt.Sprintf("no rights to read this teacher's (%s) courses with actor.ID = %s (or no %s roles)", teacherID, actor.ID, domain.AdminRole), nil)
+	}
+
+	courses, err := c.courseEdit.GetAllByTeacher(ctx, teacherID, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return courses, nil
+}
+
+func (c CoursesService) GetAllCoursesTemplates(initialCtx context.Context, actor domain.Actor, offset, limit int) ([]*domain.Course, error) {
+	_ = zapctx.Logger(initialCtx)
+
+	tr := global.Tracer(domain.ServiceName)
+	ctx, span := tr.Start(initialCtx, "courses/service.GetAllCoursesTemplates")
+	defer span.End()
+
+	ToSpan(&span, actor)
+
+	if !actor.HasRole(domain.AdminRole) {
+		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to read all courses templates",
+			fmt.Sprintf("no rights to read all courses templates with no %s role", domain.AdminRole), nil)
+	}
+
+	courses, err := c.courseEdit.GetAll(ctx, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return courses, nil
+}

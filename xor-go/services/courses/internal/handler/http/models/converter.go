@@ -12,6 +12,16 @@ const (
 	UnknownAccessStatus
 )
 
+func ToCourseListResponse(courses []*domain.Course) []generated.Course {
+	courseResponses := make([]generated.Course, len(courses))
+	for i, course := range courses {
+		if course != nil {
+			courseResponses[i] = ToCourseResponse(*course)
+		}
+	}
+	return courseResponses
+}
+
 func ToCourseResponse(course domain.Course) generated.Course {
 	return generated.Course{
 		Discipline: course.Discipline,
