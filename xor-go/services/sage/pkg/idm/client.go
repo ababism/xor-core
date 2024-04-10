@@ -2,43 +2,46 @@ package idm
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-resty/resty/v2"
 )
+
+const verifyEndpoint = "/admin/account/verify"
 
 type ClientInterface interface {
 	Verify(request *VerifyRequest) (*VerifyResponse, error)
 }
 
 type Client struct {
-	baseUrl string
-	client  *resty.Client
+	ApiHost     string
+	restyClient *resty.Client
 }
 
-func NewClient(baseURL string, client *resty.Client) *Client {
+func NewIdmClient(ApiUrl string) *Client {
 	return &Client{
-		baseUrl: baseURL,
-		client:  client,
+		ApiHost:     ApiUrl,
+		restyClient: resty.New(),
 	}
 }
 
 func (r *Client) Verify(request *VerifyRequest) (*VerifyResponse, error) {
-	url := r.baseUrl + "/admin/account/verify"
-	var targetResponse VerifyResponse
+	var verifyResponse VerifyResponse
 
-	resp, err := r.client.R().
+	restyResponse, err := r.restyClient.R().
 		SetAuthToken(request.AccessToken).
-		SetResult(&targetResponse).
-		Get(url)
+		SetResult(&verifyResponse).
+		Get(r.getRequestUrl(verifyEndpoint))
+
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.IsError() {
-		return nil, errors.New("client")
+	if restyResponse.IsError() {
+		return nil, errors.New(restyResponse.String())
 	}
 
-	fmt.Println(resp.StatusCode())
+	return &verifyResponse, nil
+}
 
-	return &targetResponse, nil
+func (r *Client) getRequestUrl(endpoint string) string {
+	return r.ApiHost + endpoint
 }

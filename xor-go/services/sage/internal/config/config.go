@@ -7,15 +7,15 @@ import (
 	"xor-go/pkg/xlogger"
 )
 
+type IdmClientConfig struct {
+	Host string `mapstructure:"host"`
+}
+
 type Config struct {
-	App    *xapp.Config    `mapstructure:"app"`
-	Http   *xhttp.Config   `mapstructure:"http"`
-	Logger *xlogger.Config `mapstructure:"logger"`
-	//Postgres         *postgres.Config  `mapstructure:"postgres"`
-	//PaymentsClient   *payments.Config  `mapstructure:"payments_client"`
-	//GracefulShutdown *xshutdown.Config `mapstructure:"graceful_shutdown"`
-	//Tracer           *xtracer.Config   `mapstructure:"tracer"`
-	//Metrics          *metrics.Config              `mapstructure:"metrics"`
+	App             *xapp.Config    `mapstructure:"app"`
+	Http            *xhttp.Config   `mapstructure:"http"`
+	Logger          *xlogger.Config `mapstructure:"logger"`
+	IdmClientConfig IdmClientConfig `mapstructure:"idm-client"`
 }
 
 func ParseConfig(configPath string, config interface{}) error {
@@ -30,17 +30,3 @@ func ParseConfig(configPath string, config interface{}) error {
 
 	return nil
 }
-
-//func NewConfig(filePath string) (*Config, error) {
-//	viper.SetConfigFile(filePath)
-//	if err := viper.ReadInConfig(); err != nil {
-//		log.Fatalf("Failed to read config: %v", err)
-//	}
-//
-//	var config Config
-//	if err := viper.Unmarshal(&config); err != nil {
-//		log.Fatalf("Failed to unmarshal config: %v", err)
-//	}
-//
-//	return &config, nil
-//}

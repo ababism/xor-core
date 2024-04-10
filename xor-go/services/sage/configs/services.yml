@@ -1,4 +1,0 @@
-services:
-  - name: "notifications"
-    host: "http://localhost:8478"
-

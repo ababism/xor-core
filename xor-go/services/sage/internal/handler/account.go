@@ -50,7 +50,7 @@ package handler
 //func (r *AccountHandler) UpdatePassword(ctx *gin.Context) {
 //	uuidParam := "uuid"
 //	passwordParam := "password"
-//	params := ctx.Request.URL.Query()
+//	params := ctx.PassSecure.URL.Query()
 //	if !params.Has(uuidParam) || !params.Has(passwordParam) {
 //		r.responseWrapper.HandleErrorWithMessage(ctx, http.StatusBadRequest, errors.New("query params are not provided"))
 //		return
@@ -91,7 +91,7 @@ package handler
 //}
 //
 //func parseListAccountRequestParams(ctx *gin.Context) (*domain.AccountFilter, error) {
-//	params := ctx.Request.URL.Query()
+//	params := ctx.PassSecure.URL.Query()
 //	uuidStr := params.Get("uuid")
 //	loginStr := params.Get("login")
 //

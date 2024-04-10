@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	configPath         = "./services/sage/configs/config.dev.yml"
-	servicesConfigPath = "./services/sage/configs/services.yml"
+	configPath          = "./services/sage/configs/config.dev.yml"
+	resourcesConfigPath = "./services/sage/configs/resources-config.yml"
 )
 
 func main() {
@@ -18,8 +18,8 @@ func main() {
 		log.Fatalf(err.Error())
 	}
 
-	var servicesCfg config.PlatformServicesConfig
-	err = config.ParseConfig(servicesConfigPath, &servicesCfg)
+	var servicesCfg config.ResourcesConfig
+	err = config.ParseConfig(resourcesConfigPath, &servicesCfg)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

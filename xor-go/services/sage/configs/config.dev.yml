@@ -9,11 +9,6 @@ http:
   read_timeout: "1s"
   write_timeout: "1s"
 
-#system:
-#  service: "sage"
-#  environment: "dev"
-#  dc: "local"
-#
 logger:
   environment: "dev"
   level: "info"
@@ -23,25 +18,5 @@ logger:
   error_output_paths:
     - "stderr"
 
-
-
-#logger:
-#  env: "dev" # "prod"
-#  level: "info"
-#  outputs:
-#    - "stdout"
-#  error_outputs:
-#    - "stderr"
-#  encoding: "json"
-#  sentry_dsn: ""
-#  sentry_level: "error"
-#http:
-#  host: "host"
-#  port: "port"
-#  read_timeout: "6s"
-#  write_timeout: "6s"
-#
-#mongo:
-#  uri: "mongodb://host:port"
-#  database: "sage"
-#  timeout: "3s"
+idm-client:
+  host: "http://localhost:5758"

@@ -1,0 +1,18 @@
+resources:
+  - name: "idm"
+    host: "http://localhost:5758"
+    routes:
+      - pattern: "^/auth/.*"
+        required-roles: [ ]
+      - pattern: "^/account/.*"
+        required-roles:
+          - "PLATFORM_USER"
+      - pattern: "^/admin/account/.*"
+        required-roles:
+          - "IDM_ADMIN"
+  - name: "notifications"
+    host: "http://localhost:8478"
+    routes:
+      - pattern: "^/platform-notification/.*"
+        required-roles:
+          - "PLATFORM_USER"

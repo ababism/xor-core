@@ -1,12 +1,12 @@
 package adapter
 
-import "context"
+import (
+	"context"
+	"xor-go/services/sage/internal/domain"
+)
 
-type IdmService interface {
-	Verify(ctx context.Context)
-	//Get(ctx context.Context, login string) (*domain.BankAccountGet, error)
-	//List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
-	//Create(ctx context.Context, account *domain.BankAccountCreate) error
-	//Update(ctx context.Context, account *domain.BankAccountUpdate) error
-	//ChangeFunds(ctx context.Context, login string, newFunds float32) error
+type GatewayService interface {
+	Verify(ctx context.Context, passSecureResourceInfo *domain.PassSecureResourceInfo) (*domain.IdmVerifyResponse, error)
+	PassSecure(ctx context.Context, passResourceRequest *domain.PassSecureResourceRequest) (*domain.InternalResourceResponse, error)
+	PassInsecure(ctx context.Context, PassInsecureResourceRequest *domain.PassInsecureResourceRequest) (*domain.InternalResourceResponse, error)
 }
