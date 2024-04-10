@@ -128,6 +128,7 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 
 	ToSpan(&span, actor)
 
+	// TODO
 	if !actor.HasRole(domain.UnregisteredRole) {
 		return xapperror.New(http.StatusForbidden, "user can't be registered",
 			fmt.Sprintf("user can't be registere user do not have %s role", domain.UnregisteredRole), nil)
