@@ -18,22 +18,21 @@ const (
 
 const (
 	baseDiscountGetQuery = `
-		SELECT uuid, created_by, percent, stand_alone, started_at, ended_at, status, created_at, updated_at
+		SELECT uuid, created_by, percent, started_at, ended_at, status, created_at, updated_at
 		FROM discounts
 	`
 	createDiscountQuery = `
-		INSERT INTO discounts (created_by, percent, stand_alone, started_at, ended_at, status)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO discounts (created_by, percent, started_at, ended_at, status)
+		VALUES ($1, $2, $3, $4, $5)
 	`
 	updateDiscountQuery = `
 		UPDATE discounts
 		SET 
 		    created_by = $2,
 		    percent = $3,
-		    stand_alone = $4,
-		    started_at = $5,
-		    ended_at = $6,
-		    status = $7
+		    started_at = $4,
+		    ended_at = $5,
+		    status = $6
 		WHERE uuid = $1;
 	`
 	finishDiscountQuery = `
@@ -92,7 +91,6 @@ func (r *discountRepository) Create(ctx context.Context, discount *domain.Discou
 		createDiscountQuery,
 		discountPostgres.CreatedBy,
 		discountPostgres.Percent,
-		discountPostgres.StandAlone,
 		discountPostgres.StartedAt,
 		discountPostgres.EndedAt,
 		discountPostgres.Status,
@@ -108,7 +106,6 @@ func (r *discountRepository) Update(ctx context.Context, discount *domain.Discou
 		discountPostgres.UUID,
 		discountPostgres.CreatedBy,
 		discountPostgres.Percent,
-		discountPostgres.StandAlone,
 		discountPostgres.StartedAt,
 		discountPostgres.EndedAt,
 		discountPostgres.Status,
@@ -139,9 +136,6 @@ func mapGetDiscountRequestParams(params *domain.DiscountFilter) map[string]inter
 	}
 	if params.Percent != nil {
 		paramsMap["percent"] = *params.Percent
-	}
-	if params.StandAlone != nil {
-		paramsMap["stand_alone"] = *params.StandAlone
 	}
 	if params.Status != nil {
 		paramsMap["status"] = *params.Status

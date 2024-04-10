@@ -40,13 +40,12 @@ type Product struct {
 }
 
 type Discount struct {
-	UUID       uuid.UUID `json:"uuid"`
-	CreatedBy  uuid.UUID `json:"created_by"`
-	Percent    float32   `json:"percent"`
-	StandAlone bool      `json:"stand_alone"`
-	StartedAt  time.Time `json:"started_at"`
-	EndedAt    time.Time `json:"ended_at"`
-	Status     string    `json:"status"`
+	UUID      uuid.UUID `json:"uuid"`
+	CreatedBy uuid.UUID `json:"created_by"`
+	Percent   float32   `json:"percent"`
+	StartedAt time.Time `json:"started_at"`
+	EndedAt   time.Time `json:"ended_at"`
+	Status    string    `json:"status"`
 }
 
 type PayoutRequestData struct {

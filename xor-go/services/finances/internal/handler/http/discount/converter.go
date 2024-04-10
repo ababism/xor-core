@@ -6,12 +6,11 @@ import (
 
 func CreateToDomain(create DiscountCreate) domain.DiscountCreate {
 	return domain.DiscountCreate{
-		CreatedBy:  create.CreatedBy,
-		Percent:    create.Percent,
-		StandAlone: create.StandAlone,
-		StartedAt:  create.StartedAt,
-		EndedAt:    create.EndedAt,
-		Status:     create.Status,
+		CreatedBy: create.CreatedBy,
+		Percent:   create.Percent,
+		StartedAt: create.StartedAt,
+		EndedAt:   create.EndedAt,
+		Status:    create.Status,
 	}
 }
 
@@ -20,7 +19,6 @@ func DomainToGet(get domain.DiscountGet) DiscountGet {
 		UUID:         get.UUID,
 		CreatedBy:    get.CreatedBy,
 		Percent:      get.Percent,
-		StandAlone:   get.StandAlone,
 		StartedAt:    get.StartedAt,
 		EndedAt:      get.EndedAt,
 		Status:       get.Status,
@@ -31,13 +29,12 @@ func DomainToGet(get domain.DiscountGet) DiscountGet {
 
 func UpdateToDomain(update DiscountUpdate) domain.DiscountUpdate {
 	return domain.DiscountUpdate{
-		UUID:       update.UUID,
-		CreatedBy:  update.CreatedBy,
-		Percent:    update.Percent,
-		StandAlone: update.StandAlone,
-		StartedAt:  update.StartedAt,
-		EndedAt:    update.EndedAt,
-		Status:     update.Status,
+		UUID:      update.UUID,
+		CreatedBy: update.CreatedBy,
+		Percent:   update.Percent,
+		StartedAt: update.StartedAt,
+		EndedAt:   update.EndedAt,
+		Status:    update.Status,
 	}
 }
 
@@ -46,10 +43,9 @@ func FilterToDomain(filter *DiscountFilter) *domain.DiscountFilter {
 		return nil
 	}
 	return &domain.DiscountFilter{
-		UUID:       filter.UUID,
-		CreatedBy:  filter.CreatedBy,
-		Percent:    filter.Percent,
-		StandAlone: filter.StandAlone,
-		Status:     filter.Status,
+		UUID:      filter.UUID,
+		CreatedBy: filter.CreatedBy,
+		Percent:   filter.Percent,
+		Status:    filter.Status,
 	}
 }

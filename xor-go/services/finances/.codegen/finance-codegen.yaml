@@ -598,8 +598,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -618,7 +616,6 @@ components:
         - UUID
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -632,8 +629,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -645,7 +640,6 @@ components:
       required:
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -660,8 +654,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -674,7 +666,6 @@ components:
         - UUID
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -689,8 +680,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         Status:
           type: string
     PaymentData:

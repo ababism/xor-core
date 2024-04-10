@@ -15,21 +15,19 @@ import (
 
 // DiscountCreate defines model for DiscountCreate.
 type DiscountCreate struct {
-	CreatedBy  openapi_types.UUID `json:"CreatedBy"`
-	EndedAt    time.Time          `json:"EndedAt"`
-	Percent    float32            `json:"Percent"`
-	StandAlone bool               `json:"StandAlone"`
-	StartedAt  time.Time          `json:"StartedAt"`
-	Status     string             `json:"Status"`
+	CreatedBy openapi_types.UUID `json:"CreatedBy"`
+	EndedAt   time.Time          `json:"EndedAt"`
+	Percent   float32            `json:"Percent"`
+	StartedAt time.Time          `json:"StartedAt"`
+	Status    string             `json:"Status"`
 }
 
 // DiscountFilter defines model for DiscountFilter.
 type DiscountFilter struct {
-	CreatedBy  *openapi_types.UUID `json:"CreatedBy,omitempty"`
-	Percent    *float32            `json:"Percent,omitempty"`
-	StandAlone *bool               `json:"StandAlone,omitempty"`
-	Status     *string             `json:"Status,omitempty"`
-	UUID       *openapi_types.UUID `json:"UUID,omitempty"`
+	CreatedBy *openapi_types.UUID `json:"CreatedBy,omitempty"`
+	Percent   *float32            `json:"Percent,omitempty"`
+	Status    *string             `json:"Status,omitempty"`
+	UUID      *openapi_types.UUID `json:"UUID,omitempty"`
 }
 
 // DiscountGet defines model for DiscountGet.
@@ -39,7 +37,6 @@ type DiscountGet struct {
 	EndedAt      time.Time          `json:"EndedAt"`
 	LastUpdateAt time.Time          `json:"LastUpdateAt"`
 	Percent      float32            `json:"Percent"`
-	StandAlone   bool               `json:"StandAlone"`
 	StartedAt    time.Time          `json:"StartedAt"`
 	Status       string             `json:"Status"`
 	UUID         openapi_types.UUID `json:"UUID"`
@@ -47,13 +44,12 @@ type DiscountGet struct {
 
 // DiscountUpdate defines model for DiscountUpdate.
 type DiscountUpdate struct {
-	CreatedBy  openapi_types.UUID `json:"CreatedBy"`
-	EndedAt    time.Time          `json:"EndedAt"`
-	Percent    float32            `json:"Percent"`
-	StandAlone bool               `json:"StandAlone"`
-	StartedAt  time.Time          `json:"StartedAt"`
-	Status     string             `json:"Status"`
-	UUID       openapi_types.UUID `json:"UUID"`
+	CreatedBy openapi_types.UUID `json:"CreatedBy"`
+	EndedAt   time.Time          `json:"EndedAt"`
+	Percent   float32            `json:"Percent"`
+	StartedAt time.Time          `json:"StartedAt"`
+	Status    string             `json:"Status"`
+	UUID      openapi_types.UUID `json:"UUID"`
 }
 
 // GetListJSONRequestBody defines body for GetList for application/json ContentType.
