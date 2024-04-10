@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/spf13/viper"
 	"log"
+	"xor-go/pkg/metrics"
 	"xor-go/pkg/xapp"
 	"xor-go/pkg/xconfig"
 	"xor-go/pkg/xdb/postgres"
@@ -21,7 +22,7 @@ type Config struct {
 	PaymentsClient   *payments.Config  `mapstructure:"payments_client"`
 	GracefulShutdown *xshutdown.Config `mapstructure:"graceful_shutdown"`
 	Tracer           *xtracer.Config   `mapstructure:"tracer"`
-	//Metrics          *metrics.Config              `mapstructure:"metrics"`
+	Metrics          *metrics.Config   `mapstructure:"metrics"`
 }
 
 func NewConfig(filePath string, appName string) (*Config, error) {
