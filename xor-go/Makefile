@@ -3,6 +3,10 @@ include .env
 up:
 	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait
 
+up-all:
+	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait
+	docker-compose -f ./deployments/compose.yaml up -d --build
+
 up-p:
 	docker-compose up --build courses-svc finances-svc
 
