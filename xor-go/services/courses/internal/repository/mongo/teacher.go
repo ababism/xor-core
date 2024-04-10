@@ -35,6 +35,28 @@ type TeacherRepository struct {
 	course  *mongo.Collection
 }
 
+func (r TeacherRepository) Get(ctx context.Context, teacherID uuid.UUID) (domain.Teacher, error) {
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/teacher.Get")
+	defer span.End()
+
+	filter := bson.M{"account_id": teacherID.String()}
+	var teacher models.Teacher
+	err := r.teacher.FindOne(newCtx, filter).Decode(&teacher)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return domain.Teacher{}, mErr
+	}
+
+	res, err := teacher.ToDomain()
+	if err != nil {
+		return domain.Teacher{}, xapperror.New(http.StatusInternalServerError, "internal server error",
+			"failed to convert teacher to domain", err)
+	}
+	return *res, nil
+}
+
 func (r TeacherRepository) Create(ctx context.Context, tProfile domain.Teacher) error {
 	logger := zapctx.Logger(ctx)
 

@@ -6,9 +6,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 )
 
 func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Actor, course *domain.Course) (*domain.Course, error) {
@@ -23,18 +26,20 @@ func (c CoursesService) CreateCourse(initialCtx context.Context, actor domain.Ac
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
+	course.TeacherID = actor.ID
+	course.ID = uuid.New()
+
 	err := course.Validate()
 	if err != nil {
 		return nil, err
 	}
-
-	course.TeacherID = actor.ID
 
 	newCourse, err := c.courseEdit.Create(ctx, course)
 	if err != nil {
 		return nil, err
 	}
 
+	span.AddEvent("course created", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, newCourse.ID.String())))
 	return newCourse, nil
 }
 
@@ -69,6 +74,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
+	course.ID = courseID
 	err := course.Validate()
 	if err != nil {
 		return nil, err
@@ -90,6 +96,7 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 		return nil, err
 	}
 
+	span.AddEvent("course updated", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, course.ID.String())))
 	return course, nil
 }
 
@@ -109,6 +116,7 @@ func (c CoursesService) DeleteCourse(initialCtx context.Context, actor domain.Ac
 	if err != nil {
 		return err
 	}
+	span.AddEvent("course deleted", trace.WithAttributes(attribute.String(keys.CourseIDAttributeKey, courseID.String())))
 
 	return nil
 }

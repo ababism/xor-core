@@ -80,7 +80,7 @@ func (h CoursesHandler) PutLessonsEditLessonID(ginCtx *gin.Context, lessonID uui
 	var payload generated.Lesson
 	h.bindRequestBody(ginCtx, &payload)
 
-	lesson, err := h.coursesService.UpdateLesson(ctx, params.Actor.ToDomain(), payload.ToDomain())
+	lesson, err := h.coursesService.UpdateLesson(ctx, params.Actor.ToDomain(), lessonID, payload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return

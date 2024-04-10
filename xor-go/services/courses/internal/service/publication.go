@@ -3,13 +3,17 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	_ "github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/repository/mongo/collections"
 )
 
@@ -36,12 +40,15 @@ func (c CoursesService) RequestCoursePublication(initialCtx context.Context, act
 		}
 	}
 	request.UpdatedAt = time.Now()
-
+	request.RequestStatus = domain.Unwatched
+	request.AssigneeID = actor.ID
+	request.ID = uuid.New()
 	err := c.publication.Create(ctx, request)
 	if err != nil {
 		return domain.PublicationRequest{}, err
 	}
 
+	span.AddEvent("publication request created", trace.WithAttributes(attribute.String(keys.LessonIDAttributeKey, request.ID.String())))
 	return request, nil
 }
 

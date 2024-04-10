@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	global "go.opentelemetry.io/otel"
 	"net/http"
+	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/repository/mongo/collections"
@@ -33,6 +34,60 @@ type StudentRepository struct {
 
 	student      *mongo.Collection
 	lessonAccess *mongo.Collection
+}
+
+func (r StudentRepository) UpdateAccessToLesson(ctx context.Context, lessonAccess domain.LessonAccess) (domain.LessonAccess, error) {
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/student.UpdateAccessToLesson")
+	defer span.End()
+
+	filter := bson.M{
+		"student_id": lessonAccess.StudentID.String(),
+		"lesson_id":  lessonAccess.LessonID.String(),
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"access_status": lessonAccess.AccessStatus,
+			"updated_at":    time.Now(),
+		},
+	}
+
+	_, err := r.lessonAccess.UpdateOne(newCtx, filter, update)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return domain.LessonAccess{}, mErr
+	}
+	if err != nil {
+		appErr := xapperror.New(http.StatusBadRequest, "lesson access not updated",
+			"failed to update lesson access in MongoDB", err)
+		return domain.LessonAccess{}, appErr
+	}
+
+	return lessonAccess, nil
+}
+
+func (r StudentRepository) Get(ctx context.Context, studentID uuid.UUID) (domain.Student, error) {
+	logger := zapctx.Logger(ctx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(ctx, "courses/repository/mongo/student.Get")
+	defer span.End()
+
+	filter := bson.M{"account_id": studentID.String()}
+	var student models.Student
+	err := r.student.FindOne(newCtx, filter).Decode(&student)
+	if mErr := handleMongoError(err, logger); mErr != nil {
+		return domain.Student{}, mErr
+	}
+
+	res, err := student.ToDomain()
+	if err != nil {
+		return domain.Student{}, xapperror.New(http.StatusInternalServerError, "internal server error",
+			"failed to convert student to domain", err)
+	}
+	return *res, nil
 }
 
 // GetLessonAccess returns a document from the r.lessonAccess collection that matches the userID and lessonID

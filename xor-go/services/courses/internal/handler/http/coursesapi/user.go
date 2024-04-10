@@ -79,7 +79,7 @@ func (h CoursesHandler) PutUserAccessLessons(ginCtx *gin.Context, params generat
 	var payload generated.LessonAccess
 	h.bindRequestBody(ginCtx, &payload)
 
-	lessonAccess, err := h.coursesService.ChangeLessonAccess(ctx, params.Actor.ToDomain(), payload.ToDomain())
+	lessonAccess, err := h.coursesService.CreateOrChangeLessonAccess(ctx, params.Actor.ToDomain(), payload.ToDomain())
 	if err != nil {
 		h.abortWithAutoResponse(ginCtx, err)
 		return

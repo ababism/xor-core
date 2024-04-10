@@ -27,11 +27,14 @@ type StudentRepository interface {
 	Create(ctx context.Context, profile domain.Student) error
 	GetLessonAccess(ctx context.Context, userID uuid.UUID, lessonID uuid.UUID) (domain.LessonAccess, error)
 	CreateAccessToLesson(ctx context.Context, lessonAccess domain.LessonAccess) (domain.LessonAccess, error)
+	Get(ctx context.Context, studentID uuid.UUID) (domain.Student, error)
+	UpdateAccessToLesson(ctx context.Context, lessonAccess domain.LessonAccess) (domain.LessonAccess, error)
 }
 
 type TeacherRepository interface {
 	Create(ctx context.Context, profile domain.Teacher) error
 	IsCourseAccessible(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) (bool, error)
+	Get(ctx context.Context, teacherID uuid.UUID) (domain.Teacher, error)
 	//CreateAccessToCourse(ctx context.Context, teacherID uuid.UUID, courseID uuid.UUID) error
 }
 

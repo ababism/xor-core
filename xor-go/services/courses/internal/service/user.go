@@ -6,10 +6,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 )
 
 func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor, courseID uuid.UUID) (domain.PaymentRedirect, error) {
@@ -42,12 +45,14 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	if len(productsToBuy) == 0 {
 		return domain.PaymentRedirect{}, err
 	}
+	stringProducts := keys.ProductToStrings(productsToBuy)
+	span.AddEvent("products to buy", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
 	redirect, err := c.financesClient.CreatePurchase(ctx, productsToBuy)
 	if err != nil {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
 	}
-
+	span.AddEvent("purchase created", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
 	return redirect, nil
 }
 
@@ -83,7 +88,7 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
-
+	span.AddEvent("purchase created", trace.WithAttributes(attribute.String(keys.ProductIDAttributeKey, lesson.Product.ID.String())))
 	return redirect, access, nil
 }
 
@@ -109,6 +114,7 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 		return err
 	}
 
+	span.AddEvent("student created", trace.WithAttributes(attribute.String(keys.StudentIDAttributeKey, profile.AccountID.String())))
 	return nil
 }
 
@@ -133,15 +139,15 @@ func (c CoursesService) RegisterTeacherProfile(initialCtx context.Context, actor
 	if err != nil {
 		return err
 	}
-
+	span.AddEvent("teacher created", trace.WithAttributes(attribute.String(keys.TeacherIDAttributeKey, profile.AccountID.String())))
 	return nil
 }
 
-func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
+func (c CoursesService) CreateOrChangeLessonAccess(initialCtx context.Context, actor domain.Actor, access domain.LessonAccess) (domain.LessonAccess, error) {
 	_ = zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "courses/service.ChangeLessonAccess")
+	ctx, span := tr.Start(initialCtx, "courses/service.CreateOrChangeLessonAccess")
 	defer span.End()
 
 	if !actor.HasRole(domain.AdminRole) {
@@ -149,11 +155,24 @@ func (c CoursesService) ChangeLessonAccess(initialCtx context.Context, actor dom
 			fmt.Sprintf("user can't give acces to lessons no %s role", domain.AdminRole), nil)
 	}
 
+	curAccess, err := c.student.GetLessonAccess(ctx, access.StudentID, access.LessonID)
+	// if access exists
+	if err == nil {
+		access.ID = curAccess.ID
+		updatedAccess, err := c.student.UpdateAccessToLesson(ctx, access)
+		if err != nil {
+			return domain.LessonAccess{}, err
+		}
+		return updatedAccess, nil
+	}
+	// if access does not exist
+	access.ID = uuid.New()
 	newAccess, err := c.student.CreateAccessToLesson(ctx, access)
 	if err != nil {
 		return domain.LessonAccess{}, err
 	}
 
+	span.AddEvent("lesson access created", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, newAccess.ID.String())))
 	return newAccess, nil
 }
 
@@ -179,9 +198,11 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	ctx, span := tr.Start(initialCtx, "courses/service.ConfirmAccess")
 	defer span.End()
 
+	span.AddEvent("products to confirm", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, keys.ProductToStrings(products))))
+
 	for _, pr := range products {
 		lessonAccess := domain.LessonAccess{
-			ID:           uuid.UUID{},
+			ID:           uuid.Nil,
 			LessonID:     pr.Item,
 			StudentID:    buyerID,
 			AccessStatus: domain.Accessible,

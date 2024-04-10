@@ -3,6 +3,7 @@ package financesclient
 import (
 	"context"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/repository/financesclient/generated"
 	"xor-go/services/courses/internal/service/adapters"
 )
@@ -28,7 +29,7 @@ func NewClient(client *generated.ClientWithResponses) *Client {
 }
 
 func GetRequestIDFromContext(ctx context.Context) (string, bool) {
-	requestID, ok := ctx.Value(domain.KeyRequestID).(string)
+	requestID, ok := ctx.Value(keys.KeyRequestID).(string)
 	return requestID, ok
 }
 
