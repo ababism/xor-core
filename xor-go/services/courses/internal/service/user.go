@@ -240,17 +240,33 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	span.AddEvent("products to confirm", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, keys.ProductToStrings(products))))
 
 	for _, pr := range products {
+		currAccess, err := c.student.GetLessonAccess(ctx, buyerID, pr.Item)
+		if err != nil {
+			//	update access
+			currAccess.AccessStatus = domain.Accessible
+			currAccess.UpdatedAt = time.Now()
+			_, err = c.student.CreateAccessToLesson(ctx, currAccess)
+			if err != nil {
+				return err
+			}
+			span.AddEvent("lesson access updated", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, currAccess.ID.String())))
+			// SKIP
+			continue
+		}
+		// create access
+		newUUID := uuid.New()
 		lessonAccess := domain.LessonAccess{
-			ID:           uuid.Nil,
+			ID:           newUUID,
 			LessonID:     pr.Item,
 			StudentID:    buyerID,
 			AccessStatus: domain.Accessible,
 			UpdatedAt:    time.Now(),
 		}
-		_, err := c.student.CreateAccessToLesson(ctx, lessonAccess)
+		_, err = c.student.CreateAccessToLesson(ctx, lessonAccess)
 		if err != nil {
 			return err
 		}
+		span.AddEvent("lesson access created", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, newUUID.String())))
 	}
 
 	return nil
