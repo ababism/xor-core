@@ -3,11 +3,21 @@ package ru.xority.idm.config.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import ru.xority.idm.service.AccountService;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 /**
  * @author foxleren
@@ -17,24 +27,84 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityContextConfiguration {
     private final JwtAuthFilter jwtAuthFilter;
+    private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(r -> r
-                .requestMatchers("/actuator/**")
-                .permitAll()
-                .requestMatchers("/auth/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated());
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.authorizeHttpRequests(r -> r
+//                        .requestMatchers("/actuator/**")
+//                        .permitAll()
+//                        .requestMatchers("/auth/**")
+//                        .permitAll()
+//                        .requestMatchers("/admin/account/**")
+//                        .hasAuthority("IDM_ADMIN")
+//                        .anyRequest()
+//                        .authenticated())
+//                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+//                .authenticationProvider(authenticationProvider())
+//                .addFilterBefore(
+//                        jwtAuthFilter,
+//                        UsernamePasswordAuthenticationFilter.class
+//                );
+//
+//        http.csrf(AbstractHttpConfigurer::disable);
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(accountService.userDetailsService());
+//        authProvider.setPasswordEncoder(passwordEncoder());
+//        return authProvider;
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+//        return config.getAuthenticationManager();
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(request -> request.requestMatchers(
+                                    "/auth/**",
+                                    "/111**"
+                            )
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+            )
+//            .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+//            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(
+                    jwtAuthFilter,
+                    UsernamePasswordAuthenticationFilter.class
+            );
+    return http.build();
+}
 
-        http.addFilterBefore(
-                jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        return http.build();
-    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(accountService.userDetailsService());
+//        authProvider.setPasswordEncoder(passwordEncoder);
+//        return authProvider;
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+//        return config.getAuthenticationManager();
+//    }
 }

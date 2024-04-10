@@ -1,23 +1,32 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"xor-go/services/sage/internal/app"
+	"xor-go/services/sage/internal/config"
+)
 
-const configPath = "./services/sage/configs/config.dev.yaml"
+const (
+	configPath         = "./services/sage/configs/config.dev.yml"
+	servicesConfigPath = "./services/sage/configs/services.yml"
+)
 
 func main() {
-	fmt.Println("ok")
-	//cfg, err := config.NewConfig(configPath, ServiceCapsName)
-	//if err != nil {
-	//	log.Fatalf("Fail to parse %s config: %v", ServiceName, err)
-	//}
-	//var appConfig config.Config
-	//if err := cleanenv.ReadConfig(configPath, &appConfig); err != nil {
-	//	log.Fatalf("failed to read config from path: %s, error: %v", configPath, err)
-	//}
-	//
-	//application, err := app.NewApp(&appConfig)
-	//if err != nil {
-	//	log.Fatalf("failed to create app: %v", err)
-	//}
-	//application.Start()
+	var cfg config.Config
+	err := config.ParseConfig(configPath, &cfg)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	var servicesCfg config.PlatformServicesConfig
+	err = config.ParseConfig(servicesConfigPath, &servicesCfg)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	application, err := app.NewApp(&cfg, &servicesCfg)
+	if err != nil {
+		log.Fatalf("Failed to create app: %v", err)
+	}
+	application.Start()
 }

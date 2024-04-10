@@ -8,6 +8,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,23 +48,11 @@ public class AuthController {
     }
 
     @PostMapping("/log-in")
-    public AccessTokenResponse logIn(@RequestBody @Valid LogInRequest logInRequest) {
+    public AccessTokenResponse logIn(@AuthenticationPrincipal UserDetails user,
+                                     @RequestBody @Valid LogInRequest logInRequest) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println(user.getUsername());
         String accessToken = authService.logIn(logInRequest.getEmail(), logInRequest.getPassword());
         return new AccessTokenResponse(accessToken);
-    }
-
-    @GetMapping("/access/{uuid}")
-    public ResponseEntity<?> access(@PathVariable UUID uuid) {
-        Optional<AccountEntity> accountO = accountService.get(AccountFilter.byUuid(uuid));
-        if (accountO.isEmpty()) {
-            throw new AccountNotFoundException();
-        }
-        AccountEntity account = accountO.get();
-        AccountAccessInformation accountAccessInformation = new AccountAccessInformation(
-                account.getUuid(),
-                account.getEmail(),
-                new ArrayList<>()
-        );
-        return new ResponseEntity<>(accountAccessInformation, HttpStatus.OK);
     }
 }

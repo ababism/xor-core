@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,10 @@ public class PlatformNotificationController {
     private final PlatformNotificationService platformNotificationService;
 
     @GetMapping("/list")
-    public ResponseEntity<?> list(@RequestParam UUID recieverUuid) {
+    public ResponseEntity<?> list(
+            @RequestHeader HttpHeaders headers,
+            @RequestParam UUID recieverUuid) {
+        System.err.println(headers);
         PlatformNotificationFilter filter = PlatformNotificationFilter.byReceiverUuid(recieverUuid);
         List<GetPlatformNotificationResponse> notifications = platformNotificationService.list(filter)
                 .stream()
@@ -45,7 +49,7 @@ public class PlatformNotificationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestHeader(SageHeader.ACCOUNT_UUID) UUID accountUuid,
+    public ResponseEntity<?> create(@RequestHeader(SageHeader.XOR_ACCOUNT_UUID) UUID accountUuid,
                                     @RequestBody @Valid CreatePlatformNotificationRequest request) {
         PlatformNotificationEntity notification = PlatformNotificationEntity.fromCreatePlatformNotificationRequest(accountUuid, request);
         UUID uuid = platformNotificationService.create(notification);

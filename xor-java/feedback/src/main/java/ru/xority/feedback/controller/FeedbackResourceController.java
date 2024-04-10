@@ -55,7 +55,7 @@ public class FeedbackResourceController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CreateFeedbackResourceResponse> create(@RequestHeader(SageHeader.ACCOUNT_UUID) UUID accountUuid,
+    public ResponseEntity<CreateFeedbackResourceResponse> create(@RequestHeader(SageHeader.XOR_ACCOUNT_UUID) UUID accountUuid,
                                                                  @RequestBody @Valid CreateFeedbackResourceRequest request) {
         FeedbackResourceEntity resource = FeedbackResourceEntity.fromCreateFeedbackResourceRequest(accountUuid, request);
         UUID uuid = feedbackResourceService.create(resource);

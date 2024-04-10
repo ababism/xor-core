@@ -1,0 +1,47 @@
+app:
+  name: "sage"
+  env: "dev"
+  version: "0.0"
+
+http:
+  host: "localhost"
+  port: 8080
+  read_timeout: "1s"
+  write_timeout: "1s"
+
+#system:
+#  service: "sage"
+#  environment: "dev"
+#  dc: "local"
+#
+logger:
+  environment: "dev"
+  level: "info"
+  encoding: "json"
+  output_paths:
+    - "stdout"
+  error_output_paths:
+    - "stderr"
+
+
+
+#logger:
+#  env: "dev" # "prod"
+#  level: "info"
+#  outputs:
+#    - "stdout"
+#  error_outputs:
+#    - "stderr"
+#  encoding: "json"
+#  sentry_dsn: ""
+#  sentry_level: "error"
+#http:
+#  host: "host"
+#  port: "port"
+#  read_timeout: "6s"
+#  write_timeout: "6s"
+#
+#mongo:
+#  uri: "mongodb://host:port"
+#  database: "sage"
+#  timeout: "3s"
