@@ -1,0 +1,12 @@
+# finances-client-for-courses-oapi-codegen.yaml for finances client
+
+output: xor-go/services/courses/internal/repository/financesclient/generated/financesClientCodegen.go
+package: generated
+generate:
+- types
+- client
+
+# To RUN from root:
+# oapi-codegen --config xor-go/.codegen/finances-client-for-courses-oapi-codegen.yaml xor-go/.codegen/finances-client-courses.yaml
+
+#swagger-cli bundle -r -o xor-go/.codegen/finances-client-courses.yaml xor-go/services/finances/.codegen/product-codegen.yaml xor-go/services/finances/.codegen/purchase-request-codegen.yaml

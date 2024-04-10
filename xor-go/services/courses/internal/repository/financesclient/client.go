@@ -2,6 +2,8 @@ package financesclient
 
 import (
 	"context"
+	"github.com/juju/zaputil/zapctx"
+	global "go.opentelemetry.io/otel"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/repository/financesclient/generated"
@@ -14,14 +16,25 @@ type Client struct {
 	httpDoer *generated.ClientWithResponses
 }
 
-func (c Client) RegisterProducts(ctx context.Context, products []domain.Product) ([]domain.Product, error) {
-	//TODO implement me
-	panic("implement me")
+func (c Client) RegisterProducts(initialCtx context.Context, products []domain.Product) ([]domain.Product, error) {
+	logger := zapctx.Logger(initialCtx)
+
+	tr := global.Tracer(domain.ServiceName)
+	newCtx, span := tr.Start(initialCtx, "driver/repository/financesClient.RegisterProducts")
+	defer span.End()
+
+	requestID, ok := GetRequestIDFromContext(newCtx)
+
+	body := generated.NewCreateRequest
+	body.Products = products
+
+	resp, err := c.httpDoer.CreateManyWithResponse(ctx, &generated)
+
 }
 
 func (c Client) CreatePurchase(ctx context.Context, productIDs []domain.Product) (domain.PaymentRedirect, error) {
-	//TODO implement me
-	panic("implement me")
+
+	c.httpDoer.CreatePurchaseWithResponse(ctx, &generated.Cre{})
 }
 
 func NewClient(client *generated.ClientWithResponses) *Client {
