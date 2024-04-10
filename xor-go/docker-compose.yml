@@ -20,19 +20,19 @@ services:
     environment:
       - DB_PASSWORD=password
 
-#  finances-svc:
-#    image: 'finances-svc:latest'
-#    build:
-#      context: './'
-#      dockerfile: 'finances.Dockerfile'
-#    ports:
-#      - "8082:8082"
-#    depends_on:
-#      finances_db:
-#        condition: service_healthy
-#    environment:
-#      - LOGGER_LEVEL=release
-#      - DB_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
+  finances-svc:
+    image: 'finances-svc:latest'
+    build:
+      context: './'
+      dockerfile: 'finances.Dockerfile'
+    ports:
+      - "8082:8082"
+    depends_on:
+      finances_db:
+        condition: service_healthy
+    environment:
+      - LOGGER_LEVEL=release
+      - DB_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
 
   mongo1:
     image: mongo:7.0
@@ -68,22 +68,22 @@ services:
     volumes:
       - "mongo3_data:/data/db"
       - "mongo3_config:/data/configdb"
-#
-#  finances_db:
-#    restart: always
-#    image: postgres:latest
-#    ports:
-#      - "5436:5432"
-#    environment:
-#      - POSTGRES_DB=${FINANCES_POSTGRES_NAME}
-#      - POSTGRES_HOST=${FINANCES_POSTGRES_HOST}
-#      - POSTGRES_USER=${FINANCES_POSTGRES_USER}
-#      - POSTGRES_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U postgres -d finances_db" ]
-#      interval: 5s
-#      timeout: 10s
-#      retries: 5
+
+  finances_db:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_DB=${FINANCES_POSTGRES_NAME}
+      - POSTGRES_HOST=${FINANCES_POSTGRES_HOST}
+      - POSTGRES_USER=${FINANCES_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d finances_db" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 #  zookeeper:
 #    image: wurstmeister/zookeeper:latest
 #    ports:
