@@ -12,6 +12,12 @@ import (
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/courses/internal/config"
+	financesClient "xor-go/services/courses/internal/repository/financesclient"
+	productClientGen "xor-go/services/courses/internal/repository/financesclient/generated"
+
+	purchaseClient "xor-go/services/courses/internal/repository/purchaseclient"
+	purchaseClientGen "xor-go/services/courses/internal/repository/purchaseclient/generated"
+
 	"xor-go/services/courses/internal/repository/mongo"
 	"xor-go/services/courses/internal/repository/mongo/collections"
 	"xor-go/services/courses/internal/service"
@@ -115,14 +121,24 @@ func NewApp(cfg *config.Config) (*App, error) {
 	studentRepo := mongo.NewStudentRepository(mongoDatabase)
 	publicationRepo := mongo.NewPublicationRepository(mongoDatabase)
 
-	// Инициализируем Location microservice client repository layer
-	//client, err := financesClientGen.NewClientWithResponses(cfg.FinancesClient.Uri)
-	//if err != nil {
-	//	logger.Fatal("cannot initialize generated location client:", zap.Error(err))
-	//	return nil, err
-	//}
-	//finances := financesClient.NewClient(client)
-	//logger.Info("Init Location client – success")
+	// Инициализируем Finances product client repository layer
+	productClient, err := productClientGen.NewClientWithResponses(cfg.FinancesClient.Uri)
+	if err != nil {
+		logger.Fatal("cannot initialize generated location client:", zap.Error(err))
+		return nil, err
+	}
+	financesProduct := financesClient.NewClient(productClient)
+	logger.Info("Init finances product client – success")
+
+	// Инициализируем Finances purchase client repository layer
+	purchaseFinanceClient, err := purchaseClientGen.NewClientWithResponses(cfg.PurchaseClient.Uri)
+	if err != nil {
+		logger.Fatal("cannot initialize generated location client:", zap.Error(err))
+		return nil, err
+	}
+
+	financesPurchase := purchaseClient.NewClient(purchaseFinanceClient)
+	logger.Info("Init finances purchase client – success")
 
 	// Kafka Producer in repository layer
 	//_ = kafkaproducer.NewKafkaProducer(cfg.KafkaWriter)
@@ -132,7 +148,8 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// Service layer
 	coursesService := service.NewCoursesService(courseRepo, courseEditRepo,
-		lessonRepo, lessonEditRepo, teacherRepo, studentRepo, publicationRepo)
+		lessonRepo, lessonEditRepo, teacherRepo, studentRepo, publicationRepo,
+		financesProduct, financesPurchase)
 
 	logger.Info(fmt.Sprintf("Init %s – success", cfg.App.Name))
 

@@ -7,6 +7,9 @@ import (
 
 type FinancesClient interface {
 	RegisterProducts(ctx context.Context, products []domain.Product) ([]domain.Product, error)
+}
+
+type PurchaseClient interface {
 	CreatePurchase(ctx context.Context, productIDs []domain.Product) (domain.PaymentRedirect, error)
 }
 

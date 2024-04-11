@@ -1,18 +1,4 @@
-package financesclient
-
-import (
-	"xor-go/services/courses/internal/domain"
-	"xor-go/services/courses/internal/repository/financesclient/generated"
-)
-
-func ToProductCreateRequest(product domain.Product) generated.ProductCreate {
-	return generated.ProductCreate{
-		Info:        product.ID.String(),
-		IsAvailable: true,
-		Name:        product.Item.String(),
-		Price:       product.Price,
-	}
-}
+package purchaseclient
 
 //
 //func ToDriverLocationDomain(r generated.Driver) (*domain.DriverLocation, error) {

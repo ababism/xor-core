@@ -15,12 +15,14 @@ import (
 	"xor-go/services/courses/internal/repository/financesclient"
 	"xor-go/services/courses/internal/repository/kafkaproducer"
 	"xor-go/services/courses/internal/repository/mongo"
+	purchaseClient "xor-go/services/courses/internal/repository/purchaseclient"
 )
 
 type Config struct {
 	App            *xapp.Config                 `mapstructure:"app"`
 	Http           *xhttp.Config                `mapstructure:"http"`
 	FinancesClient *financesclient.ClientConfig `mapstructure:"finances_client"`
+	PurchaseClient *purchaseClient.ClientConfig `mapstructure:"purchase_client"`
 	//Logger         *xlogger.Config              `mapstructure:"logger"`
 	Logger           *mylogger.Config        `mapstructure:"logger"`
 	Mongo            *mongo.Config           `mapstructure:"mongo"`

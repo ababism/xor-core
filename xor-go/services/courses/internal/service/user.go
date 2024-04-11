@@ -72,7 +72,7 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	}
 	stringProducts := keys.ProductToStrings(productsToBuy)
 	span.AddEvent("products to buy", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
-	redirect, err := c.financesClient.CreatePurchase(ctx, productsToBuy)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, productsToBuy)
 	if err != nil {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
@@ -111,7 +111,7 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	}
 
 	payload := []domain.Product{lesson.Product}
-	redirect, err := c.financesClient.CreatePurchase(ctx, payload)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, payload)
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
