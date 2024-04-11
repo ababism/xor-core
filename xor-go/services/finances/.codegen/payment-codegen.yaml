@@ -7,7 +7,8 @@ servers:
 paths:
   /payments/{uuid}:
     get:
-      operationId: get
+      tags:
+        - Payment
       summary: Get payment by UUID
       parameters:
         - in: path
@@ -29,7 +30,8 @@ paths:
           description: Payment not found by UUID
   /payments:
     get:
-      operationId: getList
+      tags:
+        - Payment
       summary: List payments
       requestBody:
         content:
@@ -46,7 +48,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/PaymentGet'
     post:
-      operationId: create
+      tags:
+        - Payment
       summary: Create a payment
       requestBody:
         required: true

@@ -1,0 +1,22 @@
+app:
+  name: "sage"
+  env: "dev"
+  version: "0.0"
+
+http:
+  host: "localhost"
+  port: 8080
+  read_timeout: "1s"
+  write_timeout: "1s"
+
+logger:
+  environment: "dev"
+  level: "info"
+  encoding: "json"
+  output_paths:
+    - "stdout"
+  error_output_paths:
+    - "stderr"
+
+idm-client:
+  host: "localhost:6134"

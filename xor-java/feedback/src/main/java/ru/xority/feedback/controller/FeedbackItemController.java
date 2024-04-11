@@ -55,7 +55,7 @@ public class FeedbackItemController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CreateFeedbackItemResponse> create(@RequestHeader(SageHeader.ACCOUNT_UUID) UUID accountUuid,
+    public ResponseEntity<CreateFeedbackItemResponse> create(@RequestHeader(SageHeader.XOR_ACCOUNT_UUID) UUID accountUuid,
                                                              @RequestBody @Valid CreateFeedbackItemRequest request) {
         FeedbackItemEntity item = FeedbackItemEntity.fromCreateFeedbackItemRequest(accountUuid, request);
         UUID uuid = feedbackItemService.create(item);

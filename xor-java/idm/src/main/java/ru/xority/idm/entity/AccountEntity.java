@@ -2,16 +2,21 @@ package ru.xority.idm.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author foxleren
  */
 @Data
-public class AccountEntity {
+public class AccountEntity implements UserDetails {
     public static final String UUID_FIELD = "uuid";
     public static final String EMAIL_FIELD = "email";
     public static final String PASSWORD_HASH_FIELD = "password_hash";
@@ -54,5 +59,40 @@ public class AccountEntity {
         account.setTelegramUsername(Optional.empty());
 
         return account;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("IDM_ADMIN"), new SimpleGrantedAuthority("SAGE_ADMIN"));
+    }
+
+    @Override
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

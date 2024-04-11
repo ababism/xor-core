@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "xor-go/services/sage/pkg/idmproto";
+option java_multiple_files = true;
+option java_package = "ru.xority.idmproto";
+option java_outer_classname = "IdmProto";
+
+package idmproto;
+
+service Idm {
+  rpc Verify (VerifyRequest) returns (VerifyResponse) {}
+}
+
+message VerifyRequest {
+  string access_token = 1;
+}
+
+message VerifyResponse {
+  string account_uuid = 1;
+  string account_email = 2;
+  repeated string roles = 3;
+}

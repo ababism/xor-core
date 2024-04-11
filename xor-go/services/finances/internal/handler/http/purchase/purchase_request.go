@@ -33,7 +33,7 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) GetPurchaseRequestsId(ctx *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *Handler) Get(ctx *gin.Context, uuid openapitypes.UUID) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetList(ctx *gin.Context) {
+func (h *Handler) GetPurchaseRequests(ctx *gin.Context) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".GetList")
 	defer span.End()
 
@@ -72,7 +72,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) PostPurchaseRequests(ctx *gin.Context) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -92,7 +92,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Archive(ctx *gin.Context, id openapitypes.UUID) {
+func (h *Handler) PutPurchaseRequestsIdArchive(ctx *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Archive")
 	defer span.End()
 

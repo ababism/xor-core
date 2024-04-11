@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,11 @@ import ru.xority.idm.repository.AccountRepository;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public UserDetailsService userDetailsService() {
+        return email -> accountRepository.get(AccountFilter.activeByEmail(email))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 
     public List<AccountEntity> list(AccountFilter filter) {
         return accountRepository.list(filter);

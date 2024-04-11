@@ -43,7 +43,7 @@ public class AccountController {
         return ResponseEntity.ok(accounts);
     }
 
-    @PutMapping("/set-activate/{uuid}")
+    @PutMapping("/set-active/{uuid}")
     public ResponseEntity<?> deactivate(@PathVariable UUID uuid,
                                         @RequestParam boolean active) {
         accountService.setActive(uuid, active);

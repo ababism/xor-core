@@ -7,7 +7,8 @@ servers:
 paths:
   /discounts/{id}:
     get:
-      operationId: get
+      tags:
+        - Discount
       summary: Get discount by ID
       parameters:
         - in: path
@@ -25,7 +26,8 @@ paths:
                 $ref: '#/components/schemas/DiscountGet'
   /discounts:
     get:
-      operationId: getList
+      tags:
+        - Discount
       summary: List discounts
       requestBody:
         required: true
@@ -43,7 +45,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/DiscountGet'
     post:
-      operationId: create
+      tags:
+        - Discount
       summary: Create a discount
       requestBody:
         content:
@@ -54,7 +57,8 @@ paths:
         '200':
           description: Successful operation
     put:
-      operationId: update
+      tags:
+        - Discount
       summary: Update a discount
       requestBody:
         required: true
@@ -67,7 +71,8 @@ paths:
           description: Successful operation
   /discounts/{id}/end:
     patch:
-      operationId: end
+      tags:
+        - Discount
       summary: End a discount
       parameters:
         - in: path
@@ -92,8 +97,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -112,7 +115,6 @@ components:
         - UUID
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -126,8 +128,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -139,7 +139,6 @@ components:
       required:
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -154,8 +153,6 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         StartedAt:
           type: string
           format: date-time
@@ -168,7 +165,6 @@ components:
         - UUID
         - CreatedBy
         - Percent
-        - StandAlone
         - StartedAt
         - EndedAt
         - Status
@@ -183,7 +179,5 @@ components:
           format: uuid
         Percent:
           type: number
-        StandAlone:
-          type: boolean
         Status:
           type: string

@@ -33,7 +33,7 @@ func getProductTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
+func (h *Handler) GetProductsId(c *gin.Context, uuid openapitypes.UUID) {
 	_, newCtx, span := getProductTracerSpan(c, ".Get")
 	defer span.End()
 
@@ -48,7 +48,7 @@ func (h *Handler) Get(c *gin.Context, uuid openapitypes.UUID) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) GetPrice(c *gin.Context, uuids []openapitypes.UUID) {
+func (h *Handler) GetProductsPriceUuids(c *gin.Context, uuids []openapitypes.UUID) {
 	_, newCtx, span := getProductTracerSpan(c, ".GetPrice")
 	defer span.End()
 
@@ -61,7 +61,7 @@ func (h *Handler) GetPrice(c *gin.Context, uuids []openapitypes.UUID) {
 	c.JSON(http.StatusOK, price)
 }
 
-func (h *Handler) GetList(ctx *gin.Context) {
+func (h *Handler) GetProducts(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".GetList")
 	defer span.End()
 
@@ -85,7 +85,7 @@ func (h *Handler) GetList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) PostProductsList(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -105,7 +105,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) CreateMany(ctx *gin.Context) {
+func (h *Handler) PostProducts(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -127,7 +127,7 @@ func (h *Handler) CreateMany(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Update(ctx *gin.Context) {
+func (h *Handler) PutProducts(ctx *gin.Context) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".Update")
 	defer span.End()
 
@@ -147,7 +147,7 @@ func (h *Handler) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) Disable(c *gin.Context, id openapitypes.UUID) {
+func (h *Handler) PutProductsIdDisable(c *gin.Context, id openapitypes.UUID) {
 	_, newCtx, span := getProductTracerSpan(c, ".Disable")
 	defer span.End()
 

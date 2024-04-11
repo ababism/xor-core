@@ -92,7 +92,7 @@ func (c *paymentsClient) CreatePurchase(
 
 	requestID, ok := CtxRequestID(ctx)
 	var (
-		resp *CreatePurchaseRequestResponse
+		resp *PostPurchaseResponse
 		err  error
 	)
 	if ok {
@@ -105,10 +105,10 @@ func (c *paymentsClient) CreatePurchase(
 			req.Header.Set(domain.KeyRequestID, requestID)
 			return nil
 		}
-		resp, err = c.httpDoer.CreatePurchaseRequestWithResponse(ctx, convertToCreatePurchase(*purchase), reqEditor)
+		resp, err = c.httpDoer.PostPurchaseWithResponse(ctx, convertToCreatePurchase(*purchase), reqEditor)
 	} else {
 		log.Logger.Error("can't find RequestID in ctx")
-		resp, err = c.httpDoer.CreatePurchaseRequestWithResponse(ctx, convertToCreatePurchase(*purchase))
+		resp, err = c.httpDoer.PostPurchaseWithResponse(ctx, convertToCreatePurchase(*purchase))
 	}
 	if err != nil {
 		log.Logger.Error("error while creating purchase from Payments Service:", zap.Error(err))
@@ -169,7 +169,7 @@ func (c *paymentsClient) CreatePayout(
 
 	requestID, ok := CtxRequestID(ctx)
 	var (
-		resp *CreatePayoutRequestResponse
+		resp *PostPayoutResponse
 		err  error
 	)
 	if ok {
@@ -182,10 +182,10 @@ func (c *paymentsClient) CreatePayout(
 			req.Header.Set(domain.KeyRequestID, requestID)
 			return nil
 		}
-		resp, err = c.httpDoer.CreatePayoutRequestWithResponse(ctx, convertToCreatePayout(*payout), reqEditor)
+		resp, err = c.httpDoer.PostPayoutWithResponse(ctx, convertToCreatePayout(*payout), reqEditor)
 	} else {
 		log.Logger.Error("can't find RequestID in ctx")
-		resp, err = c.httpDoer.CreatePayoutRequestWithResponse(ctx, convertToCreatePayout(*payout))
+		resp, err = c.httpDoer.PostPayoutWithResponse(ctx, convertToCreatePayout(*payout))
 	}
 	if err != nil {
 		log.Logger.Error("error while creating payout from Payments Service:", zap.Error(err))

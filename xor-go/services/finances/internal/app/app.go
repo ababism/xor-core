@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
+	"xor-go/pkg/metrics"
 	"xor-go/pkg/xdb/postgres"
 	"xor-go/pkg/xerror"
 	"xor-go/pkg/xshutdown"
@@ -67,23 +68,24 @@ func NewApp(cfg *config.Config) (*App, error) {
 		})
 	log.Logger.Info("Init Tracer – success")
 
-	// TODO Инициализируем Prometheus
-	//httpResponser := httpresponse.NewHttpResponseWrapper(logger)
-
-	//metrics.InitOnce(cfg.Metrics, logger, metrics.AppInfo{
-	//	Name:        cfg.App.Name,
-	//	Environment: cfg.App.Environment,
-	//	Version:     cfg.App.Version,
-	//})
+	// Инициализируем Prometheus
+	metrics.InitOnce(cfg.Metrics, log.Logger, metrics.AppInfo{
+		Name:        cfg.App.Name,
+		Environment: string(cfg.App.Environment),
+		Version:     cfg.App.Version,
+	})
 	log.Logger.Info("Init Metrics – success")
 
 	// REPOSITORY ----------------------------------------------------------------------
 
+	// Инициализация PostgreSQL
 	postgresDb, err := postgres.NewDB(cfg.Postgres)
 	if err != nil {
+		log.Logger.Fatal("Error init Postgres DB:", zap.Error(err))
 		return nil, errors.Wrap(err, "Init Postgres DB")
 	}
 
+	// Инициализация всех репозиториев
 	bankAccountRepo := postgre.NewBankAccountRepository(postgresDb)
 	discountRepo := postgre.NewDiscountRepository(postgresDb)
 	paymentRepo := postgre.NewPaymentRepository(postgresDb)
@@ -91,6 +93,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	payoutRequest := postgre.NewPayoutRequestRepository(postgresDb)
 	purchaseRequest := postgre.NewPurchaseRequestRepository(postgresDb)
 
+	// Инициализация всех клиентов
 	paymentsClientServer, err := payments.NewClientWithResponses(cfg.PaymentsClient.Uri)
 	if err != nil {
 		log.Logger.Fatal("cannot initialize generated Payments Client:", zap.Error(err))

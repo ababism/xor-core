@@ -7,7 +7,6 @@ servers:
 paths:
   /status:
     get:
-      operationId: getStatus
       summary: Get payment status by UUID
       requestBody:
         required: true
@@ -45,7 +44,6 @@ paths:
 #                  $ref: '#/components/schemas/PaymentGet'
   /purchase:
     post:
-      operationId: createPurchaseRequest
       summary: Create purchase
       requestBody:
         required: true
@@ -64,7 +62,6 @@ paths:
           description: Incorrect purchase data
   /payout:
     post:
-      operationId: createPayoutRequest
       summary: Create payout
       requestBody:
         required: true

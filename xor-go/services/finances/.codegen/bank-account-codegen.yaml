@@ -7,7 +7,8 @@ servers:
 paths:
   /bank-accounts/{login}:
     get:
-      operationId: get
+      tags:
+        - Bank Account
       summary: Get bank account by login
       parameters:
         - in: path
@@ -28,7 +29,8 @@ paths:
           description: Bank account not found
   /bank-accounts:
     get:
-      operationId: getList
+      tags:
+        - Bank Account
       summary: List bank accounts
       requestBody:
         content:
@@ -45,7 +47,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/BankAccountGet'
     post:
-      operationId: create
+      tags:
+        - Bank Account
       summary: Create a bank account
       requestBody:
         required: true
@@ -59,7 +62,8 @@ paths:
         '400':
           description: Incorrect bank account data
     put:
-      operationId: update
+      tags:
+        - Bank Account
       summary: Update a bank account
       requestBody:
         content:
@@ -75,7 +79,8 @@ paths:
           description: Bank account not found
   /bank-accounts/{login}/change-funds:
     put:
-      operationId: change
+      tags:
+        - Bank Account
       summary: Change bank account funds
       parameters:
         - in: path

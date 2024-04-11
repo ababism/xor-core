@@ -50,7 +50,7 @@ public class EmailNotificationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestHeader(SageHeader.ACCOUNT_UUID) UUID accountUuid,
+    public ResponseEntity<?> create(@RequestHeader(SageHeader.XOR_ACCOUNT_UUID) UUID accountUuid,
                                     @RequestBody @Valid CreateEmailNotificationRequest request) {
         UUID uuid = emailNotificationService.create(
                 accountUuid,

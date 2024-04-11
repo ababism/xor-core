@@ -41,26 +41,26 @@ type PayoutRequestGet struct {
 	UUID      openapi_types.UUID `json:"UUID"`
 }
 
-// GetListJSONRequestBody defines body for GetList for application/json ContentType.
-type GetListJSONRequestBody = PayoutRequestFilter
+// GetPayoutRequestsJSONRequestBody defines body for GetPayoutRequests for application/json ContentType.
+type GetPayoutRequestsJSONRequestBody = PayoutRequestFilter
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = PayoutRequestCreate
+// PostPayoutRequestsJSONRequestBody defines body for PostPayoutRequests for application/json ContentType.
+type PostPayoutRequestsJSONRequestBody = PayoutRequestCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List payout requests
 	// (GET /payout-requests)
-	GetList(c *gin.Context)
+	GetPayoutRequests(c *gin.Context)
 	// Create a payout request
 	// (POST /payout-requests)
-	Create(c *gin.Context)
+	PostPayoutRequests(c *gin.Context)
 	// Get payout request by ID
 	// (GET /payout-requests/{id})
-	Get(c *gin.Context, id openapi_types.UUID)
+	GetPayoutRequestsId(c *gin.Context, id openapi_types.UUID)
 	// Archive a payout request
 	// (PUT /payout-requests/{id}/archive)
-	Archive(c *gin.Context, id openapi_types.UUID)
+	PutPayoutRequestsIdArchive(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -72,8 +72,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetList operation middleware
-func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
+// GetPayoutRequests operation middleware
+func (siw *ServerInterfaceWrapper) GetPayoutRequests(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -82,11 +82,11 @@ func (siw *ServerInterfaceWrapper) GetList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetList(c)
+	siw.Handler.GetPayoutRequests(c)
 }
 
-// Create operation middleware
-func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
+// PostPayoutRequests operation middleware
+func (siw *ServerInterfaceWrapper) PostPayoutRequests(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -95,11 +95,11 @@ func (siw *ServerInterfaceWrapper) Create(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Create(c)
+	siw.Handler.PostPayoutRequests(c)
 }
 
-// Get operation middleware
-func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
+// GetPayoutRequestsId operation middleware
+func (siw *ServerInterfaceWrapper) GetPayoutRequestsId(c *gin.Context) {
 
 	var err error
 
@@ -119,11 +119,11 @@ func (siw *ServerInterfaceWrapper) Get(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Get(c, id)
+	siw.Handler.GetPayoutRequestsId(c, id)
 }
 
-// Archive operation middleware
-func (siw *ServerInterfaceWrapper) Archive(c *gin.Context) {
+// PutPayoutRequestsIdArchive operation middleware
+func (siw *ServerInterfaceWrapper) PutPayoutRequestsIdArchive(c *gin.Context) {
 
 	var err error
 
@@ -143,7 +143,7 @@ func (siw *ServerInterfaceWrapper) Archive(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.Archive(c, id)
+	siw.Handler.PutPayoutRequestsIdArchive(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -173,8 +173,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/payout-requests", wrapper.GetList)
-	router.POST(options.BaseURL+"/payout-requests", wrapper.Create)
-	router.GET(options.BaseURL+"/payout-requests/:id", wrapper.Get)
-	router.PUT(options.BaseURL+"/payout-requests/:id/archive", wrapper.Archive)
+	router.GET(options.BaseURL+"/payout-requests", wrapper.GetPayoutRequests)
+	router.POST(options.BaseURL+"/payout-requests", wrapper.PostPayoutRequests)
+	router.GET(options.BaseURL+"/payout-requests/:id", wrapper.GetPayoutRequestsId)
+	router.PUT(options.BaseURL+"/payout-requests/:id/archive", wrapper.PutPayoutRequestsIdArchive)
 }

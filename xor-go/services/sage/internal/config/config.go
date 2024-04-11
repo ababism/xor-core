@@ -1,17 +1,32 @@
 package config
 
 import (
+	"github.com/spf13/viper"
 	"xor-go/pkg/xapp"
-	"xor-go/pkg/xdb/mongo"
-	"xor-go/pkg/xdb/postgres"
 	"xor-go/pkg/xhttp"
 	"xor-go/pkg/xlogger"
 )
 
+type IdmClientConfig struct {
+	Host string `mapstructure:"host"`
+}
+
 type Config struct {
-	SystemConfig   *xapp.Config     `yaml:"system"`
-	LoggerConfig   *xlogger.Config  `yaml:"xlogger"`
-	HttpConfig     *xhttp.Config    `yaml:"xhttp"`
-	MongoConfig    *mongo.Config    `yaml:"mongo"`
-	PostgresConfig *postgres.Config `yaml:"postgres"`
+	App             *xapp.Config    `mapstructure:"app"`
+	Http            *xhttp.Config   `mapstructure:"http"`
+	Logger          *xlogger.Config `mapstructure:"logger"`
+	IdmClientConfig IdmClientConfig `mapstructure:"idm-client"`
+}
+
+func ParseConfig(configPath string, config interface{}) error {
+	viper.SetConfigFile(configPath)
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+
+	if err := viper.Unmarshal(config); err != nil {
+		return err
+	}
+
+	return nil
 }

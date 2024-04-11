@@ -2,43 +2,49 @@ package app
 
 import (
 	"go.uber.org/zap"
-	"xor-go/pkg/xdb/postgres"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"xor-go/pkg/xhttp"
-	httpresponse "xor-go/pkg/xhttp/response"
+	"xor-go/pkg/xhttp/response"
 	"xor-go/pkg/xlogger"
+	idmproto "xor-go/proto/idm"
+	"xor-go/services/sage/internal/api/http/handler"
 	"xor-go/services/sage/internal/config"
-	"xor-go/services/sage/internal/handler"
-	repopostgres "xor-go/services/sage/internal/repository/postgres"
 	"xor-go/services/sage/internal/service"
 )
 
 type Application struct {
 	config         *config.Config
 	logger         *zap.Logger
-	accountHandler *handler.AccountHandler
+	securedHandler *handler.GatewayHandler
 }
 
-func NewApp(cfg *config.Config) (*Application, error) {
-	logger, err := xlogger.Init(cfg.LoggerConfig, cfg.SystemConfig)
+func NewApp(cfg *config.Config, servicesCfg *config.ResourcesConfig) (*Application, error) {
+	logger, err := xlogger.Init(cfg.Logger, cfg.App)
+	if err != nil {
+		return nil, err
+	}
+	httpResponser := response.NewHttpResponseWrapper(logger)
+
+	resourceToConfig := getResourceToConfig(servicesCfg)
+
+	idmGrpcClient, err := getIdmGrpcClient(cfg.IdmClientConfig.Host)
 	if err != nil {
 		return nil, err
 	}
 
-	httpResponser := httpresponse.NewHttpResponseWrapper(logger)
+	gatewayResourceService := service.NewGatewayResourceService(resourceToConfig, idmGrpcClient)
 
-	postgresDb, err := postgres.NewDB(cfg.PostgresConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	accountRepository := repopostgres.NewAccountPostgresRepository(logger, postgresDb)
-	accountService := service.NewAccountService(logger, accountRepository)
-	accountHandler := handler.NewAccountHandler(httpResponser, accountService)
+	gatewayHandler := handler.NewGatewayHandler(
+		logger,
+		httpResponser,
+		gatewayResourceService,
+	)
 
 	return &Application{
 		config:         cfg,
 		logger:         logger,
-		accountHandler: accountHandler,
+		securedHandler: gatewayHandler,
 	}, nil
 }
 
@@ -50,10 +56,28 @@ func (r *Application) startHTTPServer() {
 	router := xhttp.NewRouter()
 
 	api := router.Router().Group("/api")
-	r.accountHandler.InitRoutes(api)
+	r.securedHandler.InitRoutes(api)
 
-	httpServer := xhttp.NewServer(r.config.HttpConfig, router)
+	httpServer := xhttp.NewServer(r.config.Http, router)
 	if err := httpServer.Start(); err != nil {
 		r.logger.Error(err.Error())
 	}
+}
+
+func getResourceToConfig(cfg *config.ResourcesConfig) map[string]*config.ResourceConfig {
+	resourceToConfig := make(map[string]*config.ResourceConfig)
+	for i := 0; i < len(cfg.Resources); i++ {
+		resource := cfg.Resources[i]
+		resourceToConfig[resource.Name] = &resource
+	}
+	return resourceToConfig
+}
+
+func getIdmGrpcClient(host string) (idmproto.IdmClient, error) {
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+
+	return idmproto.NewIdmClient(conn), nil
 }

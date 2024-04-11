@@ -49,3 +49,4 @@ gen-courses:
 	oapi-codegen --config xor-go/.codegen/courses-oapi-codegen.yaml oapi/courses.yaml
 	oapi-codegen --config xor-go/.codegen/finances-client-product-oapi-codegen.yaml xor-go/services/finances/.codegen/product-codegen.yaml
 	oapi-codegen --config xor-go/.codegen/finances-client-purchase-oapi-codegen.yaml xor-go/services/finances/.codegen/purchase-request-codegen.yaml
+
