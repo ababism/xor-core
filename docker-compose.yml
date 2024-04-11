@@ -3,7 +3,7 @@ version: '3.9'
 services:
   courses-svc:
     build:
-      context: './xor-go/'
+      context: 'xor-go/'
       dockerfile: 'courses.Dockerfile'
     image: 'courses-svc:latest'
     ports:
@@ -17,6 +17,8 @@ services:
         condition: service_started
     environment:
       - DB_PASSWORD=password
+
+  #  MONGO
 
   mongo1:
     image: mongo:7.0
@@ -53,36 +55,95 @@ services:
       - "mongo3_data:/data/db"
       - "mongo3_config:/data/configdb"
 
+  # POSTGRESQL
 
-  finances-svc:
-    image: 'finances-svc:latest'
-    build:
-      context: './xor-go/'
-      dockerfile: 'finances.Dockerfile'
-    ports:
-      - "8082:8082"
-    depends_on:
-      finances_db:
-        condition: service_healthy
-    environment:
-      - LOGGER_LEVEL=release
-      - DB_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
-
-  finances_db:
+  postgresql_db:
     restart: always
     image: postgres:latest
     ports:
       - "5436:5432"
     environment:
-      - POSTGRES_DB=${FINANCES_POSTGRES_NAME}
-      - POSTGRES_HOST=${FINANCES_POSTGRES_HOST}
-      - POSTGRES_USER=${FINANCES_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${FINANCES_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d finances_db" ]
       interval: 5s
       timeout: 10s
       retries: 5
+
+  # FINANCES
+
+  finances-svc:
+    image: 'finances-svc:latest'
+    build:
+      context: 'xor-go/'
+      dockerfile: 'finances.Dockerfile'
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgresql_db:
+        condition: service_healthy
+
+  # PAYMENTS
+
+  payments-svc:
+    image: 'payments-svc:latest'
+    build:
+      context: './xor-python/services/payments'
+      dockerfile: './deploy/Dockerfile'
+    ports:
+      - "8083:8083"
+
+  # SAGE
+
+  sage-svc:
+    image: 'sage-svc:latest'
+    build:
+      context: 'xor-go/'
+      dockerfile: 'sage.Dockerfile'
+    ports:
+      - "8084:8084"
+
+  # IDM
+
+  idm-svc:
+    image: 'idm-svc:latest'
+    build:
+      context: './'
+      dockerfile: './xor-java/idm/Dockerfile'
+    ports:
+      - "8085:8085"
+    depends_on:
+      postgresql_db:
+        condition: service_healthy
+
+  # FEEDBACK
+
+  feedback-svc:
+    image: 'feedback-svc:latest'
+    build:
+      context: './'
+      dockerfile: './xor-java/feedback/Dockerfile'
+    ports:
+      - "8086:8086"
+    depends_on:
+      postgresql_db:
+        condition: service_healthy
+
+  # NOTIFICATION
+
+  notifications-svc:
+    image: 'notifications-svc:latest'
+    build:
+      context: './'
+      dockerfile: './xor-java/notifications/Dockerfile'
+    ports:
+      - "8087:8087"
+    depends_on:
+      postgresql_db:
+        condition: service_healthy
 
 networks:
   courses:

@@ -10,8 +10,8 @@ RUN poetry config virtualenvs.create false
 
 WORKDIR /app/src
 
-COPY --chown=application:application ../pyproject.toml ./
-COPY --chown=application:application ../poetry.lock ./
+COPY --chown=application:application ./pyproject.toml ./
+COPY --chown=application:application ./poetry.lock ./
 
 RUN apt-get update && \
     apt-get --yes --no-install-recommends install make="4.3-4.1" && \

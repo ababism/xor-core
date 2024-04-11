@@ -4,7 +4,7 @@ services:
   courses-svc:
     build:
       context: './'
-      dockerfile: 'courses.Dockerfile'
+      dockerfile: 'services/courses/courses.Dockerfile'
     image: 'courses-svc:latest'
     ports:
       - "8080:8080"
@@ -60,7 +60,7 @@ services:
     image: 'finances-svc:latest'
     build:
       context: './'
-      dockerfile: 'finances.Dockerfile'
+      dockerfile: 'services/finances/finances.Dockerfile'
     ports:
       - "8082:8082"
     depends_on:
