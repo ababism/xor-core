@@ -19,12 +19,12 @@ WORKDIR /xor-java
 
 COPY --from=prepare-protos /xor-core/xor-java .
 
-RUN gradle notifications:build
+RUN gradle feedback:build
 
 FROM amazoncorretto:17
 
-WORKDIR /notifications
+WORKDIR /feedback
 
-COPY --from=build-java /xor-java/notifications/build/libs/*.jar /notifications/app.jar
+COPY --from=build-java /xor-java/feedback/build/libs/*.jar /feedback/app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

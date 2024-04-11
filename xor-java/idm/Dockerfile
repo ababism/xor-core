@@ -7,7 +7,9 @@ COPY . .
 COPY --from=golang:1.21.4-alpine /usr/local/go/ /usr/local/go/
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-RUN apt update && apt install -y protobuf-compiler
+RUN apt update && \
+    apt install -y protobuf-compiler && \
+    apt clean
 
 RUN ./.github/workflows/etc/prepare_protos.sh
 

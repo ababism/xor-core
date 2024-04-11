@@ -13,9 +13,9 @@ on:
         required: true
   workflow_call:
     secrets:
-      DOCKERHUB_USERNAME:
+      DOCKER_HUB_USERNAME:
         required: true
-      DOCKERHUB_PASSWORD:
+      DOCKER_HUB_PASSWORD:
         required: true
     inputs:
       service:
