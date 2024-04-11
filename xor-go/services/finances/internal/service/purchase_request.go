@@ -1,15 +1,12 @@
 package service
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
-	"net/http"
 	"time"
 	"xor-go/services/finances/internal/domain"
 	"xor-go/services/finances/internal/log"
@@ -96,7 +93,7 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	}
 	spanCreate.End()
 
-	_, newCtxSendPayment, spanPayments := getPurchaseRequestTracerSpan(newCtxSpanCreate, ".Create.SendPayment")
+	_, _, spanPayments := getPurchaseRequestTracerSpan(newCtxSpanCreate, ".Create.SendPayment")
 	defer spanPayments.End()
 	products := make([]domain.ProductGet, 0)
 	productsNames := ""
@@ -127,30 +124,7 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	}
 	spanPayments.End()
 
-	log.Logger.Info(fmt.Sprintf("Purchase created: %v", createPurchase))
-
-	_, _, spanSendResult := getPurchaseRequestTracerSpan(newCtxSendPayment, ".Create.SendResultByWebhook")
-	defer newCtxSendPayment.Done()
-
-	webhook := domain.PurchaseRequestWebhook{
-		Sender:   *purchase.Sender,
-		Receiver: *purchase.Receiver,
-		Products: domain.ConvertProductsToSmall(products),
-	}
-	jsonBody, err := json.Marshal(webhook)
-	if err != nil {
-		return err
-	}
-	bodyReader := bytes.NewReader(jsonBody)
-	log.Logger.Info(fmt.Sprintf("Sending Purchase request result to %s", purchase.WebhookURL))
-
-	url := purchase.WebhookURL
-	_, err = http.NewRequest(http.MethodPost, url, bodyReader)
-	if err != nil {
-		return err
-	}
-	spanSendResult.End()
-
+	log.Logger.Info(fmt.Sprintf("Purchase created status='%s': %v", createPurchase.Status, createPurchase))
 	return nil
 }
 
