@@ -118,7 +118,7 @@ func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Ac
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
-	curLesson, err := c.lesson.Get(ctx, lessonID)
+	curLesson, err := c.lessonEdit.Get(ctx, lessonID)
 	if err != nil {
 		return nil, err
 	}

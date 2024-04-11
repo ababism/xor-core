@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -31,11 +32,15 @@ type LessonRepository struct {
 	lesson *mongo.Collection
 }
 
+func (r LessonRepository) spanName() string {
+	return fmt.Sprintf("courses/repository/mongo/%s.", r.lesson.Name())
+}
+
 func (r LessonRepository) Create(ctx context.Context, lesson *domain.Lesson) (*domain.Lesson, error) {
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Create")
+	newCtx, span := tr.Start(ctx, r.spanName()+"Create")
 	defer span.End()
 
 	mongoLesson := models.ToMongoModelLesson(*lesson)
@@ -56,7 +61,7 @@ func (r LessonRepository) Get(ctx context.Context, lessonID uuid.UUID) (*domain.
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Get")
+	newCtx, span := tr.Start(ctx, r.spanName()+"Get")
 	defer span.End()
 
 	var lesson models.Lesson
@@ -83,7 +88,7 @@ func (r LessonRepository) GetAllByCourse(ctx context.Context, courseID uuid.UUID
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.GetAllByCourse")
+	newCtx, span := tr.Start(ctx, r.spanName()+"GetAllByCourse")
 	defer span.End()
 
 	var lessons []models.Lesson
@@ -121,7 +126,7 @@ func (r LessonRepository) Update(ctx context.Context, lesson *domain.Lesson) err
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Update")
+	newCtx, span := tr.Start(ctx, r.spanName()+"Update")
 	defer span.End()
 
 	mongoLesson := models.ToMongoModelLesson(*lesson)
@@ -142,7 +147,7 @@ func (r LessonRepository) Delete(ctx context.Context, lessonID uuid.UUID) error 
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/lesson.Delete")
+	newCtx, span := tr.Start(ctx, r.spanName()+"Delete")
 	defer span.End()
 
 	filter := createUUIDFilter(lessonID, "lesson_id")

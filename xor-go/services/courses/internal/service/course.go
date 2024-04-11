@@ -8,6 +8,7 @@ import (
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
@@ -71,7 +72,7 @@ func (c CoursesService) GetCourse(initialCtx context.Context, actor domain.Actor
 }
 
 func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Actor, courseID uuid.UUID, course *domain.Course) (*domain.Course, error) {
-	_ = zapctx.Logger(initialCtx)
+	log := zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateCourse")
@@ -93,12 +94,13 @@ func (c CoursesService) UpdateCourse(initialCtx context.Context, actor domain.Ac
 	ok, errAccess := c.teacher.IsCourseAccessible(ctx, actor.ID, courseID)
 	if errAccess != nil {
 		return nil, xapperror.New(http.StatusForbidden, "user does not own this course",
-			fmt.Sprintf("user does %s not own this course %s", actor.ID, courseID), nil)
+			fmt.Sprintf("user does %s not own this course %s", actor.ID, courseID), errAccess)
 	}
 
 	if !actor.HasRole(domain.AdminRole) && !ok {
-		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to update course",
-			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
+		log.Info("Bool !(actor.HasRole(domain.AdminRole) || ok) and res", zap.Bools("", []bool{actor.HasRole(domain.AdminRole), ok, !actor.HasRole(domain.AdminRole) || !ok}))
+		return nil, xapperror.New(http.StatusForbidden, "user does not own course",
+			fmt.Sprintf("user do not have %s roles or do not own course", domain.AdminRole), nil)
 	}
 
 	err = c.courseEdit.Update(ctx, courseID, course)

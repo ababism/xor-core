@@ -2,12 +2,15 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
@@ -33,11 +36,17 @@ type CourseRepository struct {
 	course *mongo.Collection
 }
 
+func (cr CourseRepository) newSpanName(funcName string) string {
+	return fmt.Sprintf("courses/repository/mongo/%s.%s", cr.course.Name(), funcName)
+}
+func (cr CourseRepository) spanName() string {
+	return fmt.Sprintf("courses/repository/mongo/%s.", cr.course.Name())
+}
 func (cr CourseRepository) Create(ctx context.Context, course *domain.Course) (*domain.Course, error) {
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Create")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"Create")
 	defer span.End()
 
 	mongoCourse := models.ToMongoModelCourse(course)
@@ -58,7 +67,7 @@ func (cr CourseRepository) Get(ctx context.Context, courseID uuid.UUID) (*domain
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Get")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"Get")
 	defer span.End()
 
 	var course models.Course
@@ -85,7 +94,7 @@ func (cr CourseRepository) GetAll(ctx context.Context, offset, limit int) ([]*do
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.GetAll")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"GetAll")
 	defer span.End()
 
 	var courses []models.Course
@@ -104,6 +113,7 @@ func (cr CourseRepository) GetAll(ctx context.Context, offset, limit int) ([]*do
 	}
 
 	var res []*domain.Course
+	res = make([]*domain.Course, 0, len(courses))
 	for _, course := range courses {
 		c, err := course.ToDomain()
 		if err != nil {
@@ -120,7 +130,7 @@ func (cr CourseRepository) GetAllByTeacher(ctx context.Context, teacherID uuid.U
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.GetAllByTeacher")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"GetAllByTeacher")
 	defer span.End()
 
 	var courses []models.Course
@@ -138,8 +148,10 @@ func (cr CourseRepository) GetAllByTeacher(ctx context.Context, teacherID uuid.U
 		appErr := xapperror.New(http.StatusInternalServerError, "can't fetch courses", "error fetching courses from MongoDB", err)
 		return nil, appErr
 	}
+	span.AddEvent("found courses", trace.WithAttributes(attribute.Int("count", len(courses))))
 
 	var res []*domain.Course
+	res = make([]*domain.Course, 0, len(courses))
 	for _, course := range courses {
 		c, err := course.ToDomain()
 		if err != nil {
@@ -149,6 +161,8 @@ func (cr CourseRepository) GetAllByTeacher(ctx context.Context, teacherID uuid.U
 		res = append(res, c)
 	}
 
+	span.AddEvent("returning courses", trace.WithAttributes(attribute.Int("count", len(res))))
+
 	return res, nil
 }
 
@@ -156,7 +170,7 @@ func (cr CourseRepository) Update(ctx context.Context, courseID uuid.UUID, cours
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Update")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"Update")
 	defer span.End()
 
 	filter := createUUIDFilter(courseID, "course_id")
@@ -177,7 +191,7 @@ func (cr CourseRepository) Delete(ctx context.Context, courseID uuid.UUID) error
 	logger := zapctx.Logger(ctx)
 
 	tr := global.Tracer(domain.ServiceName)
-	newCtx, span := tr.Start(ctx, "courses/repository/mongo/course.Delete")
+	newCtx, span := tr.Start(ctx, cr.spanName()+"Delete")
 	defer span.End()
 
 	filter := createUUIDFilter(courseID, "course_id")
