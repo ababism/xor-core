@@ -8,6 +8,7 @@ on:
         type: choice
         options:
           - sage
+          - finances
         required: true
   workflow_call:
     inputs:
@@ -18,7 +19,8 @@ on:
 env:
   SERVICE_ENTRY: >
     ${{ fromJson('{
-      "sage": "./services/sage/cmd/main.go"
+      "sage": "./services/sage/cmd/main.go",
+      "finances": "./services/finances/cmd/main.go"
     }')[github.event.inputs.service || inputs.service] }}
   PYTHON_VERSION: 3.9
 
