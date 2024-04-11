@@ -82,6 +82,10 @@ paths:
       responses:
         '201':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
         '400':
           description: Incorrect bank account data
     put:
@@ -238,3 +242,11 @@ components:
           type: number
         Status:
           type: string
+    ModelUUID:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+      required:
+        - UUID

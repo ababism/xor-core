@@ -13,6 +13,11 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// ModelUUID defines model for ModelUUID.
+type ModelUUID struct {
+	UUID openapi_types.UUID `json:"UUID"`
+}
+
 // PayoutRequestCreate defines model for PayoutRequestCreate.
 type PayoutRequestCreate struct {
 	Amount    float32            `json:"Amount"`

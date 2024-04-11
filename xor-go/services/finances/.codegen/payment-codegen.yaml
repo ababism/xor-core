@@ -60,6 +60,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
         '400':
           description: Incorrect payment data
 components:
@@ -144,3 +148,11 @@ components:
         EndedAt:
           type: string
           format: date-time
+    ModelUUID:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+      required:
+        - UUID

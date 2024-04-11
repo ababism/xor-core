@@ -56,6 +56,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
     put:
       tags:
         - Discount
@@ -181,3 +185,11 @@ components:
           type: number
         Status:
           type: string
+    ModelUUID:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+      required:
+        - UUID
