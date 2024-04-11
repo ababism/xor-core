@@ -19,12 +19,12 @@ const (
 
 const (
 	basePurchaseRequestGetQuery = `
-		SELECT uuid, sender, receiver, webhook_url, created_at
+		SELECT uuid, sender, receiver, status, webhook_url, created_at
 		FROM purchase_requests
 	`
 	createPurchaseRequestQuery = `
-		INSERT INTO purchase_requests (sender, receiver, webhook_url, created_at)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO purchase_requests (sender, receiver, status, webhook_url, created_at)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING uuid
 	`
 	createPurchaseProductsQuery = `
@@ -96,6 +96,7 @@ func (r *purchaseRequestRepository) Create(
 		createPurchaseRequestQuery,
 		purchasePostgres.Sender,
 		purchasePostgres.Receiver,
+		purchasePostgres.Status,
 		purchasePostgres.WebhookURL,
 		purchasePostgres.CreatedAt,
 	)
@@ -147,6 +148,9 @@ func mapGetPurchaseRequestRequestParams(params *domain.PurchaseRequestFilter) ma
 	}
 	if params.Receiver != nil {
 		paramsMap["receiver"] = *params.Receiver
+	}
+	if params.Status != nil {
+		paramsMap["status"] = *params.Status
 	}
 	if params.WebhookURL != nil {
 		paramsMap["webhook_url"] = *params.WebhookURL

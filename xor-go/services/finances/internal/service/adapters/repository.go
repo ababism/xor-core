@@ -10,21 +10,21 @@ type BankAccountRepository interface {
 	Present(ctx context.Context, filter *domain.BankAccountFilter) (bool, error)
 	Get(ctx context.Context, filter *domain.BankAccountFilter) (*domain.BankAccountGet, error)
 	List(ctx context.Context, filter *domain.BankAccountFilter) ([]domain.BankAccountGet, error)
-	Create(ctx context.Context, account *domain.BankAccountCreate) error
+	Create(ctx context.Context, account *domain.BankAccountCreate) (*uuid.UUID, error)
 	Update(ctx context.Context, account *domain.BankAccountUpdate) error
 }
 
 type PaymentRepository interface {
 	Get(ctx context.Context, filter *domain.PaymentFilter) (*domain.PaymentGet, error)
 	List(ctx context.Context, filter *domain.PaymentFilter) ([]domain.PaymentGet, error)
-	Create(ctx context.Context, payment *domain.PaymentCreate) error
+	Create(ctx context.Context, payment *domain.PaymentCreate) (*uuid.UUID, error)
 }
 
 type ProductRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.ProductGet, error)
 	GetPrice(ctx context.Context, productUUIDs []uuid.UUID) (*float32, error)
 	List(ctx context.Context, filter *domain.ProductFilter) ([]domain.ProductGet, error)
-	Create(ctx context.Context, product *domain.ProductCreate) error
+	Create(ctx context.Context, product *domain.ProductCreate) (*uuid.UUID, error)
 	Update(ctx context.Context, product *domain.ProductUpdate) error
 	SetAvailability(ctx context.Context, id uuid.UUID, isAvailable bool) error
 }
@@ -33,7 +33,7 @@ type DiscountRepository interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.DiscountGet, error)
 	List(ctx context.Context, filter *domain.DiscountFilter) ([]domain.DiscountGet, error)
 	EndDiscount(ctx context.Context, id uuid.UUID) error
-	Create(ctx context.Context, discount *domain.DiscountCreate) error
+	Create(ctx context.Context, discount *domain.DiscountCreate) (*uuid.UUID, error)
 	Update(ctx context.Context, discount *domain.DiscountUpdate) error
 }
 

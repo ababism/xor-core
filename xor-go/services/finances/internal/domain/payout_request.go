@@ -11,6 +11,7 @@ type PayoutRequestData struct {
 type PayoutRequestGet struct {
 	UUID      uuid.UUID
 	Receiver  uuid.UUID
+	Status    string
 	Amount    float32
 	Data      PayoutRequestData
 	CreatedAt time.Time
@@ -26,6 +27,7 @@ type PayoutRequestCreate struct {
 type PayoutRequestFilter struct {
 	UUID      *uuid.UUID
 	Receiver  *uuid.UUID
+	Status    *string
 	Amount    *float32
 	CreatedAt *time.Time
 }

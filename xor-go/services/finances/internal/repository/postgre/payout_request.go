@@ -18,12 +18,12 @@ const (
 
 const (
 	basePayoutRequestGetQuery = `
-		SELECT uuid, receiver, amount, data, created_at
+		SELECT uuid, receiver, status, amount, data, created_at
 		FROM payout_requests
 	`
 	createPayoutRequestQuery = `
-		INSERT INTO payout_requests (receiver, amount, data, created_at)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO payout_requests (receiver, status, amount, data, created_at)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING uuid
 	`
 	deletePayoutRequestQuery = `
@@ -43,7 +43,7 @@ func NewPayoutRequestRepository(db *sqlx.DB) adapters.PayoutRequestRepository {
 
 func (r *payoutRequestRepository) Get(ctx context.Context, id uuid.UUID) (*domain.PayoutRequestGet, error) {
 	tr := global.Tracer(adapters.ServiceNamePayoutRequest)
-	_, span := tr.Start(ctx, spanDefaultPayoutRequest+".Get")
+	_, span := tr.Start(ctx, spanDefaultPayoutRequest+".GetByLogin")
 	defer span.End()
 
 	payouts, err := r.List(ctx, &domain.PayoutRequestFilter{UUID: &id})
@@ -85,6 +85,7 @@ func (r *payoutRequestRepository) Create(ctx context.Context, payout *domain.Pay
 	row := r.db.QueryRow(
 		createPayoutRequestQuery,
 		payoutPostgres.Receiver,
+		payoutPostgres.Status,
 		payoutPostgres.Amount,
 		string(data),
 		payoutPostgres.CreatedAt,

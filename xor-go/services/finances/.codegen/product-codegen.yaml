@@ -3,9 +3,9 @@ info:
   title: Product Service API
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api/v1/finances
+  - url: http://localhost:8082/api/v1/finances
 paths:
-  /products/{id}:
+  /product/{id}:
     get:
       tags:
         - Product
@@ -24,7 +24,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductGet'
-  /products:
+  /product:
     get:
       tags:
         - Product
@@ -69,7 +69,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/list:
+  /product/list:
     post:
       tags:
         - Product
@@ -85,7 +85,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/{id}/disable:
+  /product/{id}/disable:
     put:
       tags:
         - Product
@@ -100,7 +100,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/price/{uuids}:
+  /product/price/{uuids}:
     get:
       tags:
         - Product

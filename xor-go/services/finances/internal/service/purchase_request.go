@@ -1,15 +1,12 @@
 package service
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
-	"net/http"
 	"time"
 	"xor-go/services/finances/internal/domain"
 	"xor-go/services/finances/internal/log"
@@ -53,7 +50,7 @@ func getPurchaseRequestTracerSpan(ctx context.Context, name string) (trace.Trace
 }
 
 func (s *purchaseRequestService) Get(ctx context.Context, id uuid.UUID) (*domain.PurchaseRequestGet, error) {
-	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Get")
+	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	request, err := s.rPurchase.Get(newCtx, id)
@@ -79,7 +76,10 @@ func (s *purchaseRequestService) List(
 	return purchaseRequests, nil
 }
 
-func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.PurchaseRequestCreate) error {
+func (s *purchaseRequestService) Create(
+	ctx context.Context,
+	purchase *domain.PurchaseRequestCreate,
+) (*uuid.UUID, error) {
 	_, newCtx, span := getPurchaseRequestTracerSpan(ctx, ".Create")
 	defer span.End()
 
@@ -87,16 +87,16 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 	defer spanCreate.End()
 	price, err := s.rProduct.GetPrice(ctx, purchase.Products)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	id, err := s.rPurchase.Create(newCtx, purchase, *price)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	spanCreate.End()
 
-	_, newCtxSendPayment, spanPayments := getPurchaseRequestTracerSpan(newCtxSpanCreate, ".Create.SendPayment")
+	_, _, spanPayments := getPurchaseRequestTracerSpan(newCtxSpanCreate, ".Create.SendPayment")
 	defer spanPayments.End()
 	products := make([]domain.ProductGet, 0)
 	productsNames := ""
@@ -106,7 +106,7 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 			log.Logger.Error(
 				fmt.Sprintf("Error while finding a product with id=%s: %v", productId, zap.Error(err)),
 			)
-			return nil
+			return nil, err
 		}
 		products = append(products, *product)
 		productsNames += " " + product.Name
@@ -123,35 +123,12 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 		Products:    []domain.PaymentsCreatePurchaseProduct{},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	spanPayments.End()
 
-	log.Logger.Info(fmt.Sprintf("Purchase created: %v", createPurchase))
-
-	_, _, spanSendResult := getPurchaseRequestTracerSpan(newCtxSendPayment, ".Create.SendResultByWebhook")
-	defer newCtxSendPayment.Done()
-
-	webhook := domain.PurchaseRequestWebhook{
-		Sender:   *purchase.Sender,
-		Receiver: *purchase.Receiver,
-		Products: domain.ConvertProductsToSmall(products),
-	}
-	jsonBody, err := json.Marshal(webhook)
-	if err != nil {
-		return err
-	}
-	bodyReader := bytes.NewReader(jsonBody)
-	log.Logger.Info(fmt.Sprintf("Sending Purchase request result to %s", purchase.WebhookURL))
-
-	url := purchase.WebhookURL
-	_, err = http.NewRequest(http.MethodPost, url, bodyReader)
-	if err != nil {
-		return err
-	}
-	spanSendResult.End()
-
-	return nil
+	log.Logger.Info(fmt.Sprintf("Purchase created status='%s': %v", createPurchase.Status, createPurchase))
+	return id, nil
 }
 
 func (s *purchaseRequestService) Archive(ctx context.Context, id uuid.UUID) error {
@@ -163,7 +140,7 @@ func (s *purchaseRequestService) Archive(ctx context.Context, id uuid.UUID) erro
 		return err
 	}
 
-	err = s.rPayment.Create(ctx, &domain.PaymentCreate{
+	_, err = s.rPayment.Create(ctx, &domain.PaymentCreate{
 		Sender:   *purchase.Sender,
 		Receiver: *purchase.Receiver,
 		Data:     domain.PaymentData{},

@@ -28,6 +28,7 @@ func (a *PayoutRequestData) Scan(value interface{}) error {
 type PayoutRequest struct {
 	UUID      uuid.UUID         `db:"uuid"`
 	Receiver  uuid.UUID         `db:"receiver"`
+	Status    string            `db:"status"`
 	Amount    float32           `db:"amount"`
 	Data      PayoutRequestData `db:"data"`
 	CreatedAt time.Time         `db:"created_at"`
@@ -42,6 +43,7 @@ func CreateToPayoutRequestPostgres(model *domain.PayoutRequestCreate) *PayoutReq
 	return &PayoutRequest{
 		UUID:      id,
 		Receiver:  model.Receiver,
+		Status:    "created",
 		Amount:    model.Amount,
 		Data:      CreateToPayoutRequestDataPostgres(model.Data),
 		CreatedAt: time.Now(),
@@ -56,6 +58,7 @@ func ToPayoutRequestDomain(model *PayoutRequest) *domain.PayoutRequestGet {
 	return &domain.PayoutRequestGet{
 		UUID:      model.UUID,
 		Receiver:  model.Receiver,
+		Status:    model.Status,
 		Amount:    model.Amount,
 		CreatedAt: model.CreatedAt,
 		Data:      ToPayoutRequestDataDomain(model.Data),

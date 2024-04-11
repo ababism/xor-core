@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
 	"xor-go/pkg/xcommon"
@@ -24,6 +25,7 @@ const (
 	createBankAccountQuery = `
 		INSERT INTO bank_accounts (account_uuid, login, funds, data, status)
 		VALUES ($1, $2, $3, $4, $5)
+		RETURNING uuid
 	`
 	updateBankAccountQuery = `
 		UPDATE bank_accounts
@@ -73,7 +75,7 @@ func (r *bankAccountRepository) Get(
 	filter *domain.BankAccountFilter,
 ) (*domain.BankAccountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
-	_, span := tr.Start(ctx, spanDefaultBankAccount+".Get")
+	_, span := tr.Start(ctx, spanDefaultBankAccount+".GetByLogin")
 	defer span.End()
 
 	accounts, err := r.List(ctx, filter)
@@ -104,7 +106,7 @@ func (r *bankAccountRepository) List(
 	return xcommon.ConvertSliceP(accounts, repo_models.ToBankAccountDomain), nil
 }
 
-func (r *bankAccountRepository) Create(ctx context.Context, account *domain.BankAccountCreate) error {
+func (r *bankAccountRepository) Create(ctx context.Context, account *domain.BankAccountCreate) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNameBankAccount)
 	_, span := tr.Start(ctx, spanDefaultBankAccount+".Create")
 	defer span.End()
@@ -112,11 +114,10 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 	accountPostgres := repo_models.CreateToBankAccountPostgres(account)
 	data, err := json.Marshal(accountPostgres.Data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createBankAccountQuery,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
@@ -124,7 +125,12 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 		string(data),
 		accountPostgres.Status,
 	)
-	return err
+	var id uuid.UUID
+	err = row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, err
 }
 
 func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccountUpdate) error {

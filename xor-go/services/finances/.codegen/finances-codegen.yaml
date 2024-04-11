@@ -5,7 +5,7 @@ info:
 servers:
   - url: http://localhost:8082/api/v1/finances
 paths:
-  /bank-accounts/{login}:
+  /bank-accounts/login/{login}:
     get:
       tags:
         - Bank Account
@@ -16,6 +16,29 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountGet'
+        '400':
+          description: Incorrect bank account login
+        '404':
+          description: Bank account not found
+  /bank-accounts/{id}:
+    get:
+      tags:
+        - Bank Account
+      summary: Get bank account by uuid
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successful operation
@@ -77,17 +100,18 @@ paths:
           description: Incorrect bank account data
         '404':
           description: Bank account not found
-  /bank-accounts/{login}/change-funds:
+  /bank-accounts/{id}/change-funds:
     put:
       tags:
         - Bank Account
       summary: Change bank account funds
       parameters:
         - in: path
-          name: login
+          name: id
           required: true
           schema:
             type: string
+            format: uuid
         - in: query
           name: newFunds
           required: true
@@ -302,7 +326,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/{id}:
+  /product/{id}:
     get:
       tags:
         - Product
@@ -321,7 +345,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductGet'
-  /products:
+  /product:
     get:
       tags:
         - Product
@@ -366,7 +390,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/list:
+  /product/list:
     post:
       tags:
         - Product
@@ -382,7 +406,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/{id}/disable:
+  /product/{id}/disable:
     put:
       tags:
         - Product
@@ -397,7 +421,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  /products/price/{uuids}:
+  /product/price/{uuids}:
     get:
       tags:
         - Product
