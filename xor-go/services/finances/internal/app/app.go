@@ -113,6 +113,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		payoutRequest,
 		paymentRepo,
 		paymentsClient,
+		bankAccountService,
 	)
 	purchaseRequestService := service.NewPurchaseRequestService(
 		purchaseRequest,
@@ -145,6 +146,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		payoutRequestService,
 		purchaseRequestService,
 		productService,
+		bankAccountService,
 		paymentsClient,
 	)
 

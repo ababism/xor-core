@@ -3,6 +3,7 @@ package postgre
 import (
 	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	global "go.opentelemetry.io/otel"
 	"xor-go/pkg/xcommon"
@@ -20,6 +21,7 @@ const (
 	createPaymentQuery = `
 		INSERT INTO payments (uuid, sender, receiver, data, url, status, ended_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING uuid
 	`
 )
 
@@ -35,7 +37,7 @@ func NewPaymentRepository(db *sqlx.DB) adapters.PaymentRepository {
 
 func (r *paymentRepository) Get(ctx context.Context, filter *domain.PaymentFilter) (*domain.PaymentGet, error) {
 	tr := global.Tracer(adapters.ServiceNamePayment)
-	_, span := tr.Start(ctx, spanPaymentDefault+".Get")
+	_, span := tr.Start(ctx, spanPaymentDefault+".GetByLogin")
 	defer span.End()
 
 	accounts, err := r.List(ctx, filter)
@@ -61,7 +63,7 @@ func (r *paymentRepository) List(ctx context.Context, filter *domain.PaymentFilt
 	return xcommon.ConvertSliceP(payments, repo_models.ToPaymentDomain), nil
 }
 
-func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentCreate) error {
+func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentCreate) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNamePayment)
 	_, span := tr.Start(ctx, spanPaymentDefault+".Create")
 	defer span.End()
@@ -69,10 +71,9 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 	accountPostgres := repo_models.CreateToPaymentPostgres(account)
 	data, err := json.Marshal(accountPostgres.Data)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createPaymentQuery,
 		accountPostgres.UUID,
 		accountPostgres.Sender,
@@ -82,7 +83,13 @@ func (r *paymentRepository) Create(ctx context.Context, account *domain.PaymentC
 		accountPostgres.Status,
 		accountPostgres.EndedAt,
 	)
-	return err
+
+	var id uuid.UUID
+	err = row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, err
 }
 
 func mapGetPaymentRequestParams(params *domain.PaymentFilter) map[string]any {

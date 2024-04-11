@@ -59,8 +59,8 @@ type BankAccountUpdate struct {
 	UUID        openapi_types.UUID   `json:"UUID"`
 }
 
-// PutBankAccountsLoginChangeFundsParams defines parameters for PutBankAccountsLoginChangeFunds.
-type PutBankAccountsLoginChangeFundsParams struct {
+// PutBankAccountsIdChangeFundsParams defines parameters for PutBankAccountsIdChangeFunds.
+type PutBankAccountsIdChangeFundsParams struct {
 	NewFunds float32 `form:"newFunds" json:"newFunds"`
 }
 
@@ -84,12 +84,15 @@ type ServerInterface interface {
 	// Update a bank account
 	// (PUT /bank-accounts)
 	PutBankAccounts(c *gin.Context)
+	// Get bank account by uuid
+	// (GET /bank-accounts/{id})
+	GetBankAccountsId(c *gin.Context, id openapi_types.UUID)
+	// Change bank account funds
+	// (PUT /bank-accounts/{id}/change-funds)
+	PutBankAccountsIdChangeFunds(c *gin.Context, id openapi_types.UUID, params PutBankAccountsIdChangeFundsParams)
 	// Get bank account by login
 	// (GET /bank-accounts/{login})
 	GetBankAccountsLogin(c *gin.Context, login string)
-	// Change bank account funds
-	// (PUT /bank-accounts/{login}/change-funds)
-	PutBankAccountsLoginChangeFunds(c *gin.Context, login string, params PutBankAccountsLoginChangeFundsParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -140,17 +143,17 @@ func (siw *ServerInterfaceWrapper) PutBankAccounts(c *gin.Context) {
 	siw.Handler.PutBankAccounts(c)
 }
 
-// GetBankAccountsLogin operation middleware
-func (siw *ServerInterfaceWrapper) GetBankAccountsLogin(c *gin.Context) {
+// GetBankAccountsId operation middleware
+func (siw *ServerInterfaceWrapper) GetBankAccountsId(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "login" -------------
-	var login string
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "login", c.Param("login"), &login)
+	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter login: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -161,25 +164,25 @@ func (siw *ServerInterfaceWrapper) GetBankAccountsLogin(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetBankAccountsLogin(c, login)
+	siw.Handler.GetBankAccountsId(c, id)
 }
 
-// PutBankAccountsLoginChangeFunds operation middleware
-func (siw *ServerInterfaceWrapper) PutBankAccountsLoginChangeFunds(c *gin.Context) {
+// PutBankAccountsIdChangeFunds operation middleware
+func (siw *ServerInterfaceWrapper) PutBankAccountsIdChangeFunds(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "login" -------------
-	var login string
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
 
-	err = runtime.BindStyledParameter("simple", false, "login", c.Param("login"), &login)
+	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter login: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
 		return
 	}
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params PutBankAccountsLoginChangeFundsParams
+	var params PutBankAccountsIdChangeFundsParams
 
 	// ------------- Required query parameter "newFunds" -------------
 
@@ -203,7 +206,31 @@ func (siw *ServerInterfaceWrapper) PutBankAccountsLoginChangeFunds(c *gin.Contex
 		}
 	}
 
-	siw.Handler.PutBankAccountsLoginChangeFunds(c, login, params)
+	siw.Handler.PutBankAccountsIdChangeFunds(c, id, params)
+}
+
+// GetBankAccountsLogin operation middleware
+func (siw *ServerInterfaceWrapper) GetBankAccountsLogin(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "login" -------------
+	var login string
+
+	err = runtime.BindStyledParameter("simple", false, "login", c.Param("login"), &login)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter login: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetBankAccountsLogin(c, login)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -236,6 +263,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/bank-accounts", wrapper.GetBankAccounts)
 	router.POST(options.BaseURL+"/bank-accounts", wrapper.PostBankAccounts)
 	router.PUT(options.BaseURL+"/bank-accounts", wrapper.PutBankAccounts)
+	router.GET(options.BaseURL+"/bank-accounts/:id", wrapper.GetBankAccountsId)
+	router.PUT(options.BaseURL+"/bank-accounts/:id/change-funds", wrapper.PutBankAccountsIdChangeFunds)
 	router.GET(options.BaseURL+"/bank-accounts/:login", wrapper.GetBankAccountsLogin)
-	router.PUT(options.BaseURL+"/bank-accounts/:login/change-funds", wrapper.PutBankAccountsLoginChangeFunds)
 }

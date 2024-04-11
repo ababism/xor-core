@@ -18,25 +18,28 @@ import (
 )
 
 type Banker struct {
-	stop            chan bool
-	payoutsService  adapters.PayoutRequestService
-	purchaseService adapters.PurchaseRequestService
-	productService  adapters.ProductService
-	paymentsClient  adapters.PaymentsClient
+	stop               chan bool
+	payoutsService     adapters.PayoutRequestService
+	purchaseService    adapters.PurchaseRequestService
+	productService     adapters.ProductService
+	bankAccountService adapters.BankAccountService
+	paymentsClient     adapters.PaymentsClient
 }
 
 func NewBanker(
 	payoutsService adapters.PayoutRequestService,
 	purchaseService adapters.PurchaseRequestService,
 	productService adapters.ProductService,
+	bankAccountService adapters.BankAccountService,
 	paymentsClient adapters.PaymentsClient,
 ) *Banker {
 	return &Banker{
-		stop:            make(chan bool),
-		payoutsService:  payoutsService,
-		purchaseService: purchaseService,
-		productService:  productService,
-		paymentsClient:  paymentsClient,
+		stop:               make(chan bool),
+		payoutsService:     payoutsService,
+		purchaseService:    purchaseService,
+		productService:     productService,
+		bankAccountService: bankAccountService,
+		paymentsClient:     paymentsClient,
 	}
 }
 
@@ -98,7 +101,7 @@ func (b *Banker) checkForPayments(scrapeInterval time.Duration) {
 func (b *Banker) handlePurchaseRequest(tr trace.Tracer, ctx context.Context, req domain.PurchaseRequestGet) error {
 	ctxPurchaseReq, spanPurchaseReq := tr.Start(
 		ctx,
-		fmt.Sprintf("finances/daemons/banker.checkForPayments.id=%s", req.UUID),
+		fmt.Sprintf("finances/daemons/banker.handlePurchaseRequest.id=%s", req.UUID),
 		trace.WithNewRoot(),
 	)
 	defer spanPurchaseReq.End()
@@ -148,6 +151,43 @@ func (b *Banker) handlePurchaseRequest(tr trace.Tracer, ctx context.Context, req
 		}
 	} else if req.Status == domain.PaymentsStatusCanceled {
 		err := b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (b *Banker) handlePayoutRequest(tr trace.Tracer, ctx context.Context, req domain.PayoutRequestGet) error {
+	ctxPayoutReq, spanPayoutReq := tr.Start(
+		ctx,
+		fmt.Sprintf("finances/daemons/banker.handlePayoutRequest.id=%s", req.UUID),
+		trace.WithNewRoot(),
+	)
+	defer spanPayoutReq.End()
+
+	log.Logger.Info(fmt.Sprintf("Found '%s' Payout request='%s'", req.Status, req.UUID))
+	if req.Status == domain.PaymentsStatusPending {
+		status, err := b.paymentsClient.GetStatus(ctxPayoutReq, req.UUID)
+		if err != nil {
+			return err
+		}
+		req.Status = status.Status
+	}
+
+	if req.Status == domain.PaymentsStatusSucceeded {
+		err := b.bankAccountService.ChangeFunds(ctx, req.Receiver, -1*req.Amount)
+		if err != nil {
+			return err
+		}
+
+		err = b.payoutsService.Archive(ctxPayoutReq, req.UUID)
+		if err != nil {
+			return err
+		}
+	} else if req.Status == domain.PaymentsStatusCanceled {
+		err := b.payoutsService.Archive(ctxPayoutReq, req.UUID)
 		if err != nil {
 			return err
 		}

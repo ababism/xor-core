@@ -24,8 +24,9 @@ const (
 		FROM products
 	`
 	createProductQuery = `
-		INSERT INTO products (uuid, name, price, is_available)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO products (name, price, is_available)
+		VALUES ($1, $2, $3)
+		RETURNING uuid
 	`
 	updateProductQuery = `
 		UPDATE products
@@ -93,7 +94,7 @@ func NewProductRepository(db *sqlx.DB) adapters.ProductRepository {
 
 func (r *productRepository) Get(ctx context.Context, id uuid.UUID) (*domain.ProductGet, error) {
 	tr := global.Tracer(adapters.ServiceNameProduct)
-	_, span := tr.Start(ctx, spanDefaultProduct+".Get")
+	_, span := tr.Start(ctx, spanDefaultProduct+".GetByLogin")
 	defer span.End()
 
 	products, err := r.List(ctx, &domain.ProductFilter{UUID: &id})
@@ -137,21 +138,25 @@ func (r *productRepository) List(ctx context.Context, filter *domain.ProductFilt
 	return xcommon.ConvertSliceP(products, repo_models.ToProductDomain), nil
 }
 
-func (r *productRepository) Create(ctx context.Context, product *domain.ProductCreate) error {
+func (r *productRepository) Create(ctx context.Context, product *domain.ProductCreate) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNameProduct)
 	_, span := tr.Start(ctx, spanDefaultProduct+".Create")
 	defer span.End()
 
 	productPostgres := repo_models.CreateToProductPostgres(product)
-	_, err := r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createProductQuery,
-		productPostgres.UUID,
 		productPostgres.Name,
 		productPostgres.Price,
 		productPostgres.IsAvailable,
 	)
-	return err
+
+	var id uuid.UUID
+	err := row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, err
 }
 
 func (r *productRepository) Update(ctx context.Context, product *domain.ProductUpdate) error {

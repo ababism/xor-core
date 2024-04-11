@@ -31,7 +31,7 @@ func getDiscountTracerSpan(ctx context.Context, name string) (trace.Tracer, cont
 }
 
 func (s *discountService) Get(ctx context.Context, id uuid.UUID) (*domain.DiscountGet, error) {
-	_, newCtx, span := getDiscountTracerSpan(ctx, ".Get")
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	discount, err := s.r.Get(newCtx, id)
@@ -70,16 +70,16 @@ func (s *discountService) EndDiscount(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (s *discountService) Create(ctx context.Context, discount *domain.DiscountCreate) error {
+func (s *discountService) Create(ctx context.Context, discount *domain.DiscountCreate) (*uuid.UUID, error) {
 	_, newCtx, span := getDiscountTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	err := s.r.Create(newCtx, discount)
+	id, err := s.r.Create(newCtx, discount)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (s *discountService) Update(ctx context.Context, discount *domain.DiscountUpdate) error {

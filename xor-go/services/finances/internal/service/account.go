@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"xor-go/services/finances/internal/domain"
@@ -28,11 +29,24 @@ func getAccountTracerSpan(ctx context.Context, name string) (trace.Tracer, conte
 	return tr, newCtx, span
 }
 
-func (s *bankAccountService) Get(ctx context.Context, login string) (*domain.BankAccountGet, error) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
+func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*domain.BankAccountGet, error) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	filter := domain.CreateBankAccountFilterLogin(&login)
+	account, err := s.r.Get(newCtx, &filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, err
+}
+
+func (s *bankAccountService) GetById(ctx context.Context, id uuid.UUID) (*domain.BankAccountGet, error) {
+	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
+	defer span.End()
+
+	filter := domain.CreateBankAccountFilterId(&id)
 	account, err := s.r.Get(newCtx, &filter)
 	if err != nil {
 		return nil, err
@@ -53,16 +67,16 @@ func (s *bankAccountService) List(ctx context.Context, filter *domain.BankAccoun
 	return accounts, err
 }
 
-func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountCreate) error {
+func (s *bankAccountService) Create(ctx context.Context, account *domain.BankAccountCreate) (*uuid.UUID, error) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	err := s.r.Create(newCtx, account)
+	id, err := s.r.Create(newCtx, account)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return err
+	return id, err
 }
 
 func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAccountUpdate) error {
@@ -77,11 +91,11 @@ func (s *bankAccountService) Update(ctx context.Context, account *domain.BankAcc
 	return err
 }
 
-func (s *bankAccountService) ChangeFunds(ctx context.Context, login string, diff float32) error {
+func (s *bankAccountService) ChangeFunds(ctx context.Context, id uuid.UUID, diff float32) error {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".AddDiffToFunds")
 	defer span.End()
 
-	account, err := s.Get(ctx, login)
+	account, err := s.GetById(ctx, id)
 	if err != nil {
 		return err
 	}

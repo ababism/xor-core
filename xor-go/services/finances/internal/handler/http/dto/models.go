@@ -66,3 +66,11 @@ type PurchaseRequest struct {
 	WebhookURL string    `json:"webhook_url"`
 	StartedAt  time.Time `json:"started_at"`
 }
+
+type ModelUUID struct {
+	UUID uuid.UUID `json:"uuid"`
+}
+
+type ModelUUIDs struct {
+	UUIDs []uuid.UUID `json:"uuids"`
+}

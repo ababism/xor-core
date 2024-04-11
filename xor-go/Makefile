@@ -40,7 +40,7 @@ down-obs:
 # Миграции
 
 migrate-up:
-	migrate -path ./xor-go/services/finances/migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST):$(FINANCES_POSTGRES_PORT)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' up
+	migrate -path ./xor-go/services/finances/migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST_LOCAL):$(FINANCES_POSTGRES_PORT_EXTERNAL)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' up
 
 migrate-down:
-	migrate -path ./xor-go/services/finances/migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST):$(FINANCES_POSTGRES_PORT)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' down 1
+	migrate -path ./xor-go/services/finances/migrations -database 'postgres://$(FINANCES_POSTGRES_USER):$(FINANCES_POSTGRES_PASSWORD)@$(FINANCES_POSTGRES_HOST_LOCAL):$(FINANCES_POSTGRES_PORT_EXTERNAL)/$(FINANCES_POSTGRES_NAME)?sslmode=disable' down 1
