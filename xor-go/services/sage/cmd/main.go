@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	configPath          = "./services/sage/configs/config.dev.yml"
-	resourcesConfigPath = "./services/sage/configs/resources-config.yml"
+	configPath          = "./services/sage/config/config.local.yml"
+	resourcesConfigPath = "./services/sage/config/resources-config.yml"
 )
 
 func main() {

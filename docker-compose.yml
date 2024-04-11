@@ -98,13 +98,13 @@ services:
 
   # SAGE
 
-#  sage-svc:
-#    image: 'sage-svc:latest'
-#    build:
-#      context: '.'
-#      dockerfile: './xor-go/sage.Dockerfile'
-#    ports:
-#      - "8084:8084"
+  sage-svc:
+    image: 'sage-svc:latest'
+    build:
+      context: '.'
+      dockerfile: './xor-go/sage.Dockerfile'
+    ports:
+      - "8084:8084"
 
   # IDM
 

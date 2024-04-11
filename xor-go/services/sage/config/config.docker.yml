@@ -1,0 +1,24 @@
+app:
+  name: "sage"
+  env: "dev"
+  version: "1.0"
+
+http:
+  host: "localhost"
+  port: 8084
+  read_timeout: "1s"
+  write_timeout: "1s"
+
+logger:
+  env: "dev" # "prod"
+  level: "info"
+  outputs:
+    - "stdout"
+  error_outputs:
+    - "stderr"
+  encoding: "json"
+  sentry_level: "error"
+  sentry_dsn: ""
+
+idm-client:
+  host: "idm-svc:8085"
