@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.xority.feedback.controller.dto.CreateFeedbackResourceRequest;
 import ru.xority.feedback.controller.dto.CreateFeedbackResourceResponse;
 import ru.xority.feedback.controller.dto.GetFeedbackResourceResponse;
+import ru.xority.feedback.controller.dto.GetFeedbackResourceStatsResponse;
 import ru.xority.feedback.controller.dto.UpdateFeedbackResourceInfoRequest;
+import ru.xority.feedback.entity.FeedbackItemEntity;
+import ru.xority.feedback.entity.FeedbackItemFilter;
 import ru.xority.feedback.entity.FeedbackResourceEntity;
 import ru.xority.feedback.entity.FeedbackResourceFilter;
+import ru.xority.feedback.service.FeedbackItemService;
 import ru.xority.feedback.service.FeedbackResourceService;
 import ru.xority.response.SuccessResponse;
 import ru.xority.sage.SageHeader;
@@ -35,6 +39,7 @@ import ru.xority.sage.SageHeader;
 @RequiredArgsConstructor
 public class FeedbackResourceController {
     private final FeedbackResourceService feedbackResourceService;
+    private final FeedbackItemService feedbackItemService;
 
     @GetMapping("/list")
     public ResponseEntity<List<GetFeedbackResourceResponse>> list(@RequestParam Optional<UUID> resourceUuid,
@@ -72,10 +77,27 @@ public class FeedbackResourceController {
         return SuccessResponse.create200("Feedback resource info is updated");
     }
 
-    @PutMapping("/set-activate/{resourceUuid}")
+    @PutMapping("/set-active/{resourceUuid}")
     public ResponseEntity<SuccessResponse> deactivate(@PathVariable UUID resourceUuid,
                                                       @RequestParam boolean active) {
         feedbackResourceService.setActive(resourceUuid, active);
         return SuccessResponse.create200("Feedback resource active status is updated");
+    }
+
+    @GetMapping("/{resourceUuid}/stats")
+    public ResponseEntity<GetFeedbackResourceStatsResponse> getStats(@PathVariable UUID resourceUuid) {
+        FeedbackItemFilter filter = new FeedbackItemFilter(
+                Optional.empty(),
+                Optional.of(resourceUuid),
+                Optional.empty(),
+                Optional.empty()
+        );
+        double averageRating = feedbackItemService.list(filter)
+                .stream()
+                .mapToInt(FeedbackItemEntity::getRating)
+                .average()
+                .orElse(0);
+        GetFeedbackResourceStatsResponse response = new GetFeedbackResourceStatsResponse(resourceUuid, averageRating);
+        return ResponseEntity.ok(response);
     }
 }

@@ -33,7 +33,9 @@ public class FeedbackItemService {
                 Optional.empty()
         );
         Optional<FeedbackItemEntity> itemFromRepoO = feedbackItemRepository.get(filter);
-        itemFromRepoO.orElseThrow(() -> new BadRequestException("Feedback item is already created"));
+        if (itemFromRepoO.isPresent()) {
+            throw new BadRequestException("Feedback item is already created");
+        }
 
         feedbackItemRepository.create(item);
         return item.getUuid();

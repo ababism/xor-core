@@ -1,10 +1,3 @@
--- private UUID uuid;
--- private String name;
--- private String description;
--- private UUID createdByUuid;
--- private LocalDateTime createdAt;
--- private boolean active;
-
 CREATE TABLE feedback_resource
 (
     uuid            uuid      NOT NULL UNIQUE,
@@ -15,13 +8,6 @@ CREATE TABLE feedback_resource
     active          bool      NOT NULL,
     PRIMARY KEY (uuid)
 );
-
--- private UUID uuid;
--- private UUID resourceUuid;
--- private UUID createdByUuid;
--- private String text;
--- private int rating;
--- private boolean active;
 
 CREATE TABLE feedback_item
 (
