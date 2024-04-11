@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/google/uuid"
 	"regexp"
 	"strings"
+	idmproto "xor-go/proto/idm"
 	"xor-go/services/sage/internal/config"
 	"xor-go/services/sage/internal/domain"
 	"xor-go/services/sage/internal/service/adapter"
-	"xor-go/services/sage/pkg/idm"
 )
 
 const xorAuthorizationHeader = "Xor-Authorization"
@@ -22,17 +23,17 @@ var _ adapter.GatewayService = &gatewayService{}
 type gatewayService struct {
 	resourceToConfig map[string]*config.ResourceConfig
 	restyClient      *resty.Client
-	idmClient        *idm.Client
+	idmGrpcClient    idmproto.IdmClient
 }
 
 func NewGatewayResourceService(
 	resourceToConfig map[string]*config.ResourceConfig,
-	IdmClient *idm.Client,
+	idmGrpcClient idmproto.IdmClient,
 ) adapter.GatewayService {
 	return &gatewayService{
 		resourceToConfig: resourceToConfig,
 		restyClient:      resty.New(),
-		idmClient:        IdmClient,
+		idmGrpcClient:    idmGrpcClient,
 	}
 }
 
@@ -80,11 +81,15 @@ func (r *gatewayService) Verify(
 	ctx context.Context,
 	passSecureResourceInfo *domain.PassSecureResourceInfo,
 ) (*domain.IdmVerifyResponse, error) {
-	verifyRequest := &idm.VerifyRequest{AccessToken: passSecureResourceInfo.AccessToken}
-	verifyResponse, err := r.idmClient.Verify(verifyRequest)
+	verifyRequest := &idmproto.VerifyRequest{AccessToken: passSecureResourceInfo.AccessToken}
+	verifyResponse, err := r.idmGrpcClient.Verify(ctx, verifyRequest)
 	if err != nil {
 		return nil, err
 	}
+	//verifyResponse, err := r.idmGrpcClient.(verifyRequest)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	assignedRoles := make(map[string]bool)
 	for _, role := range verifyResponse.Roles {
@@ -107,8 +112,12 @@ func (r *gatewayService) Verify(
 		assignedRolesSlice = append(assignedRolesSlice, role)
 	}
 
+	parsedAccountUuid, err := uuid.Parse(verifyResponse.AccountUuid)
+	if err != nil {
+		return nil, err
+	}
 	return &domain.IdmVerifyResponse{
-		AccountUuid:  verifyResponse.AccountUuid,
+		AccountUuid:  parsedAccountUuid,
 		AccountEmail: verifyResponse.AccountEmail,
 		Roles:        assignedRolesSlice,
 	}, nil

@@ -17,7 +17,8 @@ repositories {
 
 dependencies {
     implementation project(path: ':common')
-    
+    implementation project(':idm-proto')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.2.2'
@@ -26,6 +27,7 @@ dependencies {
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.28'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.5'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation("net.devh:grpc-server-spring-boot-starter:3.0.0.RELEASE")
 
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'

@@ -2,5 +2,6 @@ rootProject.name = 'xor-java'
 
 include 'common'
 include 'idm'
+include 'idm-proto'
 include 'notifications'
 include 'feedback'

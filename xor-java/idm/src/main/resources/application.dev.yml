@@ -1,6 +1,10 @@
 server:
   port: 5758
 
+grpc:
+  server:
+    port: 6134
+
 management:
   endpoint:
     health:
@@ -11,6 +15,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?user=postgres&password=qwerty
     driver-class-name: org.postgresql.Driver
+  autoconfigure:
+    exclude: net.devh.boot.grpc.server.autoconfigure.GrpcServerMetricAutoConfiguration
 
 jwt-token:
   salt: ns9ozm2ani3oc6xo4pozoijxsperv8rpo1bsdijvdlpszq

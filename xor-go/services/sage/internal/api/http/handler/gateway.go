@@ -8,7 +8,6 @@ import (
 	"xor-go/services/sage/internal/api/http/model"
 	"xor-go/services/sage/internal/domain"
 	"xor-go/services/sage/internal/service/adapter"
-	"xor-go/services/sage/pkg/idm"
 )
 
 type GatewayHandler struct {
@@ -17,7 +16,11 @@ type GatewayHandler struct {
 	gatewayService adapter.GatewayService
 }
 
-func NewGatewayHandler(logger *zap.Logger, responser *response.HttpResponseWrapper, gatewayService adapter.GatewayService, client *idm.Client) *GatewayHandler {
+func NewGatewayHandler(
+	logger *zap.Logger,
+	responser *response.HttpResponseWrapper,
+	gatewayService adapter.GatewayService,
+) *GatewayHandler {
 	return &GatewayHandler{
 		logger:         logger,
 		responser:      responser,

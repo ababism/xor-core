@@ -19,4 +19,4 @@ logger:
     - "stderr"
 
 idm-client:
-  host: "http://localhost:5758"
+  host: "localhost:6134"

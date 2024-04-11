@@ -2,13 +2,15 @@ package app
 
 import (
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"xor-go/pkg/xhttp"
 	"xor-go/pkg/xhttp/response"
 	"xor-go/pkg/xlogger"
+	idmproto "xor-go/proto/idm"
 	"xor-go/services/sage/internal/api/http/handler"
 	"xor-go/services/sage/internal/config"
 	"xor-go/services/sage/internal/service"
-	"xor-go/services/sage/pkg/idm"
 )
 
 type Application struct {
@@ -26,14 +28,17 @@ func NewApp(cfg *config.Config, servicesCfg *config.ResourcesConfig) (*Applicati
 
 	resourceToConfig := getResourceToConfig(servicesCfg)
 
-	idmClient := idm.NewIdmClient(cfg.IdmClientConfig.Host)
-	gatewayResourceService := service.NewGatewayResourceService(resourceToConfig, idmClient)
+	idmGrpcClient, err := getIdmGrpcClient(cfg.IdmClientConfig.Host)
+	if err != nil {
+		return nil, err
+	}
+
+	gatewayResourceService := service.NewGatewayResourceService(resourceToConfig, idmGrpcClient)
 
 	gatewayHandler := handler.NewGatewayHandler(
 		logger,
 		httpResponser,
 		gatewayResourceService,
-		idmClient,
 	)
 
 	return &Application{
@@ -66,4 +71,13 @@ func getResourceToConfig(cfg *config.ResourcesConfig) map[string]*config.Resourc
 		resourceToConfig[resource.Name] = &resource
 	}
 	return resourceToConfig
+}
+
+func getIdmGrpcClient(host string) (idmproto.IdmClient, error) {
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+
+	return idmproto.NewIdmClient(conn), nil
 }

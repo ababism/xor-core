@@ -1,4 +1,4 @@
-name: "[xor-go] Build monorepo"
+name: "[xor-go] Build Golang monorepo"
 
 on:
   push:
