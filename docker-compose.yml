@@ -3,8 +3,8 @@ version: '3.9'
 services:
   courses-svc:
     build:
-      context: 'xor-go/'
-      dockerfile: 'courses.Dockerfile'
+      context: '.'
+      dockerfile: './xor-go/courses.Dockerfile'
     image: 'courses-svc:latest'
     ports:
       - "8080:8080"
@@ -78,8 +78,8 @@ services:
   finances-svc:
     image: 'finances-svc:latest'
     build:
-      context: 'xor-go/'
-      dockerfile: 'finances.Dockerfile'
+      context: '.'
+      dockerfile: './xor-go/finances.Dockerfile'
     ports:
       - "8082:8082"
     depends_on:
@@ -98,20 +98,20 @@ services:
 
   # SAGE
 
-  sage-svc:
-    image: 'sage-svc:latest'
-    build:
-      context: 'xor-go/'
-      dockerfile: 'sage.Dockerfile'
-    ports:
-      - "8084:8084"
+#  sage-svc:
+#    image: 'sage-svc:latest'
+#    build:
+#      context: '.'
+#      dockerfile: './xor-go/sage.Dockerfile'
+#    ports:
+#      - "8084:8084"
 
   # IDM
 
   idm-svc:
     image: 'idm-svc:latest'
     build:
-      context: './'
+      context: '.'
       dockerfile: './xor-java/idm/Dockerfile'
     ports:
       - "8085:8085"
@@ -124,7 +124,7 @@ services:
   feedback-svc:
     image: 'feedback-svc:latest'
     build:
-      context: './'
+      context: '.'
       dockerfile: './xor-java/feedback/Dockerfile'
     ports:
       - "8086:8086"
@@ -137,13 +137,17 @@ services:
   notifications-svc:
     image: 'notifications-svc:latest'
     build:
-      context: './'
+      context: '.'
       dockerfile: './xor-java/notifications/Dockerfile'
     ports:
       - "8087:8087"
     depends_on:
       postgresql_db:
         condition: service_healthy
+    environment:
+      MAIL_USERNAME: admin
+      MAIL_PASSWORD: password
+      EMAIL_NOTIFICATIONS_SENDER_EMAIL: string
 
 networks:
   courses:

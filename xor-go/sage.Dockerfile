@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get install -y protobuf-compiler && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN ../.github/workflows/etc/prepare_protos.sh
+RUN ./.github/workflows/etc/prepare_protos.sh
 
 RUN go build -o sage-svc ./services/sage/cmd
 
