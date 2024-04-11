@@ -15,31 +15,25 @@ up-all:
 up-courses:
 	docker-compose up --build courses-svc
 
-up-finances:
-	docker-compose up --build finances-svc
-
-up-payments:
-	docker-compose up --build paymnets-svc
+up-fp:
+	docker-compose up --build finances-svc payments-svc
 
 up-cfp:
-	docker-compose up --build courses-svc finances-svc paymnets-svc
+	docker-compose up --build courses-svc finances-svc payments-svc
 
 up-d:
-	docker-compose up --build courses-svc finances-svc paymnets-svc -d
+	docker-compose up --build courses-svc finances-svc payments-svc -d
 
 # Падения
 
 down:
-	docker-compose down courses-svc finances-svc paymnets-svc
+	docker-compose down courses-svc finances-svc payments-svc
 
 down-courses:
 	docker-compose down courses-svc
 
-down-finances:
-	docker-compose down finances-svc
-
-down-payments:
-	docker-compose down payments-svc
+down-fp:
+	docker-compose down finances-svc payments-svc
 
 # Observability
 

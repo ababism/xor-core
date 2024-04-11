@@ -36,7 +36,7 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 	return tr, newCtx, span
 }
 
-func (h *Handler) GetBankAccountsLogin(ctx *gin.Context, login string) {
+func (h *Handler) GetBankAccountsLoginLogin(ctx *gin.Context, login string) {
 	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
