@@ -1,4 +1,4 @@
-package ru.xority.idm.controller.dto;
+package ru.xority.idm.api.http.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -9,7 +9,7 @@ import lombok.Data;
  * @author foxleren
  */
 @Data
-public class LogInRequest {
+public class RegisterRequest {
     @JsonProperty("email")
     @NotBlank
     @Email

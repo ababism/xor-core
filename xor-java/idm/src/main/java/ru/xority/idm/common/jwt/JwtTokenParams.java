@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 public class JwtTokenParams {
     private String subject;
-    private Map<String,  String> extraClaims = new HashMap<>();
+    private Map<String, String> extraClaims = new HashMap<>();
 }

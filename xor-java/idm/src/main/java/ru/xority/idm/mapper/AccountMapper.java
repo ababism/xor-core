@@ -2,7 +2,7 @@ package ru.xority.idm.mapper;
 
 import org.mapstruct.Mapper;
 
-import ru.xority.idm.controller.dto.AccountResponse;
+import ru.xority.idm.api.http.dto.AccountResponse;
 import ru.xority.idm.entity.AccountEntity;
 
 /**

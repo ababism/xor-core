@@ -1,4 +1,4 @@
-package ru.xority.idm.controller.dto;
+package ru.xority.idm.api.http.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -25,6 +25,7 @@ CREATE TABLE account_role
 (
     account_uuid uuid NOT NULL,
     role_uuid    uuid NOT NULL,
+    active       bool NOT NULL,
     UNIQUE (account_uuid, role_uuid),
     PRIMARY KEY (account_uuid, role_uuid),
     FOREIGN KEY (account_uuid) REFERENCES account (uuid),

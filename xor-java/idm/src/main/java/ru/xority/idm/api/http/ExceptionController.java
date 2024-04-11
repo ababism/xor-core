@@ -1,4 +1,4 @@
-package ru.xority.idm.controller;
+package ru.xority.idm.api.http;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 

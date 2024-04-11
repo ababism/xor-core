@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import ru.xority.exception.BadRequestException;
 import ru.xority.idm.entity.AccountEntity;
 import ru.xority.idm.entity.AccountFilter;
+import ru.xority.idm.entity.RoleEntity;
 import ru.xority.idm.entity.UpdateAccountInfoEntity;
 import ru.xority.idm.exception.AccountNotFoundException;
 import ru.xority.idm.repository.AccountRepository;
@@ -72,5 +73,13 @@ public class AccountService {
         account.setLastName(entity.getLastName());
         account.setTelegramUsername(entity.getTelegramUsername());
         accountRepository.update(account);
+    }
+
+    public List<RoleEntity> getRoles(UUID accountUuid) {
+        Optional<AccountEntity> accountO = accountRepository.get(AccountFilter.byUuid(accountUuid));
+        if (accountO.isEmpty()) {
+            throw new AccountNotFoundException();
+        }
+        return accountRepository.getActiveRoles(accountUuid);
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import ru.xority.idm.entity.AccountEntity;
 import ru.xority.idm.entity.AccountFilter;
+import ru.xority.idm.entity.RoleEntity;
 import ru.xority.sql.SqlQueryHelper;
 import ru.xority.utils.DataFilterX;
 
@@ -33,6 +35,13 @@ public class AccountPostgresRepository implements AccountRepository {
             UPDATE account SET
             email = ?, password_hash = ?, active = ?, first_name = ?, last_name = ?, telegram_username = ?
             WHERE uuid = ?;
+            """;
+    private static final String GET_ACCOUNT_ROLES = """
+            SELECT role.uuid, role.name, role.created_by_uuid, role.created_at, role.active
+            FROM role
+                JOIN account_role ON role.uuid = account_role.role_uuid
+                    AND role.active = true AND account_role.account_uuid = ? AND account_role.active = true
+                JOIN account ON account_role.account_uuid = account.uuid;
             """;
 
     private final JdbcTemplate jdbcTemplate;
@@ -89,6 +98,17 @@ public class AccountPostgresRepository implements AccountRepository {
 
                     ps.setObject(7, account.getUuid());
                 }
+        );
+    }
+
+    @Override
+    public List<RoleEntity> getActiveRoles(UUID accountUuid) {
+        return jdbcTemplate.query(
+                GET_ACCOUNT_ROLES,
+                ps -> {
+                    ps.setObject(1, accountUuid);
+                },
+                (rs, i) -> RoleEntity.fromResultSet(rs)
         );
     }
 }

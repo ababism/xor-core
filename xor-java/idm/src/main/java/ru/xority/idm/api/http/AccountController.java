@@ -1,4 +1,4 @@
-package ru.xority.idm.controller;
+package ru.xority.idm.api.http;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ru.xority.idm.controller.dto.AccountResponse;
+import ru.xority.idm.api.http.dto.AccountResponse;
 import ru.xority.idm.entity.AccountFilter;
 import ru.xority.idm.entity.UpdateAccountInfoEntity;
 import ru.xority.idm.mapper.AccountMapper;

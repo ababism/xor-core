@@ -1,9 +1,6 @@
 package ru.xority.idm.config.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +20,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import ru.xority.idm.common.jwt.JwtService;
-import ru.xority.idm.entity.AccountEntity;
-import ru.xority.idm.entity.AccountFilter;
 import ru.xority.idm.service.AccountService;
 
 /**
@@ -54,8 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring(7);
         final String email = jwtService.extractEmail(jwt);
         if (StringUtils.hasText(email)
-                && SecurityContextHolder.getContext().getAuthentication() == null)
-        {
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
             System.out.println("???");
             UserDetails userDetails = accountService.userDetailsService().loadUserByUsername(email);
             if (jwtService.isTokenValid(jwt, email)) {

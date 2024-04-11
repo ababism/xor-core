@@ -1,6 +1,5 @@
-package ru.xority.idm.controller.dto;
+package ru.xority.idm.api.http.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

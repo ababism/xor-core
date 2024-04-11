@@ -2,9 +2,11 @@ package ru.xority.idm.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import ru.xority.idm.entity.AccountEntity;
 import ru.xority.idm.entity.AccountFilter;
+import ru.xority.idm.entity.RoleEntity;
 
 /**
  * @author foxleren
@@ -17,4 +19,11 @@ public interface AccountRepository {
     void create(AccountEntity account);
 
     void update(AccountEntity account);
+
+    List<RoleEntity> getActiveRoles(UUID accountUuid);
+
+
+//    List<AccountRole> getRoles(UUID accountUuid);
+//
+//    void assignRole(AccountRole role);
 }
