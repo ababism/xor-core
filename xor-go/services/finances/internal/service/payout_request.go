@@ -19,20 +19,23 @@ const (
 var _ adapters.PayoutRequestService = &payoutRequestService{}
 
 type payoutRequestService struct {
-	rPayout   adapters.PayoutRequestRepository
-	rPayment  adapters.PaymentRepository
-	cPayments adapters.PaymentsClient
+	rPayout      adapters.PayoutRequestRepository
+	rPayment     adapters.PaymentRepository
+	rBankAccount adapters.BankAccountService
+	cPayments    adapters.PaymentsClient
 }
 
 func NewPayoutRequestService(
 	payoutRequestRepo adapters.PayoutRequestRepository,
 	paymentRepo adapters.PaymentRepository,
 	paymentsClient adapters.PaymentsClient,
+	rBankAccount adapters.BankAccountService,
 ) adapters.PayoutRequestService {
 	return &payoutRequestService{
-		rPayout:   payoutRequestRepo,
-		rPayment:  paymentRepo,
-		cPayments: paymentsClient,
+		rPayout:      payoutRequestRepo,
+		rPayment:     paymentRepo,
+		rBankAccount: rBankAccount,
+		cPayments:    paymentsClient,
 	}
 }
 
@@ -43,7 +46,7 @@ func getPayoutRequestTracerSpan(ctx context.Context, name string) (trace.Tracer,
 }
 
 func (s *payoutRequestService) Get(ctx context.Context, id uuid.UUID) (*domain.PayoutRequestGet, error) {
-	_, newCtx, span := getPayoutRequestTracerSpan(ctx, ".Get")
+	_, newCtx, span := getPayoutRequestTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	payoutRequest, err := s.rPayout.Get(newCtx, id)
@@ -69,13 +72,13 @@ func (s *payoutRequestService) List(
 	return payoutRequests, nil
 }
 
-func (s *payoutRequestService) Create(ctx context.Context, payout *domain.PayoutRequestCreate) error {
+func (s *payoutRequestService) Create(ctx context.Context, payout *domain.PayoutRequestCreate) (*uuid.UUID, error) {
 	_, newCtx, span := getPayoutRequestTracerSpan(ctx, ".Create")
 	defer span.End()
 
 	id, err := s.rPayout.Create(newCtx, payout)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	createPayout, err := s.cPayments.CreatePayout(ctx, &domain.PaymentsCreatePayout{
@@ -90,16 +93,21 @@ func (s *payoutRequestService) Create(ctx context.Context, payout *domain.Payout
 		IsTest:      false,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	//if createPayout.Status {
-	//
-	//}
-
 	log.Logger.Info(fmt.Sprintf("Payout created: %v", createPayout))
 
-	return nil
+	time.Sleep(5 * time.Second)
+
+	log.Logger.Info(fmt.Sprintf("Payout status: %v", createPayout.Status))
+	if createPayout.Status == domain.PaymentsStatusSucceeded {
+		err = s.rBankAccount.ChangeFunds(ctx, payout.Receiver, -1*payout.Amount)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return id, nil
 }
 
 func (s *payoutRequestService) Archive(ctx context.Context, id uuid.UUID) error {
@@ -111,7 +119,7 @@ func (s *payoutRequestService) Archive(ctx context.Context, id uuid.UUID) error 
 		return err
 	}
 
-	err = s.rPayment.Create(ctx, &domain.PaymentCreate{
+	_, err = s.rPayment.Create(ctx, &domain.PaymentCreate{
 		Sender:   uuid.Nil,
 		Receiver: payout.Receiver,
 		Data:     domain.PaymentData{},
@@ -119,11 +127,6 @@ func (s *payoutRequestService) Archive(ctx context.Context, id uuid.UUID) error 
 		Status:   domain.STATUS_COMPLETED,
 		EndedAt:  time.Now(),
 	})
-	if err != nil {
-		return err
-	}
-
-	err = s.rPayout.Delete(newCtx, id)
 	if err != nil {
 		return err
 	}

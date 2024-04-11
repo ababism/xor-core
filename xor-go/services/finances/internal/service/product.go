@@ -31,7 +31,7 @@ func getProductTracerSpan(ctx context.Context, name string) (trace.Tracer, conte
 }
 
 func (s *productService) Get(ctx context.Context, id uuid.UUID) (*domain.ProductGet, error) {
-	_, newCtx, span := getProductTracerSpan(ctx, ".Get")
+	_, newCtx, span := getProductTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	product, err := s.r.Get(newCtx, id)
@@ -66,16 +66,16 @@ func (s *productService) List(ctx context.Context, filter *domain.ProductFilter)
 	return products, nil
 }
 
-func (s *productService) Create(ctx context.Context, product *domain.ProductCreate) error {
+func (s *productService) Create(ctx context.Context, product *domain.ProductCreate) (*uuid.UUID, error) {
 	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	err := s.r.Create(newCtx, product)
+	id, err := s.r.Create(newCtx, product)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (s *productService) Update(ctx context.Context, product *domain.ProductUpdate) error {

@@ -8,6 +8,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
+	"xor-go/services/finances/internal/handler/http/dto"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -34,7 +35,7 @@ func getPaymentTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 }
 
 func (h *Handler) GetPaymentsUuid(ctx *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getPaymentTracerSpan(ctx, ".Get")
+	_, newCtx, span := getPaymentTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	domain, err := h.paymentService.Get(newCtx, uuid)
@@ -83,11 +84,11 @@ func (h *Handler) PostPayments(ctx *gin.Context) {
 	}
 
 	domain := CreateToDomain(body)
-	err := h.paymentService.Create(newCtx, &domain)
+	id, err := h.paymentService.Create(newCtx, &domain)
 	if err != nil {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, dto.ModelUUID{UUID: *id})
 }

@@ -10,6 +10,7 @@ type PurchaseRequest struct {
 	UUID       uuid.UUID   `db:"uuid"`
 	Sender     *uuid.UUID  `db:"sender"`
 	Receiver   *uuid.UUID  `db:"receiver"`
+	Status     string      `db:"status"`
 	Amount     float32     `db:"amount"`
 	Products   []uuid.UUID `db:"products"`
 	WebhookURL string      `db:"webhook_url"`
@@ -22,6 +23,7 @@ func CreateToPurchaseRequestPostgres(model *domain.PurchaseRequestCreate, amount
 		UUID:       id,
 		Sender:     model.Sender,
 		Receiver:   model.Receiver,
+		Status:     model.Status,
 		Amount:     amount,
 		Products:   model.Products,
 		WebhookURL: model.WebhookURL,
@@ -34,6 +36,7 @@ func ToPurchaseRequestDomain(model *PurchaseRequest) *domain.PurchaseRequestGet 
 		UUID:       model.UUID,
 		Sender:     model.Sender,
 		Receiver:   model.Receiver,
+		Status:     model.Status,
 		Amount:     model.Amount,
 		Products:   model.Products,
 		WebhookURL: model.WebhookURL,

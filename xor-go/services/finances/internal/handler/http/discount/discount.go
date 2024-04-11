@@ -8,6 +8,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
+	"xor-go/services/finances/internal/handler/http/dto"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -34,7 +35,7 @@ func getDiscountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context
 }
 
 func (h *Handler) GetDiscountsId(ctx *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getDiscountTracerSpan(ctx, ".Get")
+	_, newCtx, span := getDiscountTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	model, err := h.discountService.Get(newCtx, uuid)
@@ -83,13 +84,13 @@ func (h *Handler) PostDiscounts(ctx *gin.Context) {
 	}
 
 	model := CreateToDomain(body)
-	err := h.discountService.Create(newCtx, &model)
+	id, err := h.discountService.Create(newCtx, &model)
 	if err != nil {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, dto.ModelUUID{UUID: *id})
 }
 
 func (h *Handler) PutDiscounts(ctx *gin.Context) {

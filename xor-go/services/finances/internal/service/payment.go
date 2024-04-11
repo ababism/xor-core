@@ -34,7 +34,7 @@ func getPaymentTracerSpan(ctx context.Context, name string) (trace.Tracer, conte
 }
 
 func (s *paymentService) Get(ctx context.Context, uuid uuid.UUID) (*domain.PaymentGet, error) {
-	_, newCtx, span := getPaymentTracerSpan(ctx, ".Get")
+	_, newCtx, span := getPaymentTracerSpan(ctx, ".GetByLogin")
 	defer span.End()
 
 	filter := domain.CreatePaymentFilterId(&uuid)
@@ -58,14 +58,14 @@ func (s *paymentService) List(ctx context.Context, filter *domain.PaymentFilter)
 	return payments, nil
 }
 
-func (s *paymentService) Create(ctx context.Context, payment *domain.PaymentCreate) error {
+func (s *paymentService) Create(ctx context.Context, payment *domain.PaymentCreate) (*uuid.UUID, error) {
 	_, newCtx, span := getPaymentTracerSpan(ctx, ".Create")
 	defer span.End()
 
-	err := s.r.Create(newCtx, payment)
+	id, err := s.r.Create(newCtx, payment)
 	if err != nil {
-		return err
+		return id, err
 	}
 
-	return nil
+	return id, nil
 }

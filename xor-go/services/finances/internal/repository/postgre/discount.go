@@ -24,6 +24,7 @@ const (
 	createDiscountQuery = `
 		INSERT INTO discounts (created_by, percent, started_at, ended_at, status)
 		VALUES ($1, $2, $3, $4, $5)
+		RETURNING uuid
 	`
 	updateDiscountQuery = `
 		UPDATE discounts
@@ -55,7 +56,7 @@ func NewDiscountRepository(db *sqlx.DB) adapters.DiscountRepository {
 
 func (r *discountRepository) Get(ctx context.Context, id uuid.UUID) (*domain.DiscountGet, error) {
 	tr := global.Tracer(adapters.ServiceNameDiscount)
-	_, span := tr.Start(ctx, spanDefaultDiscount+".Get")
+	_, span := tr.Start(ctx, spanDefaultDiscount+".GetByLogin")
 	defer span.End()
 
 	discounts, err := r.List(ctx, &domain.DiscountFilter{UUID: &id})
@@ -80,14 +81,13 @@ func (r *discountRepository) List(ctx context.Context, filter *domain.DiscountFi
 	return xcommon.ConvertSliceP(discounts, repo_models.ToDiscountDomain), nil
 }
 
-func (r *discountRepository) Create(ctx context.Context, discount *domain.DiscountCreate) error {
+func (r *discountRepository) Create(ctx context.Context, discount *domain.DiscountCreate) (*uuid.UUID, error) {
 	tr := global.Tracer(adapters.ServiceNameDiscount)
 	_, span := tr.Start(ctx, spanDefaultDiscount+".Create")
 	defer span.End()
 
 	discountPostgres := repo_models.CreateToDiscountPostgres(discount)
-	_, err := r.db.ExecContext(
-		ctx,
+	row := r.db.QueryRow(
 		createDiscountQuery,
 		discountPostgres.CreatedBy,
 		discountPostgres.Percent,
@@ -95,7 +95,13 @@ func (r *discountRepository) Create(ctx context.Context, discount *domain.Discou
 		discountPostgres.EndedAt,
 		discountPostgres.Status,
 	)
-	return err
+
+	var id uuid.UUID
+	err := row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+	return &id, err
 }
 
 func (r *discountRepository) Update(ctx context.Context, discount *domain.DiscountUpdate) error {

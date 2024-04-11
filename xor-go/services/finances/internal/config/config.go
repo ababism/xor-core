@@ -11,6 +11,7 @@ import (
 	"xor-go/pkg/xlogger"
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
+	"xor-go/services/finances/internal/daemon/banker"
 	"xor-go/services/finances/internal/repository/payments"
 )
 
@@ -23,6 +24,7 @@ type Config struct {
 	GracefulShutdown *xshutdown.Config `mapstructure:"graceful_shutdown"`
 	Tracer           *xtracer.Config   `mapstructure:"tracer"`
 	Metrics          *metrics.Config   `mapstructure:"metrics"`
+	Banker           *banker.Config    `mapstructure:"banker"`
 }
 
 func NewConfig(filePath string, appName string) (*Config, error) {

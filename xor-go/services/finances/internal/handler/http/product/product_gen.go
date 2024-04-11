@@ -49,44 +49,44 @@ type ProductUpdate struct {
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 
-// PostProductsListJSONBody defines parameters for PostProductsList.
-type PostProductsListJSONBody = []ProductCreate
+// PostProductListJSONBody defines parameters for PostProductList.
+type PostProductListJSONBody = []ProductCreate
 
-// GetProductsJSONRequestBody defines body for GetProducts for application/json ContentType.
-type GetProductsJSONRequestBody = ProductFilter
+// GetProductJSONRequestBody defines body for GetProduct for application/json ContentType.
+type GetProductJSONRequestBody = ProductFilter
 
-// PostProductsJSONRequestBody defines body for PostProducts for application/json ContentType.
-type PostProductsJSONRequestBody = ProductCreate
+// PostProductJSONRequestBody defines body for PostProduct for application/json ContentType.
+type PostProductJSONRequestBody = ProductCreate
 
-// PutProductsJSONRequestBody defines body for PutProducts for application/json ContentType.
-type PutProductsJSONRequestBody = ProductUpdate
+// PutProductJSONRequestBody defines body for PutProduct for application/json ContentType.
+type PutProductJSONRequestBody = ProductUpdate
 
-// PostProductsListJSONRequestBody defines body for PostProductsList for application/json ContentType.
-type PostProductsListJSONRequestBody = PostProductsListJSONBody
+// PostProductListJSONRequestBody defines body for PostProductList for application/json ContentType.
+type PostProductListJSONRequestBody = PostProductListJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List products
-	// (GET /products)
-	GetProducts(c *gin.Context)
+	// (GET /product)
+	GetProduct(c *gin.Context)
 	// Create a product
-	// (POST /products)
-	PostProducts(c *gin.Context)
+	// (POST /product)
+	PostProduct(c *gin.Context)
 	// Update a product
-	// (PUT /products)
-	PutProducts(c *gin.Context)
+	// (PUT /product)
+	PutProduct(c *gin.Context)
 	// Create many products
-	// (POST /products/list)
-	PostProductsList(c *gin.Context)
+	// (POST /product/list)
+	PostProductList(c *gin.Context)
 	// Get products price with discounts
-	// (GET /products/price/{uuids})
-	GetProductsPriceUuids(c *gin.Context, uuids []openapi_types.UUID)
+	// (GET /product/price/{uuids})
+	GetProductPriceUuids(c *gin.Context, uuids []openapi_types.UUID)
 	// Get product by ID
-	// (GET /products/{id})
-	GetProductsId(c *gin.Context, id openapi_types.UUID)
+	// (GET /product/{id})
+	GetProductId(c *gin.Context, id openapi_types.UUID)
 	// Disable a product
-	// (PUT /products/{id}/disable)
-	PutProductsIdDisable(c *gin.Context, id openapi_types.UUID)
+	// (PUT /product/{id}/disable)
+	PutProductIdDisable(c *gin.Context, id openapi_types.UUID)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -98,8 +98,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// GetProducts operation middleware
-func (siw *ServerInterfaceWrapper) GetProducts(c *gin.Context) {
+// GetProduct operation middleware
+func (siw *ServerInterfaceWrapper) GetProduct(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -108,11 +108,11 @@ func (siw *ServerInterfaceWrapper) GetProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetProducts(c)
+	siw.Handler.GetProduct(c)
 }
 
-// PostProducts operation middleware
-func (siw *ServerInterfaceWrapper) PostProducts(c *gin.Context) {
+// PostProduct operation middleware
+func (siw *ServerInterfaceWrapper) PostProduct(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -121,11 +121,11 @@ func (siw *ServerInterfaceWrapper) PostProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostProducts(c)
+	siw.Handler.PostProduct(c)
 }
 
-// PutProducts operation middleware
-func (siw *ServerInterfaceWrapper) PutProducts(c *gin.Context) {
+// PutProduct operation middleware
+func (siw *ServerInterfaceWrapper) PutProduct(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -134,11 +134,11 @@ func (siw *ServerInterfaceWrapper) PutProducts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutProducts(c)
+	siw.Handler.PutProduct(c)
 }
 
-// PostProductsList operation middleware
-func (siw *ServerInterfaceWrapper) PostProductsList(c *gin.Context) {
+// PostProductList operation middleware
+func (siw *ServerInterfaceWrapper) PostProductList(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -147,11 +147,11 @@ func (siw *ServerInterfaceWrapper) PostProductsList(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostProductsList(c)
+	siw.Handler.PostProductList(c)
 }
 
-// GetProductsPriceUuids operation middleware
-func (siw *ServerInterfaceWrapper) GetProductsPriceUuids(c *gin.Context) {
+// GetProductPriceUuids operation middleware
+func (siw *ServerInterfaceWrapper) GetProductPriceUuids(c *gin.Context) {
 
 	var err error
 
@@ -171,11 +171,11 @@ func (siw *ServerInterfaceWrapper) GetProductsPriceUuids(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetProductsPriceUuids(c, uuids)
+	siw.Handler.GetProductPriceUuids(c, uuids)
 }
 
-// GetProductsId operation middleware
-func (siw *ServerInterfaceWrapper) GetProductsId(c *gin.Context) {
+// GetProductId operation middleware
+func (siw *ServerInterfaceWrapper) GetProductId(c *gin.Context) {
 
 	var err error
 
@@ -195,11 +195,11 @@ func (siw *ServerInterfaceWrapper) GetProductsId(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetProductsId(c, id)
+	siw.Handler.GetProductId(c, id)
 }
 
-// PutProductsIdDisable operation middleware
-func (siw *ServerInterfaceWrapper) PutProductsIdDisable(c *gin.Context) {
+// PutProductIdDisable operation middleware
+func (siw *ServerInterfaceWrapper) PutProductIdDisable(c *gin.Context) {
 
 	var err error
 
@@ -219,7 +219,7 @@ func (siw *ServerInterfaceWrapper) PutProductsIdDisable(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PutProductsIdDisable(c, id)
+	siw.Handler.PutProductIdDisable(c, id)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -249,11 +249,11 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/products", wrapper.GetProducts)
-	router.POST(options.BaseURL+"/products", wrapper.PostProducts)
-	router.PUT(options.BaseURL+"/products", wrapper.PutProducts)
-	router.POST(options.BaseURL+"/products/list", wrapper.PostProductsList)
-	router.GET(options.BaseURL+"/products/price/:uuids", wrapper.GetProductsPriceUuids)
-	router.GET(options.BaseURL+"/products/:id", wrapper.GetProductsId)
-	router.PUT(options.BaseURL+"/products/:id/disable", wrapper.PutProductsIdDisable)
+	router.GET(options.BaseURL+"/product", wrapper.GetProduct)
+	router.POST(options.BaseURL+"/product", wrapper.PostProduct)
+	router.PUT(options.BaseURL+"/product", wrapper.PutProduct)
+	router.POST(options.BaseURL+"/product/list", wrapper.PostProductList)
+	router.GET(options.BaseURL+"/product/price/:uuids", wrapper.GetProductPriceUuids)
+	router.GET(options.BaseURL+"/product/:id", wrapper.GetProductId)
+	router.PUT(options.BaseURL+"/product/:id/disable", wrapper.PutProductIdDisable)
 }

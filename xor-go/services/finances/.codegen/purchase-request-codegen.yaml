@@ -80,6 +80,7 @@ components:
         - Products
         - WebhookURL
         - CreatedAt
+        - Status
       properties:
         UUID:
           type: string
@@ -97,6 +98,8 @@ components:
             format: uuid
         WebhookURL:
           type: string
+        Status:
+          type: string
         CreatedAt:
           type: string
           format: date-time
@@ -106,6 +109,7 @@ components:
         - Products
         - WebhookURL
         - CreatedAt
+        - Status
       properties:
         Sender:
           type: string
@@ -113,6 +117,8 @@ components:
         Receiver:
           type: string
           format: uuid
+        Status:
+          type: string
         Products:
           type: array
           items:
@@ -135,6 +141,8 @@ components:
         Receiver:
           type: string
           format: uuid
+        Status:
+          type: string
         WebhookURL:
           type: string
         CreatedAt:

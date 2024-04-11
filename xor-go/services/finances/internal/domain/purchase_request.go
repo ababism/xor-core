@@ -9,6 +9,7 @@ type PurchaseRequestGet struct {
 	UUID       uuid.UUID
 	Sender     *uuid.UUID
 	Receiver   *uuid.UUID
+	Status     string
 	Amount     float32
 	Products   []uuid.UUID
 	WebhookURL string
@@ -18,6 +19,7 @@ type PurchaseRequestGet struct {
 type PurchaseRequestCreate struct {
 	Sender     *uuid.UUID
 	Receiver   *uuid.UUID
+	Status     string
 	Products   []uuid.UUID
 	WebhookURL string
 	CreatedAt  time.Time
@@ -27,6 +29,7 @@ type PurchaseRequestFilter struct {
 	UUID       *uuid.UUID
 	Sender     *uuid.UUID
 	Receiver   *uuid.UUID
+	Status     *string
 	WebhookURL *string
 	CreatedAt  *time.Time
 }

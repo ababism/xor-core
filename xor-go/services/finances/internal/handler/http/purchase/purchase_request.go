@@ -9,6 +9,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
+	"xor-go/services/finances/internal/handler/http/dto"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -36,7 +37,7 @@ func getAccountTracerSpan(ctx context.Context, name string) (trace.Tracer, conte
 
 func (h *Handler) GetPurchaseRequestsId(ctx *gin.Context, uuid openapitypes.UUID) {
 	ctxTrace := global.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(ctx.Request.Header))
-	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".Get")
+	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".GetByLogin")
 	defer span.End()
 
 	domain, err := h.purchaseRequestService.Get(newCtx, uuid)
@@ -87,13 +88,13 @@ func (h *Handler) PostPurchaseRequests(ctx *gin.Context) {
 	}
 
 	domain := CreateToDomain(body)
-	err := h.purchaseRequestService.Create(newCtx, &domain)
+	id, err := h.purchaseRequestService.Create(newCtx, &domain)
 	if err != nil {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	ctx.JSON(http.StatusOK, dto.ModelUUID{UUID: *id})
 }
 
 func (h *Handler) PutPurchaseRequestsIdArchive(ctx *gin.Context, id openapitypes.UUID) {

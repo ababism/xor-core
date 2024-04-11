@@ -12,6 +12,7 @@ import (
 	"xor-go/pkg/xshutdown"
 	"xor-go/pkg/xtracer"
 	"xor-go/services/finances/internal/config"
+	"xor-go/services/finances/internal/daemon/banker"
 	"xor-go/services/finances/internal/handler/http"
 	"xor-go/services/finances/internal/log"
 	"xor-go/services/finances/internal/repository/payments"
@@ -112,6 +113,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		payoutRequest,
 		paymentRepo,
 		paymentsClient,
+		bankAccountService,
 	)
 	purchaseRequestService := service.NewPurchaseRequestService(
 		purchaseRequest,
@@ -137,6 +139,16 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// инициализируем адрес сервера
 	address := fmt.Sprintf(":%s", cfg.Http.Port)
+
+	// DAEMONS ----------------------------------------------------------------------
+
+	banker.NewBanker(
+		payoutRequestService,
+		purchaseRequestService,
+		productService,
+		bankAccountService,
+		paymentsClient,
+	)
 
 	return &App{
 		cfg:            cfg,
