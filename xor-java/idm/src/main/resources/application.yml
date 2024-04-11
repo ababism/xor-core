@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8085
 
 management:
   endpoint:
@@ -9,7 +9,7 @@ management:
 
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?user=${DB_USER}&password=${DB_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}?user=${POSTGRES_USER}&password=${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   autoconfigure:
     exclude: net.devh.boot.grpc.server.autoconfigure.GrpcServerMetricAutoConfiguration

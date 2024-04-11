@@ -5,6 +5,9 @@ include .env
 up:
 	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait
 
+up-force:
+	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait --force-recreate
+
 up-all:
 	docker-compose -f ./deployments/compose.yaml up -d --build
 	docker compose --file ./docker-compose.yml --env-file ./.env up -d --build --wait

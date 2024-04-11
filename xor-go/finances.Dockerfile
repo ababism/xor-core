@@ -1,7 +1,7 @@
 FROM golang:1.21.4 as build
 WORKDIR /app
 
-COPY . .
+COPY ./xor-go .
 
 ENV CGO_ENABLED=0
 ENV GOOS=linux
