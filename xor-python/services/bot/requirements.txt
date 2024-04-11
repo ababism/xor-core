@@ -1,0 +1,10 @@
+uvicorn==0.29.0 # py3.8
+fastapi==0.110.1 # py3.8
+pydantic==2.6.4 # py3.8
+PyYAML==6.0.1 # py3.6
+mailru-im-bot==0.0.21 # py3.4
+aiohttp==3.9.3 # py3.8
+APScheduler==3.10.4 # py3.6
+pymongo==4.6.3 # py3.7
+aiogram==2.20
+psycopg2-binary==2.8.6
