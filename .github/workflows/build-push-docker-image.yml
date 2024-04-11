@@ -8,6 +8,8 @@ on:
         type: choice
         options:
           - idm
+          - notifications
+          - feedback
         required: true
   workflow_call:
     secrets:
@@ -55,7 +57,7 @@ jobs:
           password: ${{secrets.DOCKER_HUB_PASSWORD}}
 
       - name: Build Docker image
-        run: docker build -t ${{env.DOCKER_REPOSITORY}} -f xor-java/${{env.SERVICE_NAME}}/Dockerfile .
+        run: docker build -t ${{env.DOCKER_REPOSITORY}} -f xor-java/${{env.SERVICE_NAME}}/Dockerfile --no-cache .
 
       - name: Tag Docker image
         run: |
