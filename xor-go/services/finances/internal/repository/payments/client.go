@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"net/http"
@@ -101,8 +102,12 @@ func (c *paymentsClient) CreatePurchase(
 			trace.WithAttributes(attribute.String(domain.KeyRequestID, requestID)),
 		)
 
-		reqEditor := func(newCtx context.Context, req *http.Request) error {
-			req.Header.Set(domain.KeyRequestID, requestID)
+		// Inject the trace context into the request's headers to send trace
+		reqEditor := func(ctx context.Context, req *http.Request) error {
+			global.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+			if ok {
+				req.Header.Set(domain.KeyRequestID, requestID)
+			}
 			return nil
 		}
 		resp, err = c.httpDoer.PostPurchaseWithResponse(ctx, convertToCreatePurchase(*purchase), reqEditor)

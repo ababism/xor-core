@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
@@ -26,7 +27,7 @@ func NewProductHandler(productService adapters.ProductService) *Handler {
 	return &Handler{productService: productService}
 }
 
-func getProductTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
+func getProductTracerSpan(ctx context.Context, name string) (trace.Tracer, context.Context, trace.Span) {
 	tr := global.Tracer(adapters.ServiceNameProduct)
 	newCtx, span := tr.Start(ctx, spanDefaultProduct+name)
 
@@ -34,7 +35,8 @@ func getProductTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 }
 
 func (h *Handler) GetProductsId(c *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getProductTracerSpan(c, ".Get")
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".Get")
 	defer span.End()
 
 	domain, err := h.productService.Get(newCtx, uuid)
@@ -49,7 +51,8 @@ func (h *Handler) GetProductsId(c *gin.Context, uuid openapitypes.UUID) {
 }
 
 func (h *Handler) GetProductsPriceUuids(c *gin.Context, uuids []openapitypes.UUID) {
-	_, newCtx, span := getProductTracerSpan(c, ".GetPrice")
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".GetPrice")
 	defer span.End()
 
 	price, err := h.productService.GetPrice(newCtx, uuids)
@@ -61,19 +64,20 @@ func (h *Handler) GetProductsPriceUuids(c *gin.Context, uuids []openapitypes.UUI
 	c.JSON(http.StatusOK, price)
 }
 
-func (h *Handler) GetProducts(ctx *gin.Context) {
-	_, newCtx, span := getProductTracerSpan(ctx, ".GetList")
+func (h *Handler) GetProducts(c *gin.Context) {
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".GetList")
 	defer span.End()
 
 	var body *ProductFilter
-	if err := ctx.BindJSON(&body); err != nil && err != io.EOF {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+	if err := c.BindJSON(&body); err != nil && err != io.EOF {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
 	domains, err := h.productService.List(newCtx, FilterToDomain(body))
 	if err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -82,36 +86,38 @@ func (h *Handler) GetProducts(ctx *gin.Context) {
 		list[i] = DomainToGet(item)
 	}
 
-	ctx.JSON(http.StatusOK, list)
+	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) PostProductsList(ctx *gin.Context) {
-	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
+func (h *Handler) PostProductsList(c *gin.Context) {
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".Create")
 	defer span.End()
 
 	var body ProductCreate
-	if err := ctx.BindJSON(&body); err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+	if err := c.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
 	domain := CreateToDomain(body)
 	err := h.productService.Create(newCtx, &domain)
 	if err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) PostProducts(ctx *gin.Context) {
-	_, newCtx, span := getProductTracerSpan(ctx, ".Create")
+func (h *Handler) PostProducts(c *gin.Context) {
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".Create")
 	defer span.End()
 
 	var body []ProductCreate
-	if err := ctx.BindJSON(&body); err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+	if err := c.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
@@ -119,36 +125,38 @@ func (h *Handler) PostProducts(ctx *gin.Context) {
 		domain := CreateToDomain(product)
 		err := h.productService.Create(newCtx, &domain)
 		if err != nil {
-			http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+			http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 			return
 		}
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusOK, http.NoBody)
 }
 
-func (h *Handler) PutProducts(ctx *gin.Context) {
-	_, newCtx, span := getProductTracerSpan(ctx, ".Update")
+func (h *Handler) PutProducts(c *gin.Context) {
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".Update")
 	defer span.End()
 
 	var body ProductUpdate
-	if err := ctx.BindJSON(&body); err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+	if err := c.BindJSON(&body); err != nil {
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
 	domain := UpdateToDomain(body)
 	err := h.productService.Update(newCtx, &domain)
 	if err != nil {
-		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
+		http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusOK, http.NoBody)
 }
 
 func (h *Handler) PutProductsIdDisable(c *gin.Context, id openapitypes.UUID) {
-	_, newCtx, span := getProductTracerSpan(c, ".Disable")
+	ctxTrace := global.GetTextMapPropagator().Extract(c, propagation.HeaderCarrier(c.Request.Header))
+	_, newCtx, span := getProductTracerSpan(ctxTrace, ".Disable")
 	defer span.End()
 
 	err := h.productService.SetAvailability(newCtx, id, false)

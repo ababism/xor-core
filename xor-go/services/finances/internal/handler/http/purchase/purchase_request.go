@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
@@ -26,7 +27,7 @@ func NewPurchaseRequestHandler(purchaseRequestService adapters.PurchaseRequestSe
 	return &Handler{purchaseRequestService: purchaseRequestService}
 }
 
-func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.Context, trace.Span) {
+func getAccountTracerSpan(ctx context.Context, name string) (trace.Tracer, context.Context, trace.Span) {
 	tr := global.Tracer(adapters.ServiceNamePurchaseRequest)
 	newCtx, span := tr.Start(ctx, spanDefaultPurchaseRequest+name)
 
@@ -34,7 +35,8 @@ func getAccountTracerSpan(ctx *gin.Context, name string) (trace.Tracer, context.
 }
 
 func (h *Handler) GetPurchaseRequestsId(ctx *gin.Context, uuid openapitypes.UUID) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".Get")
+	ctxTrace := global.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(ctx.Request.Header))
+	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".Get")
 	defer span.End()
 
 	domain, err := h.purchaseRequestService.Get(newCtx, uuid)
@@ -49,7 +51,8 @@ func (h *Handler) GetPurchaseRequestsId(ctx *gin.Context, uuid openapitypes.UUID
 }
 
 func (h *Handler) GetPurchaseRequests(ctx *gin.Context) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".GetList")
+	ctxTrace := global.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(ctx.Request.Header))
+	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".GetList")
 	defer span.End()
 
 	var body *PurchaseRequestFilter
@@ -73,7 +76,8 @@ func (h *Handler) GetPurchaseRequests(ctx *gin.Context) {
 }
 
 func (h *Handler) PostPurchaseRequests(ctx *gin.Context) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".Create")
+	ctxTrace := global.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(ctx.Request.Header))
+	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".Create")
 	defer span.End()
 
 	var body PurchaseRequestCreate
@@ -93,7 +97,8 @@ func (h *Handler) PostPurchaseRequests(ctx *gin.Context) {
 }
 
 func (h *Handler) PutPurchaseRequestsIdArchive(ctx *gin.Context, id openapitypes.UUID) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".Archive")
+	ctxTrace := global.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(ctx.Request.Header))
+	_, newCtx, span := getAccountTracerSpan(ctxTrace, ".Archive")
 	defer span.End()
 
 	err := h.purchaseRequestService.Archive(newCtx, id)

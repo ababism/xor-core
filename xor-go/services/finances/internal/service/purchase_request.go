@@ -131,12 +131,12 @@ func (s *purchaseRequestService) Create(ctx context.Context, purchase *domain.Pu
 
 	_, _, spanSendResult := getPurchaseRequestTracerSpan(newCtxSendPayment, ".Create.SendResultByWebhook")
 	defer newCtxSendPayment.Done()
+
 	webhook := domain.PurchaseRequestWebhook{
-		Sender:   uuid.UUID{},
-		Receiver: uuid.UUID{},
+		Sender:   *purchase.Sender,
+		Receiver: *purchase.Receiver,
 		Products: domain.ConvertProductsToSmall(products),
 	}
-
 	jsonBody, err := json.Marshal(webhook)
 	if err != nil {
 		return err
