@@ -9,6 +9,9 @@ on:
     paths: [ "xor-java/**" ]
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: 3.9
+
 jobs:
   build:
     if: ${{ !github.event.pull_request.draft }}
@@ -21,7 +24,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: ${{env.PYTHON_VERSION}}
 
       - name: Prepare protos
         run: python3 ./xor-python/scripts/prepare_protos.py --xor-java

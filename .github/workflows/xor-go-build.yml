@@ -20,22 +20,33 @@ env:
     ${{ fromJson('{
       "sage": "./services/sage/cmd/main.go"
     }')[github.event.inputs.service || inputs.service] }}
+  PYTHON_VERSION: 3.9
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./xor-go
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{env.PYTHON_VERSION}}
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: ./xor-go/go.mod # this action use repo root
+          go-version-file: ./xor-go/go.mod
           cache: false
-      - name: Run build
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Prepare protos
+        run: ./.github/workflows/etc/prepare_protos.sh
+
+      - name: Run go build
         run: go build -o sage ${{env.SERVICE_ENTRY}}
+        working-directory: ./xor-go
