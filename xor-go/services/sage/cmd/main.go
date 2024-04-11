@@ -18,13 +18,13 @@ func main() {
 		log.Fatalf(err.Error())
 	}
 
-	var servicesCfg config.ResourcesConfig
-	err = config.ParseConfig(resourcesConfigPath, &servicesCfg)
+	var resourcesCfg config.ResourcesConfig
+	err = config.ParseConfig(resourcesConfigPath, &resourcesCfg)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
-	application, err := app.NewApp(&cfg, &servicesCfg)
+	application, err := app.NewApp(&cfg, &resourcesCfg)
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)
 	}

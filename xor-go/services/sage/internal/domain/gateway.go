@@ -15,6 +15,7 @@ type PassSecureResourceInfo struct {
 }
 
 type PassSecureResourceRequest struct {
+	RequestUuid  uuid.UUID
 	Resource     string
 	Route        string
 	Method       string
@@ -25,10 +26,11 @@ type PassSecureResourceRequest struct {
 }
 
 type PassInsecureResourceRequest struct {
-	Resource string
-	Route    string
-	Method   string
-	Body     map[string]any
+	RequestUuid uuid.UUID
+	Resource    string
+	Route       string
+	Method      string
+	Body        map[string]any
 }
 
 type InternalResourceResponse struct {

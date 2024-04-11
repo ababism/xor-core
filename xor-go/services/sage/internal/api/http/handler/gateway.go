@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"net/http"
 	"xor-go/pkg/xhttp/response"
@@ -41,13 +43,27 @@ func (r *GatewayHandler) PassSecure(ctx *gin.Context) {
 		return
 	}
 
+	requestUuid, err := uuid.NewUUID()
+	if err != nil {
+		r.responser.HandleXorError(ctx, err)
+		return
+	}
+	r.logger.Info(
+		fmt.Sprintf(
+			"secure request: rq_uuid=%v; access_token=%v",
+			requestUuid,
+			passSecureResourceRequest.AccessToken,
+		),
+	)
+
 	idmVerifyResponse, err := r.gatewayService.Verify(ctx, model.ToPassSecureResourceInfo(&passSecureResourceRequest))
 	if err != nil {
-		r.responser.HandleXorErrorWithMessage(ctx, err)
+		r.responser.HandleXorError(ctx, err)
 		return
 	}
 
 	internalResourceResponse, err := r.gatewayService.PassSecure(ctx, &domain.PassSecureResourceRequest{
+		RequestUuid:  requestUuid,
 		Resource:     passSecureResourceRequest.Resource,
 		Route:        passSecureResourceRequest.Route,
 		Method:       passSecureResourceRequest.Method,
@@ -57,7 +73,7 @@ func (r *GatewayHandler) PassSecure(ctx *gin.Context) {
 		Roles:        idmVerifyResponse.Roles,
 	})
 	if err != nil {
-		r.responser.HandleXorErrorWithMessage(ctx, err)
+		r.responser.HandleXorError(ctx, err)
 		return
 	}
 
@@ -71,14 +87,22 @@ func (r *GatewayHandler) PassInsecure(ctx *gin.Context) {
 		return
 	}
 
+	requestUuid, err := uuid.NewUUID()
+	if err != nil {
+		r.responser.HandleXorError(ctx, err)
+		return
+	}
+	r.logger.Info(fmt.Sprintf("insecure request: rq_uuid=%v", requestUuid))
+
 	internalResourceResponse, err := r.gatewayService.PassInsecure(ctx, &domain.PassInsecureResourceRequest{
-		Resource: passInsecureResourceRequest.Resource,
-		Route:    passInsecureResourceRequest.Route,
-		Method:   passInsecureResourceRequest.Method,
-		Body:     passInsecureResourceRequest.Body,
+		RequestUuid: requestUuid,
+		Resource:    passInsecureResourceRequest.Resource,
+		Route:       passInsecureResourceRequest.Route,
+		Method:      passInsecureResourceRequest.Method,
+		Body:        passInsecureResourceRequest.Body,
 	})
 	if err != nil {
-		r.responser.HandleXorErrorWithMessage(ctx, err)
+		r.responser.HandleXorError(ctx, err)
 		return
 	}
 

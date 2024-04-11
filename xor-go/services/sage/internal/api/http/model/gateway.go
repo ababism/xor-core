@@ -1,7 +1,7 @@
 package model
 
 type PassSecureResourceRequest struct {
-	AccessToken string         `json:"access_token"`
+	AccessToken string         `json:"access_token" binding:"required"`
 	Resource    string         `json:"resource" binding:"required"`
 	Route       string         `json:"route" binding:"required"`
 	Method      string         `json:"method" binding:"required"`

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
@@ -15,6 +16,7 @@ import (
 )
 
 const xorAuthorizationHeader = "Xor-Authorization"
+const xorRequestUuidHeader = "Xor-Request-Uuid"
 const xorAuthorizationHeaderAuthorized = "AUTHORIZED"
 const xorAuthorizationHeaderNotAuthorized = "NOT_AUTHORIZED"
 
@@ -47,6 +49,7 @@ func (r *gatewayService) PassSecure(
 	}
 
 	xorHeaders := map[string]string{
+		xorRequestUuidHeader:   passSecureResourceRequest.RequestUuid.String(),
 		xorAuthorizationHeader: xorAuthorizationHeaderAuthorized,
 		"Xor-Account-Uuid":     passSecureResourceRequest.AccountUuid.String(),
 		"Xor-Account-Email":    passSecureResourceRequest.AccountEmail,
@@ -68,10 +71,6 @@ func (r *gatewayService) PassSecure(
 		return nil, err
 	}
 
-	if restyResponse.IsError() {
-		return nil, errors.New(restyResponse.String())
-	}
-
 	internalResourceResponse.Status = restyResponse.StatusCode()
 
 	return &internalResourceResponse, nil
@@ -86,10 +85,6 @@ func (r *gatewayService) Verify(
 	if err != nil {
 		return nil, err
 	}
-	//verifyResponse, err := r.idmGrpcClient.(verifyRequest)
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	assignedRoles := make(map[string]bool)
 	for _, role := range verifyResponse.Roles {
@@ -192,6 +187,7 @@ func (r *gatewayService) PassInsecure(
 	}
 
 	xorHeaders := map[string]string{
+		xorRequestUuidHeader:   passInsecureResourceRequest.RequestUuid.String(),
 		xorAuthorizationHeader: xorAuthorizationHeaderNotAuthorized,
 	}
 
@@ -210,6 +206,14 @@ func (r *gatewayService) PassInsecure(
 	}
 
 	internalResourceResponse.Status = resp.StatusCode()
+	if resp.StatusCode() < 500 {
+		var parsedResponseBody map[string]any
+		err = json.Unmarshal([]byte(resp.String()), &parsedResponseBody)
+		if err != nil {
+			return nil, err
+		}
+		internalResourceResponse.Body = parsedResponseBody
+	}
 
 	return &internalResourceResponse, nil
 }

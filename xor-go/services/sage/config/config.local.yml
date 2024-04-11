@@ -10,13 +10,15 @@ http:
   write_timeout: "1s"
 
 logger:
-  environment: "dev"
-  level: "info"
-  encoding: "json"
-  output_paths:
+  env: "dev" # "prod"
+  level: "debug"
+  outputs:
     - "stdout"
-  error_output_paths:
+  error_outputs:
     - "stderr"
+  encoding: "json"
+  sentry_level: "error"
+  sentry_dsn: ""
 
 idm-client:
   host: "localhost:6134"
