@@ -11,6 +11,10 @@ plugins {
     id 'com.google.protobuf' version "${protobufPluginVersion}"
 }
 
+java {
+    sourceCompatibility = '17'
+}
+
 repositories {
     mavenCentral()
 }
