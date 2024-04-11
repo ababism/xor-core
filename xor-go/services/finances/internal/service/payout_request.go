@@ -78,7 +78,7 @@ func (s *payoutRequestService) Create(ctx context.Context, payout *domain.Payout
 		return err
 	}
 
-	createPurchase, err := s.cPayments.CreatePayout(ctx, &domain.PaymentsCreatePayout{
+	createPayout, err := s.cPayments.CreatePayout(ctx, &domain.PaymentsCreatePayout{
 		PaymentUUID: *id,
 		PaymentName: "",
 		Money:       payout.Amount,
@@ -93,7 +93,11 @@ func (s *payoutRequestService) Create(ctx context.Context, payout *domain.Payout
 		return err
 	}
 
-	log.Logger.Info(fmt.Sprintf("Payout created: %v", createPurchase))
+	//if createPayout.Status {
+	//
+	//}
+
+	log.Logger.Info(fmt.Sprintf("Payout created: %v", createPayout))
 
 	return nil
 }
