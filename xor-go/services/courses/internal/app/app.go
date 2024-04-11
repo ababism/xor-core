@@ -137,7 +137,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
-	financesPurchase := purchaseClient.NewClient(purchaseFinanceClient)
+	financesPurchase := purchaseClient.NewClient(purchaseFinanceClient, cfg.PurchaseClient)
 	logger.Info("Init finances purchase client – success")
 
 	// Kafka Producer in repository layer

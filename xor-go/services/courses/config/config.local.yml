@@ -31,8 +31,16 @@ http:
   read_timeout: "1s"
   write_timeout: "1s"
 
+# TODO or this?
+#finances_client:
+#  uri: "http://localhost:8084"
+#
 finances_client:
-  uri: "http://localhost:8084"
+  uri: "http://localhost:8084/api/v1"
+
+purchase_client:
+  uri: "http://localhost:8084/api/v1"
+  webhook_base_path: "http://courses-svc:8080/api/v1/user/access/confirm/"
 
 #  "mongodb://localhost:27017,courses?replicaSet=rs0&authSource=admin&readPreference=primaryPreferred"
 mongo:

@@ -51,7 +51,13 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
 			fmt.Sprintf("%s or %s roles can't buy course", domain.TeacherRole, domain.AdminRole), nil)
 	}
-
+	course, err := c.course.Get(ctx, courseID)
+	if err != nil {
+		return domain.PaymentRedirect{}, err
+	}
+	if course.TeacherID == uuid.Nil || course.TeacherID == (uuid.UUID{}) {
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "course has no teacher", "course has no owner", nil)
+	}
 	lessons, err := c.lesson.GetAllByCourse(ctx, courseID)
 	if err != nil {
 		return domain.PaymentRedirect{}, err
@@ -72,7 +78,7 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	}
 	stringProducts := keys.ProductToStrings(productsToBuy)
 	span.AddEvent("products to buy", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
-	redirect, err := c.purchaseClient.CreatePurchase(ctx, productsToBuy)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, productsToBuy, actor.ID, course.TeacherID)
 	if err != nil {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
@@ -109,9 +115,13 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
+	if lesson.TeacherID == uuid.Nil || lesson.TeacherID == (uuid.UUID{}) {
+		return domain.PaymentRedirect{}, domain.LessonAccess{}, xapperror.New(http.StatusForbidden,
+			"lesson has no teacher", "lesson has no owner", nil)
+	}
 
 	payload := []domain.Product{lesson.Product}
-	redirect, err := c.purchaseClient.CreatePurchase(ctx, payload)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, payload, actor.ID, lesson.TeacherID)
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}

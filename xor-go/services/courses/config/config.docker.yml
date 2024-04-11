@@ -33,7 +33,11 @@ http:
   write_timeout: "15s"
 
 finances_client:
-  uri: "http://location-svc:8084/api/v1"
+  uri: "http://finances-svc:8084/api/v1"
+
+purchase_client:
+  uri: "http://finances-svc:8084/api/v1"
+  webhook_base_path: "http://courses-svc:8080/api/v1/user/access/confirm/"
 
 mongo:
   database: courses

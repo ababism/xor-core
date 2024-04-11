@@ -20,14 +20,16 @@ import (
 var _ adapters.PurchaseClient = Client{}
 
 type Client struct {
-	httpDoer *generated.ClientWithResponses
+	httpDoer        *generated.ClientWithResponses
+	webhookBasePath string
 }
 
-func NewClient(client *generated.ClientWithResponses) *Client {
-	return &Client{httpDoer: client}
+func NewClient(client *generated.ClientWithResponses, config *ClientConfig) *Client {
+	return &Client{httpDoer: client,
+		webhookBasePath: config.WebhookBasePath}
 }
 
-func (c Client) CreatePurchase(initialCtx context.Context, products []domain.Product) (domain.PaymentRedirect, error) {
+func (c Client) CreatePurchase(initialCtx context.Context, products []domain.Product, buyerID, ownerID uuid.UUID) (domain.PaymentRedirect, error) {
 	logger := zapctx.Logger(initialCtx)
 
 	tr := otel.Tracer(domain.ServiceName)
@@ -40,12 +42,11 @@ func (c Client) CreatePurchase(initialCtx context.Context, products []domain.Pro
 	}
 
 	req := generated.PurchaseRequestCreate{
-		CreatedAt: time.Now(),
-		Products:  productIDs,
-		// TODO
-		Receiver:   nil,
-		Sender:     nil,
-		WebhookURL: "",
+		CreatedAt:  time.Now(),
+		Products:   productIDs,
+		Receiver:   &ownerID,
+		Sender:     &buyerID,
+		WebhookURL: c.webhookBasePath + "/" + buyerID.String(),
 	}
 
 	requestID, ok := GetRequestIDFromContext(ctx)
