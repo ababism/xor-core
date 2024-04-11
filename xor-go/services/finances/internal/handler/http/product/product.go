@@ -3,14 +3,12 @@ package product
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
-	"xor-go/services/finances/internal/handler/http/dto"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -102,7 +100,7 @@ func (h *Handler) PostProductList(c *gin.Context) {
 		return
 	}
 
-	productIds := make([]uuid.UUID, 0)
+	productIds := make([]ModelUUID, 0)
 
 	for _, product := range body {
 		domain := CreateToDomain(product)
@@ -111,10 +109,10 @@ func (h *Handler) PostProductList(c *gin.Context) {
 			http2.AbortWithBadResponse(c, http2.MapErrorToCode(err), err)
 			return
 		}
-		productIds = append(productIds, *productId)
+		productIds = append(productIds, ModelUUID{*productId})
 	}
 
-	c.JSON(http.StatusOK, dto.ModelUUIDs{UUIDs: productIds})
+	c.JSON(http.StatusOK, productIds)
 }
 
 func (h *Handler) PostProduct(c *gin.Context) {
@@ -135,7 +133,7 @@ func (h *Handler) PostProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.ModelUUID{UUID: *id})
+	c.JSON(http.StatusOK, ModelUUID{UUID: *id})
 }
 
 func (h *Handler) PutProduct(c *gin.Context) {

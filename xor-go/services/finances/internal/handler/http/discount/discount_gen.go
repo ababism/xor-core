@@ -52,6 +52,11 @@ type DiscountUpdate struct {
 	UUID      openapi_types.UUID `json:"UUID"`
 }
 
+// ModelUUID defines model for ModelUUID.
+type ModelUUID struct {
+	UUID openapi_types.UUID `json:"UUID"`
+}
+
 // GetDiscountsJSONRequestBody defines body for GetDiscounts for application/json ContentType.
 type GetDiscountsJSONRequestBody = DiscountFilter
 
