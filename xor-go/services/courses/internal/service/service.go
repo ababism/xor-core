@@ -18,6 +18,7 @@ type CoursesService struct {
 	publication adapters.PublicationRequestRepository
 
 	financesClient adapters.FinancesClient
+	purchaseClient adapters.PurchaseClient
 }
 
 func NewCoursesService(
@@ -28,18 +29,21 @@ func NewCoursesService(
 	teacherRepository adapters.TeacherRepository,
 	studentRepository adapters.StudentRepository,
 	publicationRequestRepository adapters.PublicationRequestRepository,
-	// financesClient adapters.FinancesClient
+	financesClient adapters.FinancesClient,
+	purchaseClient adapters.PurchaseClient,
+
 ) adapters.CoursesService {
 
 	return &CoursesService{
-		course:      courseRepository,
-		courseEdit:  courseEditRepository,
-		lesson:      lessonRepository,
-		lessonEdit:  lessonEditRepository,
-		student:     studentRepository,
-		teacher:     teacherRepository,
-		publication: publicationRequestRepository,
-		//financesClient: financesClient,
+		course:         courseRepository,
+		courseEdit:     courseEditRepository,
+		lesson:         lessonRepository,
+		lessonEdit:     lessonEditRepository,
+		student:        studentRepository,
+		teacher:        teacherRepository,
+		publication:    publicationRequestRepository,
+		financesClient: financesClient,
+		purchaseClient: purchaseClient,
 	}
 }
 

@@ -34,6 +34,77 @@ paths:
           name: actor
           schema:
             $ref: '#/components/schemas/OptionalActor'
+  /courses/list:
+    get:
+      summary: Read list of published Courses
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
+  /courses/list/{teacherID}:
+    get:
+      summary: Read list of published Courses
+      tags:
+        - Course
+      description: Retrieve a published course by its ID.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - name: teacherID
+          in: path
+          description: ID of the teacher owner of published courses
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: actor
+          schema:
+            $ref: '#/components/schemas/OptionalActor'
   /courses/edit:
     post:
       summary: Create Course
@@ -59,11 +130,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Course'
+#    get:
+#      summary: Get Courses
+#      tags:
+#        - Course
+#      description: Retrieve a list of courses.
+#      responses:
+#        '200':
+#          description: Successful operation
+#          content:
+#            application/json:
+#              schema:
+#                type: array
+#                items:
+#                  $ref: '#/components/schemas/Course'
+#      security:
+#        - actorAuth: [ ]
+#      parameters:
+#        - in: header
+#          name: actor
+#          required: true
+#          schema:
+#            $ref: '#/components/schemas/Actor'
+  /courses/edit/list:
     get:
-      summary: Get Courses
+      summary: Get Courses templates
       tags:
         - Course
-      description: Retrieve a list of courses.
+      description: Retrieve all courses from editor. Only admins can access this endpoint.
       responses:
         '200':
           description: Successful operation
@@ -76,6 +170,57 @@ paths:
       security:
         - actorAuth: [ ]
       parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: actor
+          required: true
+          schema:
+            $ref: '#/components/schemas/Actor'
+
+  /courses/edit/list/{teacherID}:
+    get:
+      summary: Get Courses templates of Teacher
+      tags:
+        - Course
+      description: Retrieve teacher courses from editor. Only teachers or admins can access this endpoint.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      security:
+        - actorAuth: [ ]
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+        - name: teacherID
+          in: path
+          description: ID of the teacher who created the templates
+          required: true
+          schema:
+            type: string
+            format: uuid
         - in: header
           name: actor
           required: true
@@ -697,7 +842,6 @@ components:
       required:
         - Transcript
         - Visibility
-
     Product:
       type: object
       properties:
@@ -734,8 +878,6 @@ components:
           description: ID of the item associated with the product.
       required:
         - Price
-        - Owner
-        - Item
     PaymentRedirect:
       type: object
       properties:

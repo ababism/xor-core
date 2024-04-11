@@ -51,7 +51,13 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "teacher does not have rights to buy course",
 			fmt.Sprintf("%s or %s roles can't buy course", domain.TeacherRole, domain.AdminRole), nil)
 	}
-
+	course, err := c.course.Get(ctx, courseID)
+	if err != nil {
+		return domain.PaymentRedirect{}, err
+	}
+	if course.TeacherID == uuid.Nil || course.TeacherID == (uuid.UUID{}) {
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "course has no teacher", "course has no owner", nil)
+	}
 	lessons, err := c.lesson.GetAllByCourse(ctx, courseID)
 	if err != nil {
 		return domain.PaymentRedirect{}, err
@@ -72,7 +78,7 @@ func (c CoursesService) BuyCourse(initialCtx context.Context, actor domain.Actor
 	}
 	stringProducts := keys.ProductToStrings(productsToBuy)
 	span.AddEvent("products to buy", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, stringProducts)))
-	redirect, err := c.financesClient.CreatePurchase(ctx, productsToBuy)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, productsToBuy, actor.ID, course.TeacherID)
 	if err != nil {
 		return domain.PaymentRedirect{}, xapperror.New(http.StatusForbidden, "no available lessons to buy in course",
 			"no available lessons to buy in course", nil)
@@ -109,9 +115,13 @@ func (c CoursesService) BuyLesson(initialCtx context.Context, actor domain.Actor
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
+	if lesson.TeacherID == uuid.Nil || lesson.TeacherID == (uuid.UUID{}) {
+		return domain.PaymentRedirect{}, domain.LessonAccess{}, xapperror.New(http.StatusForbidden,
+			"lesson has no teacher", "lesson has no owner", nil)
+	}
 
 	payload := []domain.Product{lesson.Product}
-	redirect, err := c.financesClient.CreatePurchase(ctx, payload)
+	redirect, err := c.purchaseClient.CreatePurchase(ctx, payload, actor.ID, lesson.TeacherID)
 	if err != nil {
 		return domain.PaymentRedirect{}, domain.LessonAccess{}, err
 	}
@@ -128,6 +138,7 @@ func (c CoursesService) RegisterStudentProfile(initialCtx context.Context, actor
 
 	ToSpan(&span, actor)
 
+	// TODO
 	if !actor.HasRole(domain.UnregisteredRole) {
 		return xapperror.New(http.StatusForbidden, "user can't be registered",
 			fmt.Sprintf("user can't be registere user do not have %s role", domain.UnregisteredRole), nil)
@@ -239,17 +250,33 @@ func (c CoursesService) ConfirmAccess(initialCtx context.Context, buyerID uuid.U
 	span.AddEvent("products to confirm", trace.WithAttributes(attribute.StringSlice(keys.ProductSliceAttributeKey, keys.ProductToStrings(products))))
 
 	for _, pr := range products {
+		currAccess, err := c.student.GetLessonAccess(ctx, buyerID, pr.Item)
+		if err != nil {
+			//	update access
+			currAccess.AccessStatus = domain.Accessible
+			currAccess.UpdatedAt = time.Now()
+			_, err = c.student.CreateAccessToLesson(ctx, currAccess)
+			if err != nil {
+				return err
+			}
+			span.AddEvent("lesson access updated", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, currAccess.ID.String())))
+			// SKIP
+			continue
+		}
+		// create access
+		newUUID := uuid.New()
 		lessonAccess := domain.LessonAccess{
-			ID:           uuid.Nil,
+			ID:           newUUID,
 			LessonID:     pr.Item,
 			StudentID:    buyerID,
 			AccessStatus: domain.Accessible,
 			UpdatedAt:    time.Now(),
 		}
-		_, err := c.student.CreateAccessToLesson(ctx, lessonAccess)
+		_, err = c.student.CreateAccessToLesson(ctx, lessonAccess)
 		if err != nil {
 			return err
 		}
+		span.AddEvent("lesson access created", trace.WithAttributes(attribute.String(keys.LessonAccessIDAttributeKey, newUUID.String())))
 	}
 
 	return nil

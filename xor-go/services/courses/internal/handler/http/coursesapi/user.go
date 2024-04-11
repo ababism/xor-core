@@ -1,13 +1,16 @@
 package coursesapi
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"net/http"
 	"xor-go/services/courses/internal/domain"
+	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/handler/generated"
 	"xor-go/services/courses/internal/handler/http/models"
 )
@@ -51,11 +54,21 @@ func (h CoursesHandler) PostTeachersRegister(ginCtx *gin.Context, params generat
 }
 
 func (h CoursesHandler) PostUserAccessConfirmBuyerID(ginCtx *gin.Context, buyerID openapitypes.UUID) {
-	tr := global.Tracer(domain.ServiceName)
-	ctxTrace, span := tr.Start(ginCtx, "courses/handler.PostTeachersRegister")
+	//tr := global.Tracer(domain.ServiceName)
+	//ctxTrace, span := tr.Start(ginCtx, "courses/handler.PostTeachersRegister")
+	//defer span.End()
+
+	// Extract trace context from the incoming headers
+	ctxTrace := global.GetTextMapPropagator().Extract(context.Background(), propagation.HeaderCarrier(ginCtx.Request.Header))
+
+	// Continue the trace
+	_, span := global.Tracer(domain.ServiceName).Start(ctxTrace, "operation-name")
 	defer span.End()
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	// write key.RequestID to the context
+	ctx = context.WithValue(ctx, keys.KeyRequestID, ginCtx.GetHeader(keys.KeyRequestID))
 
 	var payload []generated.Product
 	h.bindRequestBody(ginCtx, &payload)

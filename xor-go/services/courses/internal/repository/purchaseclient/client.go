@@ -1,41 +1,57 @@
-package financesclient
+package purchaseclient
 
 import (
 	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 	"go.uber.org/zap"
 	"net/http"
+	"time"
 	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/domain/keys"
-	"xor-go/services/courses/internal/repository/financesclient/generated"
+	"xor-go/services/courses/internal/repository/purchaseclient/generated"
 	"xor-go/services/courses/internal/service/adapters"
 )
 
-var _ adapters.FinancesClient = Client{}
+var _ adapters.PurchaseClient = Client{}
 
 type Client struct {
-	httpDoer *generated.ClientWithResponses
+	httpDoer        *generated.ClientWithResponses
+	webhookBasePath string
 }
 
-func (c Client) RegisterProducts(initialCtx context.Context, products []domain.Product) ([]domain.Product, error) {
+func NewClient(client *generated.ClientWithResponses, config *ClientConfig) *Client {
+	return &Client{httpDoer: client,
+		webhookBasePath: config.WebhookBasePath}
+}
+
+func (c Client) CreatePurchase(initialCtx context.Context, products []domain.Product, buyerID, ownerID uuid.UUID) (domain.PaymentRedirect, error) {
 	logger := zapctx.Logger(initialCtx)
 
 	tr := otel.Tracer(domain.ServiceName)
-	ctx, span := tr.Start(initialCtx, "driver/repository/financesClient.RegisterProducts")
+	ctx, span := tr.Start(initialCtx, "driver/repository/purchaseClient.CreatePurchase")
 	defer span.End()
 
-	productsCreate := make([]generated.ProductCreate, len(products))
+	productIDs := make([]uuid.UUID, len(products))
 	for i, product := range products {
-		productsCreate[i] = ToProductCreateRequest(product)
+		productIDs[i] = product.ID
+	}
+
+	req := generated.PurchaseRequestCreate{
+		CreatedAt:  time.Now(),
+		Products:   productIDs,
+		Receiver:   &ownerID,
+		Sender:     &buyerID,
+		WebhookURL: c.webhookBasePath + "/" + buyerID.String(),
 	}
 
 	requestID, ok := GetRequestIDFromContext(ctx)
 
-	// Inject the trace context into the request's headers to send trace
+	// Inject trace context in request's header to send trace
 	reqEditor := func(ctx context.Context, req *http.Request) error {
 		otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
 		if ok {
@@ -44,39 +60,33 @@ func (c Client) RegisterProducts(initialCtx context.Context, products []domain.P
 		return nil
 	}
 
-	resp, err := c.httpDoer.CreateManyWithResponse(ctx, productsCreate, reqEditor)
+	resp, err := c.httpDoer.CreateWithResponse(ctx, req, reqEditor)
 	if err != nil {
-		logger.Error("error while creating register products request:", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"error while creating register products request",
-			"error while creating register products to finance microservice", err)
+		logger.Error("error while creating purchase request:", zap.Error(err))
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusInternalServerError,
+			"error while creating purchase request", "error while creating purchase to finance microservice", err)
 	}
 
 	if resp.HTTPResponse.StatusCode == http.StatusOK {
-		var productsResponse []domain.Product
-
-		err = json.Unmarshal(resp.Body, &productsResponse)
+		var paymentRedirect domain.PaymentRedirect
+		//err = resp.DecodeJSON(&paymentRedirect)
+		err = json.Unmarshal(resp.Body, &paymentRedirect)
 		if err != nil {
-			logger.Error("error while decoding products JSON:", zap.Error(err))
-			return nil, err
+			logger.Error("error while decoding payment redirect JSON:", zap.Error(err))
+			return domain.PaymentRedirect{}, err
 		}
-		return productsResponse, nil
+		return paymentRedirect, nil
 	} else {
-		var productsErrorMessage Error
-		err = json.Unmarshal(resp.Body, &productsErrorMessage)
+		var paymentErrorMessage Error
+		err = json.Unmarshal(resp.Body, &paymentErrorMessage)
 		if err != nil {
-			logger.Error("error while decoding products error message JSON:", zap.Error(err))
-			return nil, err
+			logger.Error("error while decoding payment error message JSON:", zap.Error(err))
+			return domain.PaymentRedirect{}, err
 		}
-		logger.Error("can't create register products ended:", zap.Int("status", resp.HTTPResponse.StatusCode), zap.Error(productsErrorMessage))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"error while creating register products", "error while creating register products microservice", productsErrorMessage)
+		logger.Error("can't create purchase ended:", zap.Int("status", resp.HTTPResponse.StatusCode), zap.Error(paymentErrorMessage))
+		return domain.PaymentRedirect{}, xapperror.New(http.StatusInternalServerError,
+			"error while creating purchase", "error while creating purchase microservice", paymentErrorMessage)
 	}
-
-}
-
-func NewClient(client *generated.ClientWithResponses) *Client {
-	return &Client{httpDoer: client}
 }
 
 func GetRequestIDFromContext(ctx context.Context) (string, bool) {
@@ -84,7 +94,6 @@ func GetRequestIDFromContext(ctx context.Context) (string, bool) {
 	return requestID, ok
 }
 
-//// TODO SendTrace
 //func (c Client) GetDrivers(ctx context.Context, driverLocation domain.LatLngLiteral, radius float32) ([]domain.DriverLocation, error) {
 //	logger := zapctx.Logger(ctx)
 //
