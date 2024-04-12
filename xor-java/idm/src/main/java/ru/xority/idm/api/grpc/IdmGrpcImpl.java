@@ -1,5 +1,6 @@
 package ru.xority.idm.api.grpc;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.grpc.stub.StreamObserver;
@@ -7,12 +8,12 @@ import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import ru.xority.idm.common.jwt.JwtService;
 import ru.xority.idm.entity.AccountEntity;
 import ru.xority.idm.entity.AccountFilter;
+import ru.xority.idm.entity.RoleEntity;
 import ru.xority.idm.exception.AccountNotFoundException;
 import ru.xority.idm.service.AccountService;
 import ru.xority.idmproto.IdmGrpc;
@@ -39,11 +40,17 @@ public class IdmGrpcImpl extends IdmGrpc.IdmImplBase {
             throw new AccountNotFoundException();
         }
         AccountEntity account = accountO.get();
+        List<String> roles = accountService.getRoles(account.getUuid())
+                .stream()
+                .map(RoleEntity::getName)
+                .toList();
+
+        logger.info("find roles={}", roles);
 
         VerifyResponse response = VerifyResponse.newBuilder()
                 .setAccountUuid(account.getUuid().toString())
                 .setAccountEmail(account.getEmail())
-                .addAllRoles(user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .addAllRoles(roles)
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();

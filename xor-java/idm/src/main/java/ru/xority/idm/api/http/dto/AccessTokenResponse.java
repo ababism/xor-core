@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AccessTokenResponse {
-    @JsonProperty("accessToken")
+    @JsonProperty("access_token")
     private String accessToken;
 }
