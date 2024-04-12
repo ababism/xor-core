@@ -42,8 +42,8 @@ type CreatePayout struct {
 // CreatePayoutResponse defines model for CreatePayoutResponse.
 type CreatePayoutResponse struct {
 	Amount struct {
-		Currency *string `json:"currency,omitempty"`
-		Value    *string `json:"value,omitempty"`
+		Currency *string  `json:"currency,omitempty"`
+		Value    *float32 `json:"value,omitempty"`
 	} `json:"amount"`
 	CreatedAt         time.Time               `json:"created_at"`
 	Description       string                  `json:"description"`
@@ -81,8 +81,8 @@ type CreatePurchaseProduct struct {
 // CreatePurchaseResponse defines model for CreatePurchaseResponse.
 type CreatePurchaseResponse struct {
 	Amount struct {
-		Currency *string `json:"currency,omitempty"`
-		Value    *string `json:"value,omitempty"`
+		Currency *string  `json:"currency,omitempty"`
+		Value    *float32 `json:"value,omitempty"`
 	} `json:"amount"`
 	Confirmation struct {
 		ConfirmationUrl *string `json:"confirmation_url,omitempty"`

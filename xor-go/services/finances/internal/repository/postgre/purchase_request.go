@@ -23,9 +23,9 @@ const (
 		FROM purchase_requests
 	`
 	createPurchaseRequestQuery = `
-		INSERT INTO purchase_requests (sender, receiver, status, webhook_url, created_at)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING uuid
+	INSERT INTO purchase_requests (sender, receiver, status, amount, webhook_url, created_at)
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING uuid
 	`
 	createPurchaseProductsQuery = `
 		INSERT INTO purchase_requests_products (request_uuid, product_uuid)
@@ -97,6 +97,7 @@ func (r *purchaseRequestRepository) Create(
 		purchasePostgres.Sender,
 		purchasePostgres.Receiver,
 		purchasePostgres.Status,
+		purchasePostgres.Amount,
 		purchasePostgres.WebhookURL,
 		purchasePostgres.CreatedAt,
 	)

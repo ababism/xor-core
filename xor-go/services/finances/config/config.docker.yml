@@ -47,3 +47,6 @@ tracer:
 
 payments_client:
   uri: "http://payments-svc:8088/api/v1"
+
+banker:
+  interval: 10s

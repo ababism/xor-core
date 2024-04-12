@@ -40,7 +40,7 @@ type PaymentsCreatePurchase struct {
 
 type Amount struct {
 	Currency *string
-	Value    *string
+	Value    *float32
 }
 
 type PayoutDestination struct {
