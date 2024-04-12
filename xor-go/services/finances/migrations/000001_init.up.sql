@@ -23,9 +23,9 @@ CREATE TABLE payments
     status     VARCHAR(32) NOT NULL,
     ended_at   TIMESTAMP   NOT NULL,
     created_at TIMESTAMP   NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (uuid),
-    FOREIGN KEY (sender) REFERENCES bank_accounts (uuid),
-    FOREIGN KEY (receiver) REFERENCES bank_accounts (uuid)
+    PRIMARY KEY (uuid)
+--     FOREIGN KEY (sender) REFERENCES bank_accounts (uuid),
+--     FOREIGN KEY (receiver) REFERENCES bank_accounts (uuid)
 );
 
 CREATE TABLE products

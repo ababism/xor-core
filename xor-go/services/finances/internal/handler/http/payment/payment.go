@@ -2,13 +2,16 @@ package payment
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	openapitypes "github.com/oapi-codegen/runtime/types"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
+	"xor-go/services/finances/internal/log"
 	"xor-go/services/finances/internal/service/adapters"
 )
 
@@ -77,6 +80,7 @@ func (h *Handler) PostPayments(ctx *gin.Context) {
 	defer span.End()
 
 	var body PaymentCreate
+	log.Logger.Info(fmt.Sprintf("%v", zap.Any("body", ctx.Request.Body)))
 	if err := ctx.BindJSON(&body); err != nil {
 		http2.AbortWithBadResponse(ctx, http2.MapErrorToCode(err), err)
 		return

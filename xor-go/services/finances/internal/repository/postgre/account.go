@@ -135,13 +135,20 @@ func (r *bankAccountRepository) Create(ctx context.Context, account *domain.Bank
 
 func (r *bankAccountRepository) Update(ctx context.Context, account *domain.BankAccountUpdate) error {
 	accountPostgres := repo_models.UpdateToBankAccountPostgres(account)
-	_, err := r.db.ExecContext(
+
+	data, err := json.Marshal(accountPostgres.Data)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.ExecContext(
 		ctx,
 		updateBankAccountQuery,
 		accountPostgres.UUID,
 		accountPostgres.AccountUUID,
 		accountPostgres.Login,
-		accountPostgres.Data,
+		accountPostgres.Funds,
+		string(data),
 		accountPostgres.Status,
 		accountPostgres.LastDealAt,
 	)

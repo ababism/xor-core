@@ -43,7 +43,7 @@ func (s *bankAccountService) GetByLogin(ctx context.Context, login string) (*dom
 }
 
 func (s *bankAccountService) GetById(ctx context.Context, id uuid.UUID) (*domain.BankAccountGet, error) {
-	_, newCtx, span := getAccountTracerSpan(ctx, ".GetByLogin")
+	_, newCtx, span := getAccountTracerSpan(ctx, ".GetById")
 	defer span.End()
 
 	filter := domain.CreateBankAccountFilterId(&id)

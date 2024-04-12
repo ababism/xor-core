@@ -158,7 +158,7 @@ components:
           type: object
           properties:
             value:
-              type: string
+              type: number
             currency:
               type: string
         confirmation:

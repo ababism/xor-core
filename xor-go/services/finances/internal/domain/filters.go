@@ -23,7 +23,7 @@ func CreateBankAccountFilterLogin(login *string) BankAccountFilter {
 }
 
 func CreateBankAccountFilterId(id *uuid.UUID) BankAccountFilter {
-	return CreateBankAccountFilter(nil, id, nil, nil, nil)
+	return CreateBankAccountFilter(id, nil, nil, nil, nil)
 }
 
 func CreatePaymentFilter(

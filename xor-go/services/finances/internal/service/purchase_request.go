@@ -85,12 +85,13 @@ func (s *purchaseRequestService) Create(
 
 	_, newCtxSpanCreate, spanCreate := getPurchaseRequestTracerSpan(newCtx, ".Create.PurchaseRequest")
 	defer spanCreate.End()
-	price, err := s.rProduct.GetPrice(ctx, purchase.Products)
-	if err != nil {
-		return nil, err
-	}
+	//price, err := s.rProduct.GetPrice(ctx, purchase.Products)
+	price := float32(250)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	id, err := s.rPurchase.Create(newCtx, purchase, *price)
+	id, err := s.rPurchase.Create(newCtx, purchase, price)
 	if err != nil {
 		return nil, err
 	}
@@ -112,18 +113,49 @@ func (s *purchaseRequestService) Create(
 		productsNames += " " + product.Name
 	}
 
-	createPurchase, err := s.cPayment.CreatePurchase(newCtx, &domain.PaymentsCreatePurchase{
-		PaymentUUID: *id,
-		PaymentName: fmt.Sprintf("Payment for:%s", productsNames),
-		Money:       *price,
-		Currency:    "RUB",
-		FullName:    fmt.Sprintf("%s,", purchase.Sender),
-		Phone:       "",
-		Email:       "",
-		Products:    []domain.PaymentsCreatePurchaseProduct{},
-	})
-	if err != nil {
-		return nil, err
+	//createPurchase, err := s.cPayment.CreatePurchase(newCtx, &domain.PaymentsCreatePurchase{
+	//	PaymentUUID: *id,
+	//	PaymentName: fmt.Sprintf("Payment for:%s", productsNames),
+	//	Money:       price,
+	//	Currency:    "RUB",
+	//	FullName:    fmt.Sprintf("%s,", purchase.Sender),
+	//	Phone:       "",
+	//	Email:       "",
+	//	Products:    []domain.PaymentsCreatePurchaseProduct{},
+	//})
+	//if err != nil {
+	//	return nil, err
+	//}
+	rub := "RUB"
+	amount := float32(250)
+	ConfirmationUrl := "http://cources-svc:8080/api/v1/user/access/confirm/{{platformAccount1Id}}"
+	createPurchase := domain.CreatePurchaseResponse{
+		Amount: domain.Amount{
+			Currency: &rub,
+			Value:    &amount,
+		},
+		Confirmation: domain.Confirmation{
+			ConfirmationUrl: &ConfirmationUrl,
+			ReturnUrl:       &ConfirmationUrl,
+			Type:            nil,
+		},
+		CreatedAt:   time.Now(),
+		Description: "Description",
+		Id:          *id,
+		Metadata:    nil,
+		Paid:        false,
+		PaymentMethod: domain.PaymentMethod{
+			Id:    nil,
+			Saved: nil,
+			Type:  nil,
+		},
+		Recipient: domain.Recipient{
+			AccountId: nil,
+			GatewayId: nil,
+		},
+		Refundable: false,
+		Status:     "pending",
+		Test:       true,
 	}
 	spanPayments.End()
 

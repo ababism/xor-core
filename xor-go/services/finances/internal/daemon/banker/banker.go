@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
@@ -145,6 +146,27 @@ func (b *Banker) handlePurchaseRequest(tr trace.Tracer, ctx context.Context, req
 		}
 		log.Logger.Info(fmt.Sprintf("Purchase request result sended to %s", req.WebhookURL))
 
+		list, err := b.bankAccountService.List(ctx, &domain.BankAccountFilter{
+			UUID:        nil,
+			AccountUUID: req.Receiver,
+			Login:       nil,
+			Funds:       nil,
+			Status:      nil,
+		})
+		if err != nil {
+			return err
+		}
+		if len(list) == 0 {
+			err = errors.New(fmt.Sprintf("Banker: Bank account for payment receiver=%s doesn't exist", req.Receiver))
+			log.Logger.Error(err.Error())
+			return err
+		}
+		bankAccount := list[0]
+		err = b.bankAccountService.ChangeFunds(ctx, bankAccount.UUID, req.Amount)
+		if err != nil {
+			return err
+		}
+
 		err = b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
 		if err != nil {
 			return err
@@ -177,7 +199,24 @@ func (b *Banker) handlePayoutRequest(tr trace.Tracer, ctx context.Context, req d
 	}
 
 	if req.Status == domain.PaymentsStatusSucceeded {
-		err := b.bankAccountService.ChangeFunds(ctx, req.Receiver, -1*req.Amount)
+		list, err := b.bankAccountService.List(ctx, &domain.BankAccountFilter{
+			UUID:        nil,
+			AccountUUID: &req.Receiver,
+			Login:       nil,
+			Funds:       nil,
+			Status:      nil,
+		})
+		if err != nil {
+			return err
+		}
+		if len(list) == 0 {
+			err = errors.New(fmt.Sprintf("Banker: Bank account for payment receiver=%s doesn't exist", req.Receiver))
+			log.Logger.Error(err.Error())
+			return err
+		}
+		bankAccount := list[0]
+
+		err = b.bankAccountService.ChangeFunds(ctx, bankAccount.UUID, -1*req.Amount)
 		if err != nil {
 			return err
 		}
