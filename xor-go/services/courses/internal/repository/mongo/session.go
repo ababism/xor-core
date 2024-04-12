@@ -66,7 +66,7 @@ func (tx Session) AbortTransaction(ctx context.Context) error {
 
 	if err := s.AbortTransaction(ctx); err != nil {
 		logger.Error("MongoDB abort transaction error")
-		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB abort transaction error", nil)
+		return xapperror.New(http.StatusInternalServerError, "internal server error", "MongoDB abort transaction error", err)
 	}
 
 	return nil

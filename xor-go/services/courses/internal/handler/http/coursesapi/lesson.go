@@ -15,8 +15,29 @@ import (
 
 // GetLessonsLessonID READ lesson
 func (h CoursesHandler) GetLessonsLessonID(ginCtx *gin.Context, lessonID uuid.UUID, params generated.GetLessonsLessonIDParams) {
-	//TODO implement me
-	panic("implement me")
+	tr := global.Tracer(domain.ServiceName)
+	ctxTrace, span := tr.Start(ginCtx, "courses/handler.GetLessonsLessonID")
+	defer span.End()
+
+	ctx := zapctx.WithLogger(ctxTrace, h.logger)
+
+	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
+
+	lesson, err := h.coursesService.ReadLesson(ctx, params.Actor.ToDomainWithRoles(roles), lessonID)
+	if err != nil {
+		h.abortWithAutoResponse(ginCtx, err)
+		return
+	}
+
+	if lesson == nil {
+		err := xapperror.New(http.StatusInternalServerError, "nil lesson without error", "get lesson returned nil lesson without error", nil)
+		h.logger.Error("nil lesson", zap.Error(err))
+		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
+	}
+	resp := models.ToLessonResponse(*lesson)
+
+	ginCtx.JSON(http.StatusOK, resp)
 }
 
 // PostLessonsEdit CREATE
@@ -41,6 +62,7 @@ func (h CoursesHandler) PostLessonsEdit(ginCtx *gin.Context, params generated.Po
 		err := xapperror.New(http.StatusInternalServerError, "nil lesson without error", "create lesson returned nil lesson without error", nil)
 		h.logger.Error("nil lesson", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
 	}
 	resp := models.ToLessonResponse(*lesson)
 
@@ -66,6 +88,7 @@ func (h CoursesHandler) GetLessonsEditLessonID(ginCtx *gin.Context, lessonID uui
 		err := xapperror.New(http.StatusInternalServerError, "nil lesson without error", "get lesson returned nil lesson without error", nil)
 		h.logger.Error("nil lesson", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
 	}
 	resp := models.ToLessonResponse(*lesson)
 
@@ -96,6 +119,7 @@ func (h CoursesHandler) PutLessonsEditLessonID(ginCtx *gin.Context, lessonID uui
 		err := xapperror.New(http.StatusInternalServerError, "nil lesson without error", "update lesson returned nil lesson without error", nil)
 		h.logger.Error("nil lesson", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
 	}
 	resp := models.ToLessonResponse(*lesson)
 
@@ -109,9 +133,6 @@ func (h CoursesHandler) DeleteLessonsEditLessonID(ginCtx *gin.Context, lessonID 
 
 	ctx := zapctx.WithLogger(ctxTrace, h.logger)
 
-	var payload generated.Lesson
-	h.bindRequestBody(ginCtx, &payload)
-
 	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
 
 	err = h.coursesService.DeleteLesson(ctx, params.Actor.ToDomainWithRoles(roles), lessonID)
@@ -120,7 +141,7 @@ func (h CoursesHandler) DeleteLessonsEditLessonID(ginCtx *gin.Context, lessonID 
 		return
 	}
 
-	ginCtx.JSON(http.StatusNoContent, http.NoBody)
+	ginCtx.JSON(http.StatusOK, http.NoBody)
 }
 
 // PostLessonsLessonIDBuy Buy lesson
@@ -143,6 +164,7 @@ func (h CoursesHandler) PostLessonsLessonIDBuy(ginCtx *gin.Context, lessonID uui
 		err := xapperror.New(http.StatusInternalServerError, "nil redirect without error", "GetCourse returned nil redirect without error", nil)
 		h.logger.Error("nil redirect", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
 	}
 	respRedirect := models.ToPaymentRedirectResponse(redirect)
 	respLessonAccess := models.ToLessonAccessResponse(lAccess)

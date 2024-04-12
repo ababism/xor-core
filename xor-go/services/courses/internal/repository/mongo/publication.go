@@ -63,7 +63,8 @@ func (r PublicationRequestRepository) Get(ctx context.Context, reqID uuid.UUID) 
 	defer span.End()
 
 	var publicationRequest models.PublicationRequest
-	err := r.publications.FindOne(newCtx, models.PublicationRequest{ID: reqID.String()}).Decode(&publicationRequest)
+	filter := createUUIDFilter(reqID, "publication_request_id")
+	err := r.publications.FindOne(newCtx, filter).Decode(&publicationRequest)
 	if err != nil {
 		if mErr := handleMongoError(err, logger); mErr != nil {
 			return nil, mErr
@@ -90,7 +91,9 @@ func (r PublicationRequestRepository) GetAll(ctx context.Context, offset, limit 
 	newCtx, span := tr.Start(ctx, "courses/repository/mongo/publication.GetAll")
 	defer span.End()
 
-	cursor, err := r.publications.Find(newCtx, nil)
+	opts := options.Find().SetSkip(int64(offset)).SetLimit(int64(limit))
+
+	cursor, err := r.publications.Find(newCtx, nil, opts)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return nil, mErr
 	}
@@ -165,7 +168,8 @@ func (r PublicationRequestRepository) Update(ctx context.Context, req domain.Pub
 	defer span.End()
 
 	publicationRequest := models.ToMongoModelPublicationRequest(req)
-	_, err := r.publications.ReplaceOne(newCtx, models.PublicationRequest{ID: req.ID.String()}, publicationRequest)
+	filter := createUUIDFilter(req.ID, "publication_request_id")
+	_, err := r.publications.ReplaceOne(newCtx, filter, publicationRequest)
 	if mErr := handleMongoError(err, logger); mErr != nil {
 		return mErr
 	}

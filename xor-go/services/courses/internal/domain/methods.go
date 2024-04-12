@@ -151,6 +151,9 @@ func (l *Lesson) Validate() error {
 	if l.ID == uuid.Nil || (l.ID == uuid.UUID{}) {
 		return xapperror.New(http.StatusInternalServerError, "lesson id shouldn't be empty", "validate lesson id shouldn't be empty", nil)
 	}
+	if l.TeacherID == uuid.Nil || (l.TeacherID == uuid.UUID{}) {
+		return xapperror.New(http.StatusInternalServerError, "lesson id shouldn't be empty", "validate lesson id shouldn't be empty", nil)
+	}
 	return nil
 }
 

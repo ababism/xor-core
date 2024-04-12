@@ -66,6 +66,7 @@ func (h CoursesHandler) GetCoursesEditListTeacherID(ginCtx *gin.Context, teacher
 		err := xapperror.New(http.StatusInternalServerError, "nil courses without error", "GetCourse returned nil courses without error", nil)
 		h.logger.Error("nil course", zap.Error(err))
 		AbortWithBadResponse(ginCtx, h.logger, MapErrorToCode(err), err)
+		return
 	}
 	resp := models.ToCourseListResponse(course)
 

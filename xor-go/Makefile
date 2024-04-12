@@ -12,6 +12,9 @@ up-all:
 up-courses:
 	docker-compose up --build courses-svc
 
+up-c:
+	docker-compose up --build courses-svc
+
 up-finances:
 	docker-compose up --build finances-svc
 

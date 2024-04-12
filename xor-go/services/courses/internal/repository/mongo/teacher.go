@@ -80,8 +80,8 @@ func (r TeacherRepository) Create(ctx context.Context, tProfile domain.Teacher) 
 
 func teacherCourseAccessFilter(teacherID uuid.UUID, courseID uuid.UUID) bson.M {
 	return bson.M{
-		"teacher_id": teacherID,
-		"course_id":  courseID,
+		"teacher_id": teacherID.String(),
+		"course_id":  courseID.String(),
 	}
 }
 

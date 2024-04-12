@@ -1,6 +1,7 @@
 package generated
 
 import (
+	"github.com/google/uuid"
 	"time"
 	"xor-go/services/courses/internal/domain"
 )
@@ -8,19 +9,37 @@ import (
 func (a OptionalActor) ToDomainWithRoles(roles []string) domain.Actor {
 	if a.Roles == nil {
 		s := []string{domain.UnregisteredRole}
-		return domain.NewActor(a.ID, s)
+		aID := uuid.Nil
+		if a.ID != nil {
+			aID = *a.ID
+		}
+		return domain.NewActor(aID, s)
 	}
 	roles = append(roles, *a.Roles)
-	return domain.NewActor(a.ID, roles)
+	aID := uuid.Nil
+	if a.ID != nil {
+		aID = *a.ID
+
+	}
+	return domain.NewActor(aID, roles)
 }
 
 func (a OptionalActor) ToDomain() domain.Actor {
 	if a.Roles == nil {
 		s := []string{domain.UnregisteredRole}
-		return domain.NewActor(a.ID, s)
+		aID := uuid.Nil
+		if a.ID != nil {
+			aID = *a.ID
+		}
+		return domain.NewActor(aID, s)
 	}
 	s := []string{*a.Roles}
-	return domain.NewActor(a.ID, s)
+	aID := uuid.Nil
+	if a.ID != nil {
+		aID = *a.ID
+
+	}
+	return domain.NewActor(aID, s)
 }
 
 func (a Actor) ToDomainWithRoles(roles []string) domain.Actor {
@@ -34,10 +53,24 @@ func (a Actor) ToDomain() domain.Actor {
 }
 
 func (c Course) ToDomain() *domain.Course {
+	cID := uuid.Nil
+	if c.ID != nil {
+		cID = *c.ID
+
+	}
+	cFeedbackID := uuid.Nil
+	if c.FeedbackID != nil {
+		cFeedbackID = *c.FeedbackID
+	}
+	cTeacherID := uuid.Nil
+	if c.TeacherID != nil {
+		cTeacherID = *c.TeacherID
+
+	}
 	return &domain.Course{
-		ID:         c.ID,
-		FeedbackID: c.FeedbackID,
-		TeacherID:  c.TeacherID,
+		ID:         cID,
+		FeedbackID: cFeedbackID,
+		TeacherID:  cTeacherID,
 		Name:       c.Name,
 		Discipline: c.Discipline,
 		Landing:    c.Landing,
@@ -60,11 +93,15 @@ func ToSectionSliceToDomain(sections []Section) []domain.Section {
 }
 
 func (s Section) ToDomain() domain.Section {
+	sID := uuid.Nil
+	if s.ID != nil {
+		sID = *s.ID
+	}
 	return domain.Section{
 		Description: s.Description,
 		//FeedbackID:  s.FeedbackID,
 		Heading:    s.Heading,
-		ID:         s.ID,
+		ID:         sID,
 		Themes:     ToThemeSliceToDomain(*s.Themes),
 		Visibility: s.Visibility.ToDomain(),
 	}
@@ -82,10 +119,15 @@ func ToThemeSliceToDomain(themes []Theme) []domain.Theme {
 }
 
 func (t Theme) ToDomain() domain.Theme {
+	tID := uuid.Nil
+	if t.ID != nil {
+		tID = *t.ID
+
+	}
 	return domain.Theme{
 		//FeedbackID: t.FeedbackID,
 		Heading:    t.Heading,
-		ID:         t.ID,
+		ID:         tID,
 		LessonIDs:  *t.LessonIDs,
 		Visibility: t.Visibility.ToDomain(),
 	}
@@ -96,22 +138,46 @@ func (l Lesson) ToDomain() *domain.Lesson {
 	if l.Product != nil {
 		pr = l.Product.ToDomain()
 	}
+	uri := ""
+	if l.VideoURI != nil {
+		uri = *l.VideoURI
+	}
+	tID := uuid.Nil
+	if l.TeacherID != nil {
+		tID = *l.TeacherID
+	}
+	lID := uuid.Nil
+	if l.ID != nil {
+		lID = *l.ID
+	}
 	return &domain.Lesson{
 		CourseID:   l.CourseID,
-		ID:         l.ID,
+		ID:         lID,
 		Product:    pr,
-		TeacherID:  l.TeacherID,
+		TeacherID:  tID,
 		Transcript: l.Transcript,
-		VideoURI:   *l.VideoURI,
+		VideoURI:   uri,
 		Visibility: l.Visibility.ToDomain(),
 	}
 }
 
 func (p Product) ToDomain() domain.Product {
+	pID := uuid.Nil
+	if p.ID != nil {
+		pID = *p.ID
+	}
+	pItem := uuid.Nil
+	if p.Item != nil {
+		pItem = *p.Item
+	}
+	pOwner := uuid.Nil
+	if p.Owner != nil {
+		pOwner = *p.Owner
+	}
 	return domain.Product{
-		ID:    p.ID,
-		Item:  p.Item,
-		Owner: p.Owner,
+		ID:    pID,
+		Item:  pItem,
+		Owner: pOwner,
 		Price: p.Price,
 	}
 }
@@ -137,12 +203,17 @@ func (pr PaymentRedirect) ToDomain() domain.PaymentRedirect {
 }
 
 func (p PublicationRequest) ToDomain() domain.PublicationRequest {
+	pID := uuid.Nil
+	if p.ID != nil {
+		pID = *p.ID
+	}
+
 	return domain.PublicationRequest{
 		AssigneeID:    p.AssigneeID,
 		Comment:       p.Comment,
 		CourseID:      p.CourseID,
-		ID:            p.ID,
-		RequestStatus: p.RequestStatus.ToDomain(),
+		ID:            pID,
+		RequestStatus: ToDomainRequestStatus(p.RequestStatus),
 		UpdatedAt:     ToTimeDomain(p.UpdatedAt),
 	}
 }
@@ -151,6 +222,15 @@ func (pr Teacher) ToDomain() domain.Teacher {
 		AccountID: pr.AccountID,
 	}
 }
+
+func ToDomainRequestStatus(s *PublicationRequestRequestStatus) domain.RequestsStatus {
+	if s == nil {
+		return domain.Unwatched
+	}
+	return (*s).ToDomain()
+
+}
+
 func (pr Student) ToDomain() domain.Student {
 	return domain.Student{
 		AccountID: pr.AccountID,
@@ -169,9 +249,13 @@ func (l LessonAccess) ToDomain() domain.LessonAccess {
 	if l.UpdatedAt != nil {
 		updatedAt = l.UpdatedAt
 	}
+	lID := uuid.Nil
+	if l.ID != nil {
+		lID = *l.ID
 
+	}
 	return domain.LessonAccess{
-		ID:           l.ID,
+		ID:           lID,
 		LessonID:     l.LessonID,
 		StudentID:    l.StudentID,
 		AccessStatus: ToAccessStatus(l.AccessStatus),
@@ -179,11 +263,8 @@ func (l LessonAccess) ToDomain() domain.LessonAccess {
 	}
 }
 
-func ToAccessStatus(accessStatus *LessonAccessAccessStatus) domain.AccessStatus {
-	if accessStatus == nil {
-		return 0
-	}
-	switch *accessStatus {
+func ToAccessStatus(accessStatus LessonAccessAccessStatus) domain.AccessStatus {
+	switch accessStatus {
 	case Accessible:
 		return domain.Accessible
 	case Inaccessible:

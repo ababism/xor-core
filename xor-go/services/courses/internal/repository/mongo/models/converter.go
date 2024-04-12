@@ -30,11 +30,12 @@ func ToMongoModelProduct(p domain.Product) Product {
 
 func ToMongoModelPublicationRequest(pr domain.PublicationRequest) PublicationRequest {
 	return PublicationRequest{
-		mID:        primitive.NilObjectID,
-		ID:         pr.ID.String(),
-		CourseID:   pr.CourseID.String(),
-		AssigneeID: pr.AssigneeID.String(),
-		UpdatedAt:  pr.UpdatedAt,
+		mID:           primitive.NilObjectID,
+		ID:            pr.ID.String(),
+		CourseID:      pr.CourseID.String(),
+		AssigneeID:    pr.AssigneeID.String(),
+		UpdatedAt:     pr.UpdatedAt,
+		RequestStatus: int(pr.RequestStatus),
 	}
 }
 

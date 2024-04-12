@@ -24,7 +24,10 @@ func TestActor(t *testing.T) {
 
 		assert.True(t, actor.HasOneOfRoles(role1))
 		assert.True(t, actor.HasOneOfRoles(role2))
+		assert.True(t, actor.HasOneOfRoles(role1, missingRole1))
+		assert.False(t, actor.HasOneOfRoles(missingRole1, missingRole1))
 		assert.False(t, actor.HasOneOfRoles(missingRole1))
+
 	})
 
 	t.Run("HasOneOfRolesEmptyRoles", func(t *testing.T) {

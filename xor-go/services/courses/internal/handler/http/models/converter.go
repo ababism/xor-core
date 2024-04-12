@@ -25,12 +25,12 @@ func ToCourseListResponse(courses []*domain.Course) []generated.Course {
 func ToCourseResponse(course domain.Course) generated.Course {
 	return generated.Course{
 		Discipline: course.Discipline,
-		FeedbackID: course.FeedbackID,
-		ID:         course.ID,
+		FeedbackID: &course.FeedbackID,
+		ID:         &course.ID,
 		Landing:    course.Landing,
 		Name:       course.Name,
 		Sections:   ToSectionSliceResponse(course.Sections),
-		TeacherID:  course.TeacherID,
+		TeacherID:  &course.TeacherID,
 		Visibility: ToVisibilityCourse(course.Visibility),
 	}
 }
@@ -52,7 +52,7 @@ func ToSectionResponse(section domain.Section) generated.Section {
 		Description: section.Description,
 		//FeedbackID:  section.FeedbackID,
 		Heading:    section.Heading,
-		ID:         section.ID,
+		ID:         &section.ID,
 		Themes:     ToThemeResponseSlice(section.Themes),
 		Visibility: ToVisibilitySection(section.Visibility),
 	}
@@ -74,7 +74,7 @@ func ToThemeResponse(theme domain.Theme) generated.Theme {
 	return generated.Theme{
 		//FeedbackID: theme.FeedbackID,
 		Heading:    theme.Heading,
-		ID:         theme.ID,
+		ID:         &theme.ID,
 		LessonIDs:  &theme.LessonIDs,
 		Visibility: ToVisibilityTheme(theme.Visibility),
 	}
@@ -84,9 +84,9 @@ func ToLessonResponse(lesson domain.Lesson) generated.Lesson {
 	pr := ToProductResponse(lesson.Product)
 	return generated.Lesson{
 		CourseID:   lesson.CourseID,
-		ID:         lesson.ID,
+		ID:         &lesson.ID,
 		Product:    &pr,
-		TeacherID:  lesson.TeacherID,
+		TeacherID:  &lesson.TeacherID,
 		Transcript: lesson.Transcript,
 		VideoURI:   &lesson.VideoURI,
 		Visibility: ToVisibilityLesson(lesson.Visibility),
@@ -95,9 +95,9 @@ func ToLessonResponse(lesson domain.Lesson) generated.Lesson {
 
 func ToProductResponse(product domain.Product) generated.Product {
 	return generated.Product{
-		ID:    product.ID,
-		Item:  product.Item,
-		Owner: product.Owner,
+		ID:    &product.ID,
+		Item:  &product.Item,
+		Owner: &product.Owner,
 		Price: product.Price,
 	}
 }
@@ -114,7 +114,7 @@ func ToPublicationRequestResponse(publicationRequest domain.PublicationRequest) 
 		AssigneeID:    publicationRequest.AssigneeID,
 		Comment:       publicationRequest.Comment,
 		CourseID:      publicationRequest.CourseID,
-		ID:            publicationRequest.ID,
+		ID:            &publicationRequest.ID,
 		RequestStatus: &rs,
 		UpdatedAt:     ToRequestTime(publicationRequest.UpdatedAt),
 	}
@@ -147,10 +147,10 @@ func ToAccessStatus(accessStatus domain.AccessStatus) generated.LessonAccessAcce
 func ToLessonAccessResponse(lessonAccess domain.LessonAccess) generated.LessonAccess {
 	status := ToAccessStatus(lessonAccess.AccessStatus)
 	return generated.LessonAccess{
-		ID:           lessonAccess.ID,
+		ID:           &lessonAccess.ID,
 		LessonID:     lessonAccess.LessonID,
 		StudentID:    lessonAccess.StudentID,
-		AccessStatus: &status,
+		AccessStatus: status,
 		UpdatedAt:    ToRequestTime(lessonAccess.UpdatedAt),
 	}
 }

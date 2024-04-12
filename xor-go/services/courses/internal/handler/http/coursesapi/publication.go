@@ -44,7 +44,7 @@ func (h CoursesHandler) PutPublicationRequestsRequestID(ginCtx *gin.Context, req
 	var payload generated.PublicationRequest
 	h.bindRequestBody(ginCtx, &payload)
 
-	payload.ID = requestID
+	payload.ID = &requestID
 
 	roles, err := h.coursesService.GetActorRoles(ctx, params.Actor.ToDomain())
 

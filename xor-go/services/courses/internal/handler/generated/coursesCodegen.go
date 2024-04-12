@@ -68,12 +68,12 @@ type Actor struct {
 // Course defines model for Course.
 type Course struct {
 	Discipline string           `json:"Discipline"`
-	FeedbackID uuid.UUID        `json:"FeedbackID,omitempty"`
-	ID         uuid.UUID        `json:"ID,omitempty"`
+	FeedbackID *uuid.UUID       `json:"FeedbackID,omitempty"`
+	ID         *uuid.UUID       `json:"ID,omitempty"`
 	Landing    string           `json:"Landing"`
 	Name       string           `json:"Name"`
 	Sections   *[]Section       `json:"Sections,omitempty"`
-	TeacherID  uuid.UUID        `json:"TeacherID,omitempty"`
+	TeacherID  *uuid.UUID       `json:"TeacherID,omitempty"`
 	Visibility CourseVisibility `json:"Visibility"`
 }
 
@@ -82,10 +82,10 @@ type CourseVisibility string
 
 // Lesson defines model for Lesson.
 type Lesson struct {
-	CourseID   uuid.UUID        `json:"CourseID,omitempty"`
-	ID         uuid.UUID        `json:"ID,omitempty"`
+	CourseID   uuid.UUID        `json:"CourseID"`
+	ID         *uuid.UUID       `json:"ID,omitempty"`
 	Product    *Product         `json:"Product,omitempty"`
-	TeacherID  uuid.UUID        `json:"TeacherID,omitempty"`
+	TeacherID  *uuid.UUID       `json:"TeacherID,omitempty"`
 	Transcript string           `json:"Transcript"`
 	VideoURI   *string          `json:"VideoURI,omitempty"`
 	Visibility LessonVisibility `json:"Visibility"`
@@ -97,16 +97,16 @@ type LessonVisibility string
 // LessonAccess defines model for LessonAccess.
 type LessonAccess struct {
 	// AccessStatus Access status of the lesson.
-	AccessStatus *LessonAccessAccessStatus `json:"AccessStatus,omitempty"`
+	AccessStatus LessonAccessAccessStatus `json:"AccessStatus"`
 
 	// ID Unique identifier for the lesson access.
-	ID uuid.UUID `json:"ID,omitempty"`
+	ID *uuid.UUID `json:"ID,omitempty"`
 
 	// LessonID ID of the lesson.
-	LessonID uuid.UUID `json:"LessonID,omitempty"`
+	LessonID uuid.UUID `json:"LessonID"`
 
 	// StudentID ID of the student.
-	StudentID uuid.UUID `json:"StudentID,omitempty"`
+	StudentID uuid.UUID `json:"StudentID"`
 
 	// UpdatedAt Date and time when the request was last updated.
 	UpdatedAt *time.Time `json:"UpdatedAt,omitempty"`
@@ -118,7 +118,7 @@ type LessonAccessAccessStatus string
 // OptionalActor defines model for OptionalActor.
 type OptionalActor struct {
 	// ID Unique identifier for the actor.
-	ID uuid.UUID `json:"ID,omitempty"`
+	ID *uuid.UUID `json:"ID,omitempty"`
 
 	// Roles Role of the actor.
 	Roles *string `json:"Roles,omitempty"`
@@ -133,13 +133,13 @@ type PaymentRedirect struct {
 // Product defines model for Product.
 type Product struct {
 	// ID Unique identifier for the product.
-	ID uuid.UUID `json:"ID,omitempty"`
+	ID *uuid.UUID `json:"ID,omitempty"`
 
 	// Item ID of the item associated with the product.
-	Item uuid.UUID `json:"Item,omitempty"`
+	Item *uuid.UUID `json:"Item,omitempty"`
 
 	// Owner ID of the owner of the product.
-	Owner uuid.UUID `json:"Owner,omitempty"`
+	Owner *uuid.UUID `json:"Owner,omitempty"`
 
 	// Price Price of the product.
 	Price float32 `json:"Price"`
@@ -148,16 +148,16 @@ type Product struct {
 // PublicationRequest defines model for PublicationRequest.
 type PublicationRequest struct {
 	// AssigneeID ID of the assignee (teacher or moderator).
-	AssigneeID uuid.UUID `json:"AssigneeID,omitempty"`
+	AssigneeID uuid.UUID `json:"AssigneeID"`
 
 	// Comment Optional comment provided by the assignee.
 	Comment *string `json:"Comment,omitempty"`
 
 	// CourseID ID of the course associated with the request.
-	CourseID uuid.UUID `json:"CourseID,omitempty"`
+	CourseID uuid.UUID `json:"CourseID"`
 
 	// ID Unique identifier for the publication request.
-	ID uuid.UUID `json:"ID,omitempty"`
+	ID *uuid.UUID `json:"ID,omitempty"`
 
 	// RequestStatus Status of the publication request.
 	RequestStatus *PublicationRequestRequestStatus `json:"RequestStatus,omitempty"`
@@ -173,7 +173,7 @@ type PublicationRequestRequestStatus string
 type Section struct {
 	Description string            `json:"Description"`
 	Heading     string            `json:"Heading"`
-	ID          uuid.UUID         `json:"ID,omitempty"`
+	ID          *uuid.UUID        `json:"ID,omitempty"`
 	Themes      *[]Theme          `json:"Themes,omitempty"`
 	Visibility  SectionVisibility `json:"Visibility"`
 }
@@ -184,19 +184,19 @@ type SectionVisibility string
 // Student defines model for Student.
 type Student struct {
 	// AccountID ID of the student's account.
-	AccountID uuid.UUID `json:"AccountID,omitempty"`
+	AccountID uuid.UUID `json:"AccountID"`
 }
 
 // Teacher defines model for Teacher.
 type Teacher struct {
 	// AccountID ID of the teacher's account.
-	AccountID uuid.UUID `json:"AccountID,omitempty"`
+	AccountID uuid.UUID `json:"AccountID"`
 }
 
 // Theme defines model for Theme.
 type Theme struct {
-	Heading string    `json:"Heading"`
-	ID      uuid.UUID `json:"ID,omitempty"`
+	Heading string     `json:"Heading"`
+	ID      *uuid.UUID `json:"ID,omitempty"`
 
 	// LessonIDs Lessons in theme.
 	LessonIDs  *[]uuid.UUID    `json:"LessonIDs,omitempty"`
@@ -345,6 +345,9 @@ type PutLessonsEditLessonIDJSONRequestBody = Lesson
 
 // PostPublicationRequestsJSONRequestBody defines body for PostPublicationRequests for application/json ContentType.
 type PostPublicationRequestsJSONRequestBody = PublicationRequest
+
+// PutPublicationRequestsRequestIDJSONRequestBody defines body for PutPublicationRequestsRequestID for application/json ContentType.
+type PutPublicationRequestsRequestIDJSONRequestBody = PublicationRequest
 
 // PostStudentsRegisterJSONRequestBody defines body for PostStudentsRegister for application/json ContentType.
 type PostStudentsRegisterJSONRequestBody = Student
