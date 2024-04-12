@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
+	"time"
 	"xor-go/pkg/metrics"
 	"xor-go/pkg/xdb/postgres"
 	"xor-go/pkg/xerror"
@@ -142,13 +143,15 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	// DAEMONS ----------------------------------------------------------------------
 
-	banker.NewBanker(
+	bankerDaemon := banker.NewBanker(
 		payoutRequestService,
 		purchaseRequestService,
 		productService,
 		bankAccountService,
 		paymentsClient,
 	)
+
+	bankerDaemon.Start(10 * time.Second)
 
 	return &App{
 		cfg:            cfg,

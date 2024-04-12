@@ -1,16 +1,13 @@
 package banker
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	global "go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
-	"net/http"
 	"runtime"
 	"time"
 	"xor-go/services/finances/internal/domain"
@@ -56,6 +53,7 @@ func (b *Banker) StopFunc() func(context.Context) error {
 func (b *Banker) Start(scrapeInterval time.Duration) {
 	go func() {
 		stop := b.stop
+		log.Logger.Info("Banker is starting")
 		go func() {
 			for {
 				b.checkForPayments(scrapeInterval)
@@ -100,7 +98,7 @@ func (b *Banker) checkForPayments(scrapeInterval time.Duration) {
 }
 
 func (b *Banker) handlePurchaseRequest(tr trace.Tracer, ctx context.Context, req domain.PurchaseRequestGet) error {
-	ctxPurchaseReq, spanPurchaseReq := tr.Start(
+	_, spanPurchaseReq := tr.Start(
 		ctx,
 		fmt.Sprintf("finances/daemons/banker.handlePurchaseRequest.id=%s", req.UUID),
 		trace.WithNewRoot(),
@@ -109,73 +107,73 @@ func (b *Banker) handlePurchaseRequest(tr trace.Tracer, ctx context.Context, req
 
 	log.Logger.Info(fmt.Sprintf("Found '%s' Purchase request='%s'", req.Status, req.UUID))
 	if req.Status == domain.PaymentsStatusPending {
-		status, err := b.paymentsClient.GetStatus(ctxPurchaseReq, req.UUID)
-		if err != nil {
-			return err
-		}
+		//status, err := b.paymentsClient.GetStatus(ctxPurchaseReq, req.UUID)
+		//if err != nil {
+		//	return err
+		//}
 
-		req.Status = status.Status
+		req.Status = domain.PaymentsStatusSucceeded
 	}
 
 	if req.Status == domain.PaymentsStatusSucceeded {
-		products := make([]domain.ProductGet, 0)
-		for _, productId := range req.Products {
-			product, err := b.productService.Get(ctx, productId)
-			if err != nil {
-				log.Logger.Error(fmt.Sprintf(
-					"Purchase request=%s: Error while finding a product with id=%s: %v", req.UUID, productId, zap.Error(err),
-				))
-				return err
-			}
-			products = append(products, *product)
-		}
+		//products := make([]domain.ProductGet, 0)
+		//for _, productId := range req.Products {
+		//	product, err := b.productService.Get(ctx, productId)
+		//	if err != nil {
+		//		log.Logger.Error(fmt.Sprintf(
+		//			"Purchase request=%s: Error while finding a product with id=%s: %v", req.UUID, productId, zap.Error(err),
+		//		))
+		//		return err
+		//	}
+		//	products = append(products, *product)
+		//}
+		//
+		//webhook := domain.PurchaseRequestWebhook{
+		//	Sender:   *req.Sender,
+		//	Receiver: *req.Receiver,
+		//	Products: domain.ConvertProductsToSmall(products),
+		//}
+		//jsonBody, err := json.Marshal(webhook)
+		//if err != nil {
+		//	return err
+		//}
+		//bodyReader := bytes.NewReader(jsonBody)
+		//_, err = http.NewRequest(http.MethodPost, req.WebhookURL, bodyReader)
+		//if err != nil {
+		//	return err
+		//}
+		//log.Logger.Info(fmt.Sprintf("Purchase request result sended to %s", req.WebhookURL))
 
-		webhook := domain.PurchaseRequestWebhook{
-			Sender:   *req.Sender,
-			Receiver: *req.Receiver,
-			Products: domain.ConvertProductsToSmall(products),
-		}
-		jsonBody, err := json.Marshal(webhook)
-		if err != nil {
-			return err
-		}
-		bodyReader := bytes.NewReader(jsonBody)
-		_, err = http.NewRequest(http.MethodPost, req.WebhookURL, bodyReader)
-		if err != nil {
-			return err
-		}
-		log.Logger.Info(fmt.Sprintf("Purchase request result sended to %s", req.WebhookURL))
+		//list, err := b.bankAccountService.List(ctx, &domain.BankAccountFilter{
+		//	UUID:        nil,
+		//	AccountUUID: req.Receiver,
+		//	Login:       nil,
+		//	Funds:       nil,
+		//	Status:      nil,
+		//})
+		//if err != nil {
+		//	return err
+		//}
+		//if len(list) == 0 {
+		//	err = errors.New(fmt.Sprintf("Banker: Bank account for payment receiver=%s doesn't exist", req.Receiver))
+		//	log.Logger.Error(err.Error())
+		//	return err
+		//}
+		//bankAccount := list[0]
+		//err = b.bankAccountService.ChangeFunds(ctx, bankAccount.UUID, req.Amount)
+		//if err != nil {
+		//	return err
+		//}
 
-		list, err := b.bankAccountService.List(ctx, &domain.BankAccountFilter{
-			UUID:        nil,
-			AccountUUID: req.Receiver,
-			Login:       nil,
-			Funds:       nil,
-			Status:      nil,
-		})
-		if err != nil {
-			return err
-		}
-		if len(list) == 0 {
-			err = errors.New(fmt.Sprintf("Banker: Bank account for payment receiver=%s doesn't exist", req.Receiver))
-			log.Logger.Error(err.Error())
-			return err
-		}
-		bankAccount := list[0]
-		err = b.bankAccountService.ChangeFunds(ctx, bankAccount.UUID, req.Amount)
-		if err != nil {
-			return err
-		}
-
-		err = b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
-		if err != nil {
-			return err
-		}
+		//err = b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
+		//if err != nil {
+		//	return err
+		//}
 	} else if req.Status == domain.PaymentsStatusCanceled {
-		err := b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
-		if err != nil {
-			return err
-		}
+		//err := b.purchaseService.Archive(ctxPurchaseReq, req.UUID)
+		//if err != nil {
+		//	return err
+		//}
 	}
 
 	return nil

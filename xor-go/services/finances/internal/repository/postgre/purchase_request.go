@@ -96,7 +96,7 @@ func (r *purchaseRequestRepository) Create(
 		createPurchaseRequestQuery,
 		purchasePostgres.Sender,
 		purchasePostgres.Receiver,
-		purchasePostgres.Status,
+		"pending",
 		purchasePostgres.Amount,
 		purchasePostgres.WebhookURL,
 		purchasePostgres.CreatedAt,
