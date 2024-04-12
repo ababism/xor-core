@@ -346,6 +346,9 @@ type PutLessonsEditLessonIDJSONRequestBody = Lesson
 // PostPublicationRequestsJSONRequestBody defines body for PostPublicationRequests for application/json ContentType.
 type PostPublicationRequestsJSONRequestBody = PublicationRequest
 
+// PutPublicationRequestsRequestIDJSONRequestBody defines body for PutPublicationRequestsRequestID for application/json ContentType.
+type PutPublicationRequestsRequestIDJSONRequestBody = PublicationRequest
+
 // PostStudentsRegisterJSONRequestBody defines body for PostStudentsRegister for application/json ContentType.
 type PostStudentsRegisterJSONRequestBody = Student
 

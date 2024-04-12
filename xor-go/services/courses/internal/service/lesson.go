@@ -46,7 +46,7 @@ func (c CoursesService) ReadLesson(initialCtx context.Context, actor domain.Acto
 }
 
 func (c CoursesService) CreateLesson(initialCtx context.Context, actor domain.Actor, lesson *domain.Lesson) (*domain.Lesson, error) {
-	_ = zapctx.Logger(initialCtx)
+	log := zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.CreateLesson")
@@ -57,6 +57,11 @@ func (c CoursesService) CreateLesson(initialCtx context.Context, actor domain.Ac
 	if !actor.HasOneOfRoles(domain.TeacherRole, domain.AdminRole) {
 		return nil, xapperror.New(http.StatusForbidden, "user does not have teacher rights to create lesson",
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
+	}
+
+	if lesson == nil {
+		log.Error("lesson is nil")
+		return nil, xapperror.New(http.StatusBadRequest, "lesson is nil", "lesson is nil", nil)
 	}
 
 	lesson.TeacherID = actor.ID
@@ -105,7 +110,7 @@ func (c CoursesService) GetLesson(initialCtx context.Context, actor domain.Actor
 }
 
 func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Actor, lessonID uuid.UUID, lesson *domain.Lesson) (*domain.Lesson, error) {
-	_ = zapctx.Logger(initialCtx)
+	log := zapctx.Logger(initialCtx)
 
 	tr := global.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "courses/service.UpdateLesson")
@@ -118,6 +123,11 @@ func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Ac
 			fmt.Sprintf("user do not have %s or %s roles", domain.TeacherRole, domain.AdminRole), nil)
 	}
 
+	if lesson == nil {
+		log.Error("lesson is nil")
+		return nil, xapperror.New(http.StatusBadRequest, "lesson is nil", "lesson is nil", nil)
+	}
+
 	curLesson, err := c.lessonEdit.Get(ctx, lessonID)
 	if err != nil {
 		return nil, err
@@ -126,6 +136,8 @@ func (c CoursesService) UpdateLesson(initialCtx context.Context, actor domain.Ac
 		return nil, xapperror.New(http.StatusForbidden, "user does not have rights to update someone else's lesson",
 			"lesson teacher id does not match actor id", nil)
 	}
+
+	lesson.TeacherID = actor.ID
 	lesson.ID = lessonID
 
 	err = lesson.Validate()

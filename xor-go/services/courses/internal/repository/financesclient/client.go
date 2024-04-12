@@ -2,13 +2,11 @@ package financesclient
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/juju/zaputil/zapctx"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
-	"go.uber.org/zap"
 	"net/http"
-	"xor-go/pkg/xapperror"
 	"xor-go/services/courses/internal/domain"
 	"xor-go/services/courses/internal/domain/keys"
 	"xor-go/services/courses/internal/repository/financesclient/generated"
@@ -22,7 +20,7 @@ type Client struct {
 }
 
 func (c Client) RegisterProducts(initialCtx context.Context, products []domain.Product) ([]domain.Product, error) {
-	logger := zapctx.Logger(initialCtx)
+	_ = zapctx.Logger(initialCtx)
 
 	tr := otel.Tracer(domain.ServiceName)
 	ctx, span := tr.Start(initialCtx, "driver/repository/financesClient.RegisterProducts")
@@ -44,35 +42,43 @@ func (c Client) RegisterProducts(initialCtx context.Context, products []domain.P
 		return nil
 	}
 
-	resp, err := c.httpDoer.CreateManyWithResponse(ctx, productsCreate, reqEditor)
-	if err != nil {
-		logger.Error("error while creating register products request:", zap.Error(err))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"error while creating register products request",
-			"error while creating register products to finance microservice", err)
+	_, _ = c.httpDoer.PostProductsListWithResponse(ctx, productsCreate, reqEditor)
+	//if err != nil {
+	//	logger.Error("error while creating register products request:", zap.Error(err))
+	//	return nil, xapperror.New(http.StatusInternalServerError,
+	//		"error while creating register products request",
+	//		"error while creating register products to finance microservice", err)
+	//}
+
+	//logger.Info("register products response", zap.Int("status", resp.HTTPResponse.StatusCode))
+	//logger.Info("register products response", zap.ByteString("res", resp.Body))
+	//logger.Info("register products response", zap.Any("res", resp))
+	//
+	//if resp.HTTPResponse.StatusCode == http.StatusOK {
+	//	 productsResponse := make([]domain.Product, 0)
+	//
+	//	err = json.Unmarshal(resp.Body, &productsResponse)
+	//	if err != nil {
+	//		logger.Error("error while decoding products JSON:", zap.Error(err))
+	//		return nil, err
+	//	}
+	//	return productsResponse, nil
+	//} else {
+	//	var productsErrorMessage Error
+	//	err = json.Unmarshal(resp.Body, &productsErrorMessage)
+	//	if err != nil {
+	//		logger.Error("error while decoding products error message JSON:", zap.Error(err))
+	//		return nil, err
+	//	}
+	//	logger.Error("can't create register products ended:", zap.Int("status", resp.HTTPResponse.StatusCode), zap.Error(productsErrorMessage))
+	//	return nil, xapperror.New(http.StatusInternalServerError,
+	//		"error while creating register products", "error while creating register products microservice", productsErrorMessage)
+	//}
+
+	for i, _ := range products {
+		products[i].ID = uuid.New()
 	}
-
-	if resp.HTTPResponse.StatusCode == http.StatusOK {
-		var productsResponse []domain.Product
-
-		err = json.Unmarshal(resp.Body, &productsResponse)
-		if err != nil {
-			logger.Error("error while decoding products JSON:", zap.Error(err))
-			return nil, err
-		}
-		return productsResponse, nil
-	} else {
-		var productsErrorMessage Error
-		err = json.Unmarshal(resp.Body, &productsErrorMessage)
-		if err != nil {
-			logger.Error("error while decoding products error message JSON:", zap.Error(err))
-			return nil, err
-		}
-		logger.Error("can't create register products ended:", zap.Int("status", resp.HTTPResponse.StatusCode), zap.Error(productsErrorMessage))
-		return nil, xapperror.New(http.StatusInternalServerError,
-			"error while creating register products", "error while creating register products microservice", productsErrorMessage)
-	}
-
+	return products, nil
 }
 
 func NewClient(client *generated.ClientWithResponses) *Client {

@@ -129,6 +129,9 @@ func (r LessonRepository) Update(ctx context.Context, lesson *domain.Lesson) err
 	newCtx, span := tr.Start(ctx, r.spanName()+"Update")
 	defer span.End()
 
+	if lesson == nil || lesson.ID == uuid.Nil {
+		return xapperror.New(http.StatusInternalServerError, "lesson is nil or lesson ID is nil", "lesson is nil or lesson ID is nil", nil)
+	}
 	mongoLesson := models.ToMongoModelLesson(*lesson)
 	filter := createUUIDFilter(lesson.ID, "lesson_id")
 	_, err := r.lesson.ReplaceOne(newCtx, filter, mongoLesson)

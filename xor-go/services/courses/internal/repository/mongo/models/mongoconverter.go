@@ -170,10 +170,11 @@ func (p *PublicationRequest) ToDomain() (*domain.PublicationRequest, error) {
 		return nil, err
 	}
 	return &domain.PublicationRequest{
-		ID:         ID,
-		CourseID:   cID,
-		AssigneeID: aID,
-		UpdatedAt:  p.UpdatedAt,
+		ID:            ID,
+		CourseID:      cID,
+		AssigneeID:    aID,
+		UpdatedAt:     p.UpdatedAt,
+		RequestStatus: domain.RequestsStatus(p.RequestStatus),
 	}, nil
 }
 

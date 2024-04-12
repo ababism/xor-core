@@ -82,7 +82,10 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			"nil publication request", "nil publication request from repository with no errors", nil)
 	}
 
-	if currentPR.RequestStatus != domain.Unwatched {
+	incomingPR.CourseID = currentPR.CourseID
+	incomingPR.AssigneeID = currentPR.AssigneeID
+
+	if currentPR.RequestStatus != domain.Unwatched && currentPR.RequestStatus != domain.RequestsStatus(0) {
 		return *currentPR, xapperror.New(http.StatusForbidden, "publication request already checked",
 			"publication request already is not unwatched", nil)
 	}
@@ -111,7 +114,7 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 		}
 		txSession := *txSessionP
 
-		defer txSession.EndSession(ctx)
+		//defer txSession.EndSession(ctx)
 
 		publicationTxSession := txSession.SessionPublications(ctx)
 
@@ -182,11 +185,26 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			return domain.PublicationRequest{}, err
 		}
 
+		requestProduct := make([]domain.Product, 0, len(lessonTemplates))
+		for _, l := range lessonTemplates {
+			requestProduct = append(requestProduct, l.Product)
+		}
+		// REGISTER PRODUCTS
+		productsResponse, errRegister := c.financesClient.RegisterProducts(ctx, requestProduct)
+		if errRegister != nil {
+			errTx := txSession.AbortTransaction(ctx)
+			if errTx != nil {
+				log.Error("err aborting publication session transaction")
+				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
+					"internal transaction error", "err aborting publication session transaction", errTx)
+			}
+			return domain.PublicationRequest{}, errRegister
+		}
+
 		lessonTxSession := txSession.SessionLessons(ctx, collections.LessonCollectionName)
 
-		products := make([]domain.Product, 0, 30)
-
-		for _, l := range lessonTemplates {
+		for i, l := range lessonTemplates {
+			l.Product.ID = productsResponse[i].ID
 			errLV := l.Validate()
 			// TODO check again
 			if errLV != nil || l.TeacherID != courseTemplate.TeacherID {
@@ -199,18 +217,17 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 				return domain.PublicationRequest{}, errLV
 			}
 
-			errPV := l.Product.Validate()
-			if errPV != nil {
-				errTx := txSession.AbortTransaction(ctx)
-				if errTx != nil {
-					log.Error("err aborting publication session transaction")
-					return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
-						"internal transaction error", "err aborting publication session transaction", errTx)
-				}
-				return domain.PublicationRequest{}, errPV
-			}
-
-			products = append(products, l.Product)
+			//errPV := l.Product.Validate()
+			//if errPV != nil {
+			//	errTx := txSession.AbortTransaction(ctx)
+			//	if errTx != nil {
+			//		log.Error("err aborting publication session transaction")
+			//		return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
+			//			"internal transaction error", "err aborting publication session transaction", errTx)
+			//	}
+			//	return domain.PublicationRequest{}, errPV
+			//}
+			//products = append(products, l.Product)
 
 			_, errLC := lessonTxSession.Create(ctx, l)
 			if errLC != nil {
@@ -224,25 +241,13 @@ func (c CoursesService) UpdatePublicationRequest(initialCtx context.Context, act
 			}
 		}
 
-		// REGISTER PRODUCTS
-		_, errRegister := c.financesClient.RegisterProducts(ctx, products)
-		if errRegister != nil {
-			errTx := txSession.AbortTransaction(ctx)
-			if errTx != nil {
-				log.Error("err aborting publication session transaction")
-				return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
-					"internal transaction error", "err aborting publication session transaction", errTx)
-			}
-			return domain.PublicationRequest{}, errRegister
-		}
-
-		// NO ERRORS
-		errTx := txSession.CommitTransaction(ctx)
-		if errTx != nil {
-			log.Debug("err commit publication session transaction")
-			return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
-				"internal transaction error", "err commit publication session transaction", errTx)
-		}
+		//// NO ERRORS
+		//errTx := txSession.CommitTransaction(ctx)
+		//if errTx != nil {
+		//	log.Debug("err commit publication session transaction")
+		//	return domain.PublicationRequest{}, xapperror.New(http.StatusInternalServerError,
+		//		"internal transaction error", "err commit publication session transaction", errTx)
+		//}
 
 		// RETURN CASE
 		return incomingPR, nil

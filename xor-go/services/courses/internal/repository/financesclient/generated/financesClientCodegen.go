@@ -54,20 +54,20 @@ type ProductUpdate struct {
 	UUID        openapi_types.UUID `json:"UUID"`
 }
 
-// CreateManyJSONBody defines parameters for CreateMany.
-type CreateManyJSONBody = []ProductCreate
+// PostProductsListJSONBody defines parameters for PostProductsList.
+type PostProductsListJSONBody = []ProductCreate
 
-// GetListJSONRequestBody defines body for GetList for application/json ContentType.
-type GetListJSONRequestBody = ProductFilter
+// GetProductsJSONRequestBody defines body for GetProducts for application/json ContentType.
+type GetProductsJSONRequestBody = ProductFilter
 
-// CreateJSONRequestBody defines body for Create for application/json ContentType.
-type CreateJSONRequestBody = ProductCreate
+// PostProductsJSONRequestBody defines body for PostProducts for application/json ContentType.
+type PostProductsJSONRequestBody = ProductCreate
 
-// UpdateJSONRequestBody defines body for Update for application/json ContentType.
-type UpdateJSONRequestBody = ProductUpdate
+// PutProductsJSONRequestBody defines body for PutProducts for application/json ContentType.
+type PutProductsJSONRequestBody = ProductUpdate
 
-// CreateManyJSONRequestBody defines body for CreateMany for application/json ContentType.
-type CreateManyJSONRequestBody = CreateManyJSONBody
+// PostProductsListJSONRequestBody defines body for PostProductsList for application/json ContentType.
+type PostProductsListJSONRequestBody = PostProductsListJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -142,38 +142,38 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetListWithBody request with any body
-	GetListWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetProductsWithBody request with any body
+	GetProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	GetList(ctx context.Context, body GetListJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetProducts(ctx context.Context, body GetProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateWithBody request with any body
-	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostProductsWithBody request with any body
+	PostProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	Create(ctx context.Context, body CreateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostProducts(ctx context.Context, body PostProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateWithBody request with any body
-	UpdateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PutProductsWithBody request with any body
+	PutProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	Update(ctx context.Context, body UpdateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PutProducts(ctx context.Context, body PutProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateManyWithBody request with any body
-	CreateManyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostProductsListWithBody request with any body
+	PostProductsListWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreateMany(ctx context.Context, body CreateManyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostProductsList(ctx context.Context, body PostProductsListJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetPrice request
-	GetPrice(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetProductsPriceUuids request
+	GetProductsPriceUuids(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// Get request
-	Get(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetProductsId request
+	GetProductsId(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// Disable request
-	Disable(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PutProductsIdDisable request
+	PutProductsIdDisable(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetListWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetListRequestWithBody(c.Server, contentType, body)
+func (c *Client) GetProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProductsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -184,8 +184,8 @@ func (c *Client) GetListWithBody(ctx context.Context, contentType string, body i
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetList(ctx context.Context, body GetListJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetListRequest(c.Server, body)
+func (c *Client) GetProducts(ctx context.Context, body GetProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProductsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -196,8 +196,8 @@ func (c *Client) GetList(ctx context.Context, body GetListJSONRequestBody, reqEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostProductsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -208,8 +208,8 @@ func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io
 	return c.Client.Do(req)
 }
 
-func (c *Client) Create(ctx context.Context, body CreateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateRequest(c.Server, body)
+func (c *Client) PostProducts(ctx context.Context, body PostProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostProductsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -220,8 +220,8 @@ func (c *Client) Create(ctx context.Context, body CreateJSONRequestBody, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateRequestWithBody(c.Server, contentType, body)
+func (c *Client) PutProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPutProductsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -232,8 +232,8 @@ func (c *Client) UpdateWithBody(ctx context.Context, contentType string, body io
 	return c.Client.Do(req)
 }
 
-func (c *Client) Update(ctx context.Context, body UpdateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateRequest(c.Server, body)
+func (c *Client) PutProducts(ctx context.Context, body PutProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPutProductsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -244,8 +244,8 @@ func (c *Client) Update(ctx context.Context, body UpdateJSONRequestBody, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateManyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateManyRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostProductsListWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostProductsListRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -256,8 +256,8 @@ func (c *Client) CreateManyWithBody(ctx context.Context, contentType string, bod
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateMany(ctx context.Context, body CreateManyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateManyRequest(c.Server, body)
+func (c *Client) PostProductsList(ctx context.Context, body PostProductsListJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostProductsListRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -268,8 +268,8 @@ func (c *Client) CreateMany(ctx context.Context, body CreateManyJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetPrice(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetPriceRequest(c.Server, uuids)
+func (c *Client) GetProductsPriceUuids(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProductsPriceUuidsRequest(c.Server, uuids)
 	if err != nil {
 		return nil, err
 	}
@@ -280,8 +280,8 @@ func (c *Client) GetPrice(ctx context.Context, uuids []openapi_types.UUID, reqEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) Get(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRequest(c.Server, id)
+func (c *Client) GetProductsId(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProductsIdRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -292,8 +292,8 @@ func (c *Client) Get(ctx context.Context, id openapi_types.UUID, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-func (c *Client) Disable(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDisableRequest(c.Server, id)
+func (c *Client) PutProductsIdDisable(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPutProductsIdDisableRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -304,19 +304,19 @@ func (c *Client) Disable(ctx context.Context, id openapi_types.UUID, reqEditors 
 	return c.Client.Do(req)
 }
 
-// NewGetListRequest calls the generic GetList builder with application/json body
-func NewGetListRequest(server string, body GetListJSONRequestBody) (*http.Request, error) {
+// NewGetProductsRequest calls the generic GetProducts builder with application/json body
+func NewGetProductsRequest(server string, body GetProductsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewGetListRequestWithBody(server, "application/json", bodyReader)
+	return NewGetProductsRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewGetListRequestWithBody generates requests for GetList with any type of body
-func NewGetListRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewGetProductsRequestWithBody generates requests for GetProducts with any type of body
+func NewGetProductsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -344,19 +344,19 @@ func NewGetListRequestWithBody(server string, contentType string, body io.Reader
 	return req, nil
 }
 
-// NewCreateRequest calls the generic Create builder with application/json body
-func NewCreateRequest(server string, body CreateJSONRequestBody) (*http.Request, error) {
+// NewPostProductsRequest calls the generic PostProducts builder with application/json body
+func NewPostProductsRequest(server string, body PostProductsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateRequestWithBody(server, "application/json", bodyReader)
+	return NewPostProductsRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreateRequestWithBody generates requests for Create with any type of body
-func NewCreateRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostProductsRequestWithBody generates requests for PostProducts with any type of body
+func NewPostProductsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -384,19 +384,19 @@ func NewCreateRequestWithBody(server string, contentType string, body io.Reader)
 	return req, nil
 }
 
-// NewUpdateRequest calls the generic Update builder with application/json body
-func NewUpdateRequest(server string, body UpdateJSONRequestBody) (*http.Request, error) {
+// NewPutProductsRequest calls the generic PutProducts builder with application/json body
+func NewPutProductsRequest(server string, body PutProductsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpdateRequestWithBody(server, "application/json", bodyReader)
+	return NewPutProductsRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewUpdateRequestWithBody generates requests for Update with any type of body
-func NewUpdateRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPutProductsRequestWithBody generates requests for PutProducts with any type of body
+func NewPutProductsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -424,19 +424,19 @@ func NewUpdateRequestWithBody(server string, contentType string, body io.Reader)
 	return req, nil
 }
 
-// NewCreateManyRequest calls the generic CreateMany builder with application/json body
-func NewCreateManyRequest(server string, body CreateManyJSONRequestBody) (*http.Request, error) {
+// NewPostProductsListRequest calls the generic PostProductsList builder with application/json body
+func NewPostProductsListRequest(server string, body PostProductsListJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateManyRequestWithBody(server, "application/json", bodyReader)
+	return NewPostProductsListRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewCreateManyRequestWithBody generates requests for CreateMany with any type of body
-func NewCreateManyRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostProductsListRequestWithBody generates requests for PostProductsList with any type of body
+func NewPostProductsListRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -464,8 +464,8 @@ func NewCreateManyRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewGetPriceRequest generates requests for GetPrice
-func NewGetPriceRequest(server string, uuids []openapi_types.UUID) (*http.Request, error) {
+// NewGetProductsPriceUuidsRequest generates requests for GetProductsPriceUuids
+func NewGetProductsPriceUuidsRequest(server string, uuids []openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -498,8 +498,8 @@ func NewGetPriceRequest(server string, uuids []openapi_types.UUID) (*http.Reques
 	return req, nil
 }
 
-// NewGetRequest generates requests for Get
-func NewGetRequest(server string, id openapi_types.UUID) (*http.Request, error) {
+// NewGetProductsIdRequest generates requests for GetProductsId
+func NewGetProductsIdRequest(server string, id openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -532,8 +532,8 @@ func NewGetRequest(server string, id openapi_types.UUID) (*http.Request, error) 
 	return req, nil
 }
 
-// NewDisableRequest generates requests for Disable
-func NewDisableRequest(server string, id openapi_types.UUID) (*http.Request, error) {
+// NewPutProductsIdDisableRequest generates requests for PutProductsIdDisable
+func NewPutProductsIdDisableRequest(server string, id openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -609,44 +609,44 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetListWithBodyWithResponse request with any body
-	GetListWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetListResponse, error)
+	// GetProductsWithBodyWithResponse request with any body
+	GetProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetProductsResponse, error)
 
-	GetListWithResponse(ctx context.Context, body GetListJSONRequestBody, reqEditors ...RequestEditorFn) (*GetListResponse, error)
+	GetProductsWithResponse(ctx context.Context, body GetProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*GetProductsResponse, error)
 
-	// CreateWithBodyWithResponse request with any body
-	CreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error)
+	// PostProductsWithBodyWithResponse request with any body
+	PostProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostProductsResponse, error)
 
-	CreateWithResponse(ctx context.Context, body CreateJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateResponse, error)
+	PostProductsWithResponse(ctx context.Context, body PostProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostProductsResponse, error)
 
-	// UpdateWithBodyWithResponse request with any body
-	UpdateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateResponse, error)
+	// PutProductsWithBodyWithResponse request with any body
+	PutProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutProductsResponse, error)
 
-	UpdateWithResponse(ctx context.Context, body UpdateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateResponse, error)
+	PutProductsWithResponse(ctx context.Context, body PutProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*PutProductsResponse, error)
 
-	// CreateManyWithBodyWithResponse request with any body
-	CreateManyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateManyResponse, error)
+	// PostProductsListWithBodyWithResponse request with any body
+	PostProductsListWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostProductsListResponse, error)
 
-	CreateManyWithResponse(ctx context.Context, body CreateManyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateManyResponse, error)
+	PostProductsListWithResponse(ctx context.Context, body PostProductsListJSONRequestBody, reqEditors ...RequestEditorFn) (*PostProductsListResponse, error)
 
-	// GetPriceWithResponse request
-	GetPriceWithResponse(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPriceResponse, error)
+	// GetProductsPriceUuidsWithResponse request
+	GetProductsPriceUuidsWithResponse(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetProductsPriceUuidsResponse, error)
 
-	// GetWithResponse request
-	GetWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetResponse, error)
+	// GetProductsIdWithResponse request
+	GetProductsIdWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetProductsIdResponse, error)
 
-	// DisableWithResponse request
-	DisableWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*DisableResponse, error)
+	// PutProductsIdDisableWithResponse request
+	PutProductsIdDisableWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*PutProductsIdDisableResponse, error)
 }
 
-type GetListResponse struct {
+type GetProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]ProductGet
 }
 
 // Status returns HTTPResponse.Status
-func (r GetListResponse) Status() string {
+func (r GetProductsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -654,20 +654,20 @@ func (r GetListResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetListResponse) StatusCode() int {
+func (r GetProductsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type CreateResponse struct {
+type PostProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r CreateResponse) Status() string {
+func (r PostProductsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -675,20 +675,20 @@ func (r CreateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreateResponse) StatusCode() int {
+func (r PostProductsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type UpdateResponse struct {
+type PutProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r UpdateResponse) Status() string {
+func (r PutProductsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -696,20 +696,20 @@ func (r UpdateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpdateResponse) StatusCode() int {
+func (r PutProductsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type CreateManyResponse struct {
+type PostProductsListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r CreateManyResponse) Status() string {
+func (r PostProductsListResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -717,20 +717,20 @@ func (r CreateManyResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreateManyResponse) StatusCode() int {
+func (r PostProductsListResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetPriceResponse struct {
+type GetProductsPriceUuidsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPriceResponse) Status() string {
+func (r GetProductsPriceUuidsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -738,21 +738,21 @@ func (r GetPriceResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPriceResponse) StatusCode() int {
+func (r GetProductsPriceUuidsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetResponse struct {
+type GetProductsIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ProductGet
 }
 
 // Status returns HTTPResponse.Status
-func (r GetResponse) Status() string {
+func (r GetProductsIdResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -760,20 +760,20 @@ func (r GetResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetResponse) StatusCode() int {
+func (r GetProductsIdResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type DisableResponse struct {
+type PutProductsIdDisableResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r DisableResponse) Status() string {
+func (r PutProductsIdDisableResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -781,117 +781,117 @@ func (r DisableResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DisableResponse) StatusCode() int {
+func (r PutProductsIdDisableResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// GetListWithBodyWithResponse request with arbitrary body returning *GetListResponse
-func (c *ClientWithResponses) GetListWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetListResponse, error) {
-	rsp, err := c.GetListWithBody(ctx, contentType, body, reqEditors...)
+// GetProductsWithBodyWithResponse request with arbitrary body returning *GetProductsResponse
+func (c *ClientWithResponses) GetProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetProductsResponse, error) {
+	rsp, err := c.GetProductsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetListResponse(rsp)
+	return ParseGetProductsResponse(rsp)
 }
 
-func (c *ClientWithResponses) GetListWithResponse(ctx context.Context, body GetListJSONRequestBody, reqEditors ...RequestEditorFn) (*GetListResponse, error) {
-	rsp, err := c.GetList(ctx, body, reqEditors...)
+func (c *ClientWithResponses) GetProductsWithResponse(ctx context.Context, body GetProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*GetProductsResponse, error) {
+	rsp, err := c.GetProducts(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetListResponse(rsp)
+	return ParseGetProductsResponse(rsp)
 }
 
-// CreateWithBodyWithResponse request with arbitrary body returning *CreateResponse
-func (c *ClientWithResponses) CreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error) {
-	rsp, err := c.CreateWithBody(ctx, contentType, body, reqEditors...)
+// PostProductsWithBodyWithResponse request with arbitrary body returning *PostProductsResponse
+func (c *ClientWithResponses) PostProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostProductsResponse, error) {
+	rsp, err := c.PostProductsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateResponse(rsp)
+	return ParsePostProductsResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreateWithResponse(ctx context.Context, body CreateJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateResponse, error) {
-	rsp, err := c.Create(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostProductsWithResponse(ctx context.Context, body PostProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostProductsResponse, error) {
+	rsp, err := c.PostProducts(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateResponse(rsp)
+	return ParsePostProductsResponse(rsp)
 }
 
-// UpdateWithBodyWithResponse request with arbitrary body returning *UpdateResponse
-func (c *ClientWithResponses) UpdateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateResponse, error) {
-	rsp, err := c.UpdateWithBody(ctx, contentType, body, reqEditors...)
+// PutProductsWithBodyWithResponse request with arbitrary body returning *PutProductsResponse
+func (c *ClientWithResponses) PutProductsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutProductsResponse, error) {
+	rsp, err := c.PutProductsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateResponse(rsp)
+	return ParsePutProductsResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateWithResponse(ctx context.Context, body UpdateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateResponse, error) {
-	rsp, err := c.Update(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PutProductsWithResponse(ctx context.Context, body PutProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*PutProductsResponse, error) {
+	rsp, err := c.PutProducts(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateResponse(rsp)
+	return ParsePutProductsResponse(rsp)
 }
 
-// CreateManyWithBodyWithResponse request with arbitrary body returning *CreateManyResponse
-func (c *ClientWithResponses) CreateManyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateManyResponse, error) {
-	rsp, err := c.CreateManyWithBody(ctx, contentType, body, reqEditors...)
+// PostProductsListWithBodyWithResponse request with arbitrary body returning *PostProductsListResponse
+func (c *ClientWithResponses) PostProductsListWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostProductsListResponse, error) {
+	rsp, err := c.PostProductsListWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateManyResponse(rsp)
+	return ParsePostProductsListResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreateManyWithResponse(ctx context.Context, body CreateManyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateManyResponse, error) {
-	rsp, err := c.CreateMany(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostProductsListWithResponse(ctx context.Context, body PostProductsListJSONRequestBody, reqEditors ...RequestEditorFn) (*PostProductsListResponse, error) {
+	rsp, err := c.PostProductsList(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateManyResponse(rsp)
+	return ParsePostProductsListResponse(rsp)
 }
 
-// GetPriceWithResponse request returning *GetPriceResponse
-func (c *ClientWithResponses) GetPriceWithResponse(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPriceResponse, error) {
-	rsp, err := c.GetPrice(ctx, uuids, reqEditors...)
+// GetProductsPriceUuidsWithResponse request returning *GetProductsPriceUuidsResponse
+func (c *ClientWithResponses) GetProductsPriceUuidsWithResponse(ctx context.Context, uuids []openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetProductsPriceUuidsResponse, error) {
+	rsp, err := c.GetProductsPriceUuids(ctx, uuids, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetPriceResponse(rsp)
+	return ParseGetProductsPriceUuidsResponse(rsp)
 }
 
-// GetWithResponse request returning *GetResponse
-func (c *ClientWithResponses) GetWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetResponse, error) {
-	rsp, err := c.Get(ctx, id, reqEditors...)
+// GetProductsIdWithResponse request returning *GetProductsIdResponse
+func (c *ClientWithResponses) GetProductsIdWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetProductsIdResponse, error) {
+	rsp, err := c.GetProductsId(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetResponse(rsp)
+	return ParseGetProductsIdResponse(rsp)
 }
 
-// DisableWithResponse request returning *DisableResponse
-func (c *ClientWithResponses) DisableWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*DisableResponse, error) {
-	rsp, err := c.Disable(ctx, id, reqEditors...)
+// PutProductsIdDisableWithResponse request returning *PutProductsIdDisableResponse
+func (c *ClientWithResponses) PutProductsIdDisableWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*PutProductsIdDisableResponse, error) {
+	rsp, err := c.PutProductsIdDisable(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDisableResponse(rsp)
+	return ParsePutProductsIdDisableResponse(rsp)
 }
 
-// ParseGetListResponse parses an HTTP response from a GetListWithResponse call
-func ParseGetListResponse(rsp *http.Response) (*GetListResponse, error) {
+// ParseGetProductsResponse parses an HTTP response from a GetProductsWithResponse call
+func ParseGetProductsResponse(rsp *http.Response) (*GetProductsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetListResponse{
+	response := &GetProductsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -909,15 +909,15 @@ func ParseGetListResponse(rsp *http.Response) (*GetListResponse, error) {
 	return response, nil
 }
 
-// ParseCreateResponse parses an HTTP response from a CreateWithResponse call
-func ParseCreateResponse(rsp *http.Response) (*CreateResponse, error) {
+// ParsePostProductsResponse parses an HTTP response from a PostProductsWithResponse call
+func ParsePostProductsResponse(rsp *http.Response) (*PostProductsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateResponse{
+	response := &PostProductsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -925,15 +925,15 @@ func ParseCreateResponse(rsp *http.Response) (*CreateResponse, error) {
 	return response, nil
 }
 
-// ParseUpdateResponse parses an HTTP response from a UpdateWithResponse call
-func ParseUpdateResponse(rsp *http.Response) (*UpdateResponse, error) {
+// ParsePutProductsResponse parses an HTTP response from a PutProductsWithResponse call
+func ParsePutProductsResponse(rsp *http.Response) (*PutProductsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpdateResponse{
+	response := &PutProductsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -941,15 +941,15 @@ func ParseUpdateResponse(rsp *http.Response) (*UpdateResponse, error) {
 	return response, nil
 }
 
-// ParseCreateManyResponse parses an HTTP response from a CreateManyWithResponse call
-func ParseCreateManyResponse(rsp *http.Response) (*CreateManyResponse, error) {
+// ParsePostProductsListResponse parses an HTTP response from a PostProductsListWithResponse call
+func ParsePostProductsListResponse(rsp *http.Response) (*PostProductsListResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateManyResponse{
+	response := &PostProductsListResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -957,15 +957,15 @@ func ParseCreateManyResponse(rsp *http.Response) (*CreateManyResponse, error) {
 	return response, nil
 }
 
-// ParseGetPriceResponse parses an HTTP response from a GetPriceWithResponse call
-func ParseGetPriceResponse(rsp *http.Response) (*GetPriceResponse, error) {
+// ParseGetProductsPriceUuidsResponse parses an HTTP response from a GetProductsPriceUuidsWithResponse call
+func ParseGetProductsPriceUuidsResponse(rsp *http.Response) (*GetProductsPriceUuidsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPriceResponse{
+	response := &GetProductsPriceUuidsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -973,15 +973,15 @@ func ParseGetPriceResponse(rsp *http.Response) (*GetPriceResponse, error) {
 	return response, nil
 }
 
-// ParseGetResponse parses an HTTP response from a GetWithResponse call
-func ParseGetResponse(rsp *http.Response) (*GetResponse, error) {
+// ParseGetProductsIdResponse parses an HTTP response from a GetProductsIdWithResponse call
+func ParseGetProductsIdResponse(rsp *http.Response) (*GetProductsIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetResponse{
+	response := &GetProductsIdResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -999,15 +999,15 @@ func ParseGetResponse(rsp *http.Response) (*GetResponse, error) {
 	return response, nil
 }
 
-// ParseDisableResponse parses an HTTP response from a DisableWithResponse call
-func ParseDisableResponse(rsp *http.Response) (*DisableResponse, error) {
+// ParsePutProductsIdDisableResponse parses an HTTP response from a PutProductsIdDisableWithResponse call
+func ParsePutProductsIdDisableResponse(rsp *http.Response) (*PutProductsIdDisableResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DisableResponse{
+	response := &PutProductsIdDisableResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
