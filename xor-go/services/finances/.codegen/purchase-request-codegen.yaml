@@ -56,6 +56,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
   /purchase-requests/{id}/archive:
     put:
       tags:
@@ -148,3 +152,11 @@ components:
         CreatedAt:
           type: string
           format: date-time
+    ModelUUID:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+      required:
+        - UUID

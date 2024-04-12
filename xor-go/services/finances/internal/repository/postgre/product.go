@@ -24,8 +24,8 @@ const (
 		FROM products
 	`
 	createProductQuery = `
-		INSERT INTO products (name, price, is_available)
-		VALUES ($1, $2, $3)
+		INSERT INTO products (name, price, info, is_available)
+		VALUES ($1, $2, $3, $4)
 		RETURNING uuid
 	`
 	updateProductQuery = `
@@ -33,7 +33,8 @@ const (
 		SET 
 		    name = $2,
 		    price = $3,
-		    is_available = $4
+		    info = $4,
+		    is_available = $5
 		WHERE uuid = $1;
 	`
 	updateProductAvailabilityQuery = `
@@ -148,6 +149,7 @@ func (r *productRepository) Create(ctx context.Context, product *domain.ProductC
 		createProductQuery,
 		productPostgres.Name,
 		productPostgres.Price,
+		productPostgres.Info,
 		productPostgres.IsAvailable,
 	)
 
@@ -167,6 +169,7 @@ func (r *productRepository) Update(ctx context.Context, product *domain.ProductU
 		productPostgres.UUID,
 		productPostgres.Name,
 		productPostgres.Price,
+		productPostgres.Info,
 		productPostgres.IsAvailable,
 	)
 	return err

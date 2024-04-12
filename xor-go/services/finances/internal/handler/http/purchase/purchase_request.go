@@ -9,7 +9,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"io"
 	"net/http"
-	"xor-go/services/finances/internal/handler/http/dto"
 	http2 "xor-go/services/finances/internal/handler/http/utils"
 	"xor-go/services/finances/internal/service/adapters"
 )
@@ -94,7 +93,7 @@ func (h *Handler) PostPurchaseRequests(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.ModelUUID{UUID: *id})
+	ctx.JSON(http.StatusOK, ModelUUID{UUID: *id})
 }
 
 func (h *Handler) PutPurchaseRequestsIdArchive(ctx *gin.Context, id openapitypes.UUID) {

@@ -10,13 +10,13 @@ CREATE TABLE payout_requests
 
 CREATE TABLE purchase_requests
 (
-    uuid        UUID      NOT NULL DEFAULT gen_random_uuid(),
+    uuid        UUID        NOT NULL DEFAULT gen_random_uuid(),
     sender      UUID,
     receiver    UUID,
-    status      UUID      NOT NULL,
-    amount      FLOAT(10) NOT NULL,
-    webhook_url TEXT      NOT NULL,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    status      VARCHAR(20) NOT NULL,
+    amount      FLOAT(10)   NOT NULL,
+    webhook_url TEXT        NOT NULL,
+    created_at  TIMESTAMP   NOT NULL DEFAULT NOW(),
     PRIMARY KEY (uuid)
 );
 

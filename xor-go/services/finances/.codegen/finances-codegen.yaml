@@ -82,6 +82,10 @@ paths:
       responses:
         '201':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
         '400':
           description: Incorrect bank account data
     put:
@@ -175,6 +179,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
     put:
       tags:
         - Discount
@@ -258,6 +266,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
         '400':
           description: Incorrect payment data
   /payout-requests/{id}:
@@ -311,6 +323,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
   /payout-requests/{id}/archive:
     put:
       tags:
@@ -377,6 +393,10 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelUUID'
     put:
       tags:
         - Product
@@ -406,6 +426,12 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelUUID'
   /product/{id}/disable:
     put:
       tags:
@@ -995,3 +1021,11 @@ components:
         CreatedAt:
           type: string
           format: date-time
+    ModelUUID:
+      type: object
+      properties:
+        UUID:
+          type: string
+          format: uuid
+      required:
+        - UUID

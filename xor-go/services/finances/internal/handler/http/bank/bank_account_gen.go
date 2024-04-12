@@ -59,6 +59,11 @@ type BankAccountUpdate struct {
 	UUID        openapi_types.UUID   `json:"UUID"`
 }
 
+// ModelUUID defines model for ModelUUID.
+type ModelUUID struct {
+	UUID openapi_types.UUID `json:"UUID"`
+}
+
 // PutBankAccountsIdChangeFundsParams defines parameters for PutBankAccountsIdChangeFunds.
 type PutBankAccountsIdChangeFundsParams struct {
 	NewFunds float32 `form:"newFunds" json:"newFunds"`
